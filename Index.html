@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Presupuestos de Perniles - Perniles del Tío Rudy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header, footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            margin-top: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e9ecef;
+            text-align: center;
+        }
+        .whatsapp-button {
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #25D366;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Perniles del Tío Rudy</h1>
+    </header>
+
+    <main class="container">
+        <h1>Calculadora de Presupuestos de Perniles</h1>
+        <label for="personas">Cantidad de personas:</label>
+        <input type="number" id="personas" min="10" oninput="actualizarOpciones()">
+        
+        <label for="tipo">Tipo de pernil:</label>
+        <select id="tipo">
+            <option value="vacuno">Vacuno</option>
+            <option value="cerdo">Cerdo</option>
+            <option value="mixto">Mixto</option>
+        </select>
+        
+        <label for="envio">Opción de envío:</label>
+        <select id="envio">
+            <option value="0">Ninguno</option>
+            <option value="5000">Envío a domicilio ($5000)</option>
+            <option value="15000">Mozo de flameado y corte ($15000)</option>
+        </select>
+        
+        <label for="empanadasCarne">Empanadas de carne (unidad):</label>
+        <input type="number" id="empanadasCarne" min="0" value="0">
+        
+        <label for="empanadasJamonQueso">Empanadas de jamón y queso (unidad):</label>
+        <input type="number" id="empanadasJamonQueso" min="0" value="0">
+        
+        <label for="empanadasChoclo">Empanadas de choclo (unidad):</label>
+        <input type="number" id="empanadasChoclo" min="0" value="0">
+        
+        <button onclick="calcularPresupuesto()">Calcular Presupuesto</button>
+        
+        <div class="result" id="resultado"></div>
+
+        <a id="whatsapp-link" class="whatsapp-button" href="#" target="_blank">Enviar presupuesto por WhatsApp</a>
+
+        <p style="text-align: center; margin-top: 20px;">GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Perniles del Tío Rudy. Todos los derechos reservados.</p>
+    </footer>
+    
+    <script>
+        function actualizarOpciones() {
+            const personas = parseInt(document.getElementById('personas').value);
+            const tipoSelect = document.getElementById('tipo');
+            
+            // Remover todas las opciones
+            tipoSelect.innerHTML = '';
+            
+            // Agregar opciones basadas en la cantidad de personas
+            if (personas < 20) {
+                tipoSelect.innerHTML += '<option value="vacuno">Vacuno</option>';
+                tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
+            } else {
+                tipoSelect.innerHTML += '<option value="vacuno">Vacuno</option>';
+                tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
+                tipoSelect.innerHTML += '<option value="mixto">Mixto</option>';
+            }
+        }
+        
+        function calcularPresupuesto() {
+            const personas = parseInt(document.getElementById('personas').value);
+            const envio = parseInt(document.getElementById('envio').value);
+            const tipo = document.getElementById('tipo').value;
+            const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value);
+            const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value);
+            const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value);
+            
+            if (isNaN(personas) || personas < 10) {
+                alert("Por favor, ingrese una cantidad válida de personas (mínimo 10).");
+                return;
+            }
+            
+            const panesPorPersona = 4;
+            const salsasPorPersona = 1 / 4;
+            const costoPorPersona = personas < 20 ? 6000 : 5500;
+            const costoEmpanada = 1000;
+            
+            const totalPanes = panesPorPersona * personas;
+            const totalSalsas = Math.ceil(salsasPorPersona * personas);
+            const totalCostoPersonas = costoPorPersona * personas;
+            
+            const totalEmpanadasCarne = empanadasCarne * costoEmpanada;
+            const totalEmpanadasJamonQueso = empanadasJamonQueso * costoEmpanada;
+            const totalEmpanadasChoclo = empanadasChoclo * costoEmpanada;
+            
+            const totalCostoEmpanadas = totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo;
+            
+            const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + envio;
+            
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = `
+                <p><strong>Cantidad de personas:</strong> ${personas}</p>
+                <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
+                <p><strong>Total de panes árabes:</strong> ${totalPanes}</p>
+                <p><strong>Total de salsas:</strong> ${totalSalsas}</p>
+                <p><strong>Costo total por personas:</strong> $${totalCostoPersonas}</p>
+                <p><strong>Costo de empanadas de carne:</strong> $${totalEmpanadasCarne}</p>
+                <p><strong>Costo de empanadas de jamón y queso:</strong> $${totalEmpanadasJamonQueso}</p>
+                <p><strong>Costo de empanadas de choclo:</strong> $${totalEmpanadasChoclo}</p>
+                <p><strong>Opción de envío:</strong> $${envio}</p>
+                <p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>
+            `;
+            
+            const whatsappMessage = `
+Hola! Quisiera un presupuesto para ${personas} personas:
+- Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+- Panes árabes: ${totalPanes}
+- Salsas: ${totalSalsas}
+- Costo total por personas: $${totalCostoPersonas}
+- Empanadas de carne: ${empanadasCarne} unidades ($${totalEmpanadasCarne})
+- Empanadas de jamón y queso: ${empanadasJamonQueso} unidades ($${totalEmpanadasJamonQueso})
+- Empanadas de choclo: ${empanadasChoclo} unidades ($${totalEmpanadasChoclo})
+- Opción de envío: $${envio}
+- Total presupuesto: $${totalPresupuesto}
+GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN
+            `;
+            const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage.trim())}`;
+            document.getElementById('whatsapp-link').href = whatsappLink;
+        }
+    </script>
+</body>
+</html>
