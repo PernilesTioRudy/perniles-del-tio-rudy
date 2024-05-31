@@ -1,2 +1,2 @@
-# perniles-del-tio-rudy
+# PERNILES DEL TIPO RUDY - CALIDAD, HONESTIDAD Y BUEN GUSTO
 Calculadora de presupuestos
