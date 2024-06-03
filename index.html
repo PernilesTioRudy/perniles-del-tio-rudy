@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Presupuestos de Perniles - El boton de calcular presupuesto y enviar por Whatsapp se habilitan al completar todos los datos</title>
+    <title>Calculadora de Presupuestos de Perniles - Perniles del Tío Rudy</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,6 +35,11 @@
             width: 100%;
             padding: 10px;
             margin-top: 5px;
+            border: 2px solid #ccc;
+            box-sizing: border-box;
+        }
+        input.invalid {
+            border-color: red;
         }
         button {
             display: block;
@@ -44,6 +49,10 @@
             color: white;
             border: none;
             margin-top: 20px;
+            cursor: not-allowed;
+        }
+        button.enabled {
+            cursor: pointer;
         }
         .result {
             margin-top: 20px;
@@ -63,6 +72,10 @@
             border: none;
             border-radius: 5px;
             font-size: 16px;
+            cursor: not-allowed;
+        }
+        .whatsapp-button.enabled {
+            cursor: pointer;
         }
         footer p {
             margin: 0;
@@ -71,17 +84,17 @@
 </head>
 <body>
     <header>
-        <h1>PERNILES DEL TIO RUDY - CALIDAD, HONESTIDAD Y BUEN GUSTO</h1>
+        <h1>Perniles del Tío Rudy</h1>
     </header>
 
     <main class="container">
         <h1>Calculadora de Presupuestos de Perniles</h1>
 
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre">
+        <input type="text" id="nombre" class="required">
         
         <label for="personas">Cantidad de personas:</label>
-        <input type="number" id="personas" min="10" oninput="actualizarOpciones()">
+        <input type="number" id="personas" min="10" oninput="actualizarOpciones()" class="required">
         
         <label for="tipo">Tipo de pernil:</label>
         <select id="tipo">
@@ -90,7 +103,7 @@
             <option value="mixto">Mixto</option>
         </select>
         
-        <label for="envio">Opción de envío (se calcula 1 mozo cada 50 personas en caso de elejir esa opción:):</label>
+        <label for="envio">Opción de envío:</label>
         <select id="envio" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
             <option value="5000">Envío a domicilio Neuquen ($5000)</option>
@@ -101,10 +114,10 @@
         
         <div id="datosEvento" style="display: none;">
             <label for="direccion">Dirección del evento:</label>
-            <input type="text" id="direccion">
+            <input type="text" id="direccion" class="required-event">
             
             <label for="fechaHora">Fecha y hora del evento:</label>
-            <input type="datetime-local" id="fechaHora">
+            <input type="datetime-local" id="fechaHora" class="required-event">
         </div>
         
         <label for="empanadasCarne">Empanadas de carne (unidad):</label>
@@ -174,12 +187,48 @@
             const calcularButton = document.getElementById('calcularButton');
             const whatsappButton = document.getElementById('whatsapp-link');
 
-            if (nombre && personas >= 10 && (envio === 0 || (direccion && fechaHora))) {
+            let isValid = true;
+
+            if (!nombre) {
+                document.getElementById('nombre').classList.add('invalid');
+                isValid = false;
+            } else {
+                document.getElementById('nombre').classList.remove('invalid');
+            }
+
+            if (isNaN(personas) || personas < 10) {
+                document.getElementById('personas').classList.add('invalid');
+                isValid = false;
+            } else {
+                document.getElementById('personas').classList.remove('invalid');
+            }
+
+            if (envio !== 0) {
+                if (!direccion) {
+                    document.getElementById('direccion').classList.add('invalid');
+                    isValid = false;
+                } else {
+                    document.getElementById('direccion').classList.remove('invalid');
+                }
+                
+                if (!fechaHora) {
+                    document.getElementById('fechaHora').classList.add('invalid');
+                    isValid = false;
+                } else {
+                    document.getElementById('fechaHora').classList.remove('invalid');
+                }
+            }
+
+            if (isValid) {
                 calcularButton.disabled = false;
+                calcularButton.classList.add('enabled');
                 whatsappButton.style.display = 'block';
+                whatsappButton.classList.add('enabled');
             } else {
                 calcularButton.disabled = true;
+                calcularButton.classList.remove('enabled');
                 whatsappButton.style.display = 'none';
+                whatsappButton.classList.remove('enabled');
             }
         }
 
@@ -241,7 +290,7 @@
             `;
             
             const whatsappMessage = `
-Hola! Hice un presupuesto para ${personas} personas:
+Hola! Quisiera un presupuesto para ${personas} personas:
 - Nombre: ${nombre}
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
