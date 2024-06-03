@@ -86,7 +86,7 @@
             <option value="mixto">Mixto</option>
         </select>
         
-        <label for="envio">Opción de envío:</label>
+        <label for="envio">Opción de envío - se calcula 1 mozo cada 50 personas en caso de elejir esa opción:</label>
         <select id="envio">
             <option value="0">Ninguno</option>
             <option value="5000">Envío a domicilio Neuquen ($5000)</option>
@@ -103,6 +103,9 @@
         
         <label for="empanadasChoclo">Empanadas de choclo (unidad):</label>
         <input type="number" id="empanadasChoclo" min="0" value="0">
+
+        <label for="empanadasVerdura">Empanadas de verdura (unidad):</label>
+        <input type="number" id="empanadasVerdura" min="0" value="0">
         
         <button onclick="calcularPresupuesto()">Calcular Presupuesto</button>
         
@@ -143,6 +146,7 @@
             const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value);
             const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value);
             const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value);
+            const empanadasVerdura = parseInt(document.getElementById('empanadasVerdura').value);
             
             if (isNaN(personas) || personas < 10) {
                 alert("Por favor, ingrese una cantidad válida de personas (mínimo 10).");
@@ -153,6 +157,8 @@
             const salsasPorPersona = 1 / 4;
             const costoPorPersona = personas < 20 ? 6000 : 5500;
             const costoEmpanada = 1000;
+            const mozos = Math.ceil(personas / 50);  // 1 mozo por cada 50 personas
+            const costoMozo = envio >= 15000 ? (envio >= 20000 ? 20000 : 15000) * mozos : 0;
             
             const totalPanes = panesPorPersona * personas;
             const totalSalsas = Math.ceil(salsasPorPersona * personas);
@@ -161,10 +167,11 @@
             const totalEmpanadasCarne = empanadasCarne * costoEmpanada;
             const totalEmpanadasJamonQueso = empanadasJamonQueso * costoEmpanada;
             const totalEmpanadasChoclo = empanadasChoclo * costoEmpanada;
+            const totalEmpanadasVerdura = empanadasVerdura * costoEmpanada;
             
-            const totalCostoEmpanadas = totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo;
+            const totalCostoEmpanadas = totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura;
             
-            const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + envio;
+            const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + envio + costoMozo;
             
             const resultadoDiv = document.getElementById('resultado');
             resultadoDiv.innerHTML = `
@@ -176,12 +183,15 @@
                 <p><strong>Costo de empanadas de carne:</strong> $${totalEmpanadasCarne}</p>
                 <p><strong>Costo de empanadas de jamón y queso:</strong> $${totalEmpanadasJamonQueso}</p>
                 <p><strong>Costo de empanadas de choclo:</strong> $${totalEmpanadasChoclo}</p>
+                <p><strong>Costo de empanadas de verdura:</strong> $${totalEmpanadasVerdura}</p>
                 <p><strong>Opción de envío:</strong> $${envio}</p>
+                <p><strong>Número de mozos:</strong> ${mozos}</p>
+                <p><strong>Costo de mozos:</strong> $${costoMozo}</p>
                 <p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>
             `;
             
             const whatsappMessage = `
-Hola! Quisiera un presupuesto para ${personas} personas:
+Hola! Hice un presupuesto en la página web para ${personas} personas:
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
 - Salsas: ${totalSalsas}
@@ -189,7 +199,10 @@ Hola! Quisiera un presupuesto para ${personas} personas:
 - Empanadas de carne: ${empanadasCarne} unidades ($${totalEmpanadasCarne})
 - Empanadas de jamón y queso: ${empanadasJamonQueso} unidades ($${totalEmpanadasJamonQueso})
 - Empanadas de choclo: ${empanadasChoclo} unidades ($${totalEmpanadasChoclo})
+- Empanadas de verdura: ${empanadasVerdura} unidades ($${totalEmpanadasVerdura})
 - Opción de envío: $${envio}
+- Número de mozos: ${mozos}
+- Costo de mozos: $${costoMozo}
 - Total presupuesto: $${totalPresupuesto}
 GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL
             `;
