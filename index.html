@@ -31,7 +31,7 @@
             display: block;
             margin-top: 10px;
         }
-        input[type="number"], select {
+        input[type="number"], select, input[type="text"], input[type="datetime-local"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -76,6 +76,10 @@
 
     <main class="container">
         <h1>Calculadora de Presupuestos de Perniles</h1>
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre">
+        
         <label for="personas">Cantidad de personas:</label>
         <input type="number" id="personas" min="10" oninput="actualizarOpciones()">
         
@@ -86,14 +90,22 @@
             <option value="mixto">Mixto</option>
         </select>
         
-        <label for="envio">Opción de envío - se calcula 1 mozo cada 50 personas en caso de elejir esa opción:</label>
-        <select id="envio">
+        <label for="envio">Opción de envío (se calcula 1 mozo cada 50 personas en caso de elejir esa opción:):</label>
+        <select id="envio" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
             <option value="5000">Envío a domicilio Neuquen ($5000)</option>
             <option value="8000">Envío a domicilio Cipolletti, Plottier, Fdz Oro ($8000)</option>
             <option value="15000">Mozo de flameado y corte Neuquen ($15000)</option>
             <option value="20000">Mozo de flameado y corte Cipolletti, Plottier, Fdz Oro ($20000)</option>
         </select>
+        
+        <div id="datosEvento" style="display: none;">
+            <label for="direccion">Dirección del evento:</label>
+            <input type="text" id="direccion">
+            
+            <label for="fechaHora">Fecha y hora del evento:</label>
+            <input type="datetime-local" id="fechaHora">
+        </div>
         
         <label for="empanadasCarne">Empanadas de carne (unidad):</label>
         <input type="number" id="empanadasCarne" min="0" value="0">
@@ -107,11 +119,11 @@
         <label for="empanadasVerdura">Empanadas de verdura (unidad):</label>
         <input type="number" id="empanadasVerdura" min="0" value="0">
         
-        <button onclick="calcularPresupuesto()">Calcular Presupuesto</button>
+        <button id="calcularButton" onclick="calcularPresupuesto()" disabled>Calcular Presupuesto</button>
         
         <div class="result" id="resultado"></div>
 
-        <a id="whatsapp-link" class="whatsapp-button" href="#" target="_blank">Enviar presupuesto por WhatsApp</a>
+        <a id="whatsapp-link" class="whatsapp-button" href="#" target="_blank" style="display: none;">Enviar presupuesto por WhatsApp</a>
 
         <p style="text-align: center; margin-top: 20px;">GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY</p>
     </main>
@@ -137,12 +149,47 @@
                 tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
                 tipoSelect.innerHTML += '<option value="mixto">Mixto</option>';
             }
+            validarDatos();
         }
         
+        function mostrarDatosEvento() {
+            const envio = parseInt(document.getElementById('envio').value);
+            const datosEventoDiv = document.getElementById('datosEvento');
+            
+            if (envio !== 0) {
+                datosEventoDiv.style.display = 'block';
+            } else {
+                datosEventoDiv.style.display = 'none';
+            }
+            validarDatos();
+        }
+
+        function validarDatos() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const personas = parseInt(document.getElementById('personas').value);
+            const envio = parseInt(document.getElementById('envio').value);
+            const direccion = document.getElementById('direccion').value.trim();
+            const fechaHora = document.getElementById('fechaHora').value;
+
+            const calcularButton = document.getElementById('calcularButton');
+            const whatsappButton = document.getElementById('whatsapp-link');
+
+            if (nombre && personas >= 10 && (envio === 0 || (direccion && fechaHora))) {
+                calcularButton.disabled = false;
+                whatsappButton.style.display = 'block';
+            } else {
+                calcularButton.disabled = true;
+                whatsappButton.style.display = 'none';
+            }
+        }
+
         function calcularPresupuesto() {
+            const nombre = document.getElementById('nombre').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
             const envio = parseInt(document.getElementById('envio').value);
             const tipo = document.getElementById('tipo').value;
+            const direccion = document.getElementById('direccion').value.trim();
+            const fechaHora = document.getElementById('fechaHora').value;
             const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value);
             const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value);
             const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value);
@@ -175,6 +222,7 @@
             
             const resultadoDiv = document.getElementById('resultado');
             resultadoDiv.innerHTML = `
+                <p><strong>Nombre:</strong> ${nombre}</p>
                 <p><strong>Cantidad de personas:</strong> ${personas}</p>
                 <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
                 <p><strong>Total de panes árabes:</strong> ${totalPanes}</p>
@@ -187,11 +235,14 @@
                 <p><strong>Opción de envío:</strong> $${envio}</p>
                 <p><strong>Número de mozos:</strong> ${mozos}</p>
                 <p><strong>Costo de mozos:</strong> $${costoMozo}</p>
+                ${envio !== 0 ? `<p><strong>Dirección del evento:</strong> ${direccion}</p>` : ''}
+                ${envio !== 0 ? `<p><strong>Fecha y hora del evento:</strong> ${fechaHora}</p>` : ''}
                 <p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>
             `;
             
             const whatsappMessage = `
-Hola! Hice un presupuesto en la página web para ${personas} personas:
+Hola! Hice un presupuesto para ${personas} personas:
+- Nombre: ${nombre}
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
 - Salsas: ${totalSalsas}
@@ -203,12 +254,19 @@ Hola! Hice un presupuesto en la página web para ${personas} personas:
 - Opción de envío: $${envio}
 - Número de mozos: ${mozos}
 - Costo de mozos: $${costoMozo}
+${envio !== 0 ? `- Dirección del evento: ${direccion}` : ''}
+${envio !== 0 ? `- Fecha y hora del evento: ${fechaHora}` : ''}
 - Total presupuesto: $${totalPresupuesto}
 GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL
             `;
             const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage.trim())}`;
             document.getElementById('whatsapp-link').href = whatsappLink;
         }
+
+        document.getElementById('nombre').addEventListener('input', validarDatos);
+        document.getElementById('direccion').addEventListener('input', validarDatos);
+        document.getElementById('fechaHora').addEventListener('input', validarDatos);
+        document.getElementById('personas').addEventListener('input', validarDatos);
     </script>
 </body>
 </html>
