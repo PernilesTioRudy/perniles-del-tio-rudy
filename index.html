@@ -88,7 +88,7 @@
     </header>
 
     <main class="container">
-        <h1>Los botones "Calcular Presupuesto" y "Enviar por Whatsapp" se habilitan al completar todos los datos</h1>
+        <h1>Calculadora de Presupuestos de Perniles</h1>
 
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" class="required">
@@ -106,12 +106,17 @@
         <label for="envio">Opción de envío:</label>
         <select id="envio" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
-            <option value="5000">Envío a domicilio Neuquen ($5000)</option>
-            <option value="8000">Envío a domicilio Cipolletti, Plottier, Fdz Oro ($8000)</option>
-            <option value="15000">Mozo de flameado y corte Neuquen ($15000)</option>
-            <option value="20000">Mozo de flameado y corte Cipolletti, Plottier, Fdz Oro ($20000)</option>
+            <option value="5000">Envío a domicilio Neuquén Capital ($5000)</option>
+            <option value="8000">Envío a domicilio Alrededores ($8000)</option>
         </select>
         
+        <label for="mozo">Servicio de mozo de corte:</label>
+        <select id="mozo" onchange="mostrarDatosEvento()">
+            <option value="0">Ninguno</option>
+            <option value="15000">Mozo de corte en Neuquén Capital ($15000)</option>
+            <option value="20000">Mozo de corte en Alrededores ($20000)</option>
+        </select>
+
         <div id="datosEvento" style="display: none;">
             <label for="direccion">Dirección del evento:</label>
             <input type="text" id="direccion" class="required-event">
@@ -131,6 +136,15 @@
 
         <label for="empanadasVerdura">Empanadas de verdura (unidad):</label>
         <input type="number" id="empanadasVerdura" min="0" value="0">
+
+        <label for="tablasChicas">Tablas de fiambre Chica (5 personas):</label>
+        <input type="number" id="tablasChicas" min="0" value="0">
+        
+        <label for="tablasMedianas">Tablas de fiambre Mediana (10 personas):</label>
+        <input type="number" id="tablasMedianas" min="0" value="0">
+        
+        <label for="tablasGrandes">Tablas de fiambre Grande (15 personas):</label>
+        <input type="number" id="tablasGrandes" min="0" value="0">
         
         <button id="calcularButton" onclick="calcularPresupuesto()" disabled>Calcular Presupuesto</button>
         
@@ -167,9 +181,10 @@
         
         function mostrarDatosEvento() {
             const envio = parseInt(document.getElementById('envio').value);
+            const mozo = parseInt(document.getElementById('mozo').value);
             const datosEventoDiv = document.getElementById('datosEvento');
             
-            if (envio !== 0) {
+            if (envio !== 0 || mozo !== 0) {
                 datosEventoDiv.style.display = 'block';
             } else {
                 datosEventoDiv.style.display = 'none';
@@ -181,6 +196,7 @@
             const nombre = document.getElementById('nombre').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
             const envio = parseInt(document.getElementById('envio').value);
+            const mozo = parseInt(document.getElementById('mozo').value);
             const direccion = document.getElementById('direccion').value.trim();
             const fechaHora = document.getElementById('fechaHora').value;
 
@@ -203,7 +219,7 @@
                 document.getElementById('personas').classList.remove('invalid');
             }
 
-            if (envio !== 0) {
+            if (envio !== 0 || mozo !== 0) {
                 if (!direccion) {
                     document.getElementById('direccion').classList.add('invalid');
                     isValid = false;
@@ -236,6 +252,7 @@
             const nombre = document.getElementById('nombre').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
             const envio = parseInt(document.getElementById('envio').value);
+            const mozo = parseInt(document.getElementById('mozo').value);
             const tipo = document.getElementById('tipo').value;
             const direccion = document.getElementById('direccion').value.trim();
             const fechaHora = document.getElementById('fechaHora').value;
@@ -243,7 +260,10 @@
             const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value);
             const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value);
             const empanadasVerdura = parseInt(document.getElementById('empanadasVerdura').value);
-            
+            const tablasChicas = parseInt(document.getElementById('tablasChicas').value);
+            const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value);
+            const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value);
+
             if (isNaN(personas) || personas < 10) {
                 alert("Por favor, ingrese una cantidad válida de personas (mínimo 10).");
                 return;
@@ -253,8 +273,9 @@
             const salsasPorPersona = 1 / 4;
             const costoPorPersona = personas < 20 ? 6000 : 5500;
             const costoEmpanada = 1000;
-            const mozos = Math.ceil(personas / 50);  // 1 mozo por cada 50 personas
-            const costoMozo = envio >= 15000 ? (envio >= 20000 ? 20000 : 15000) * mozos : 0;
+            const costoTablasChicas = 30000;
+            const costoTablasMedianas = 60000;
+            const costoTablasGrandes = 90000;
             
             const totalPanes = panesPorPersona * personas;
             const totalSalsas = Math.ceil(salsasPorPersona * personas);
@@ -264,50 +285,83 @@
             const totalEmpanadasJamonQueso = empanadasJamonQueso * costoEmpanada;
             const totalEmpanadasChoclo = empanadasChoclo * costoEmpanada;
             const totalEmpanadasVerdura = empanadasVerdura * costoEmpanada;
+
+            const totalTablasChicas = tablasChicas * costoTablasChicas;
+            const totalTablasMedianas = tablasMedianas * costoTablasMedianas;
+            const totalTablasGrandes = tablasGrandes * costoTablasGrandes;
             
             const totalCostoEmpanadas = totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura;
+            const totalCostoTablas = totalTablasChicas + totalTablasMedianas + totalTablasGrandes;
             
-            const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + envio + costoMozo;
+            const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + totalCostoTablas + envio + mozo;
             
-            const resultadoDiv = document.getElementById('resultado');
-            resultadoDiv.innerHTML = `
+            let resultadoHTML = `
                 <p><strong>Nombre:</strong> ${nombre}</p>
                 <p><strong>Cantidad de personas:</strong> ${personas}</p>
                 <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
                 <p><strong>Total de panes árabes:</strong> ${totalPanes}</p>
                 <p><strong>Total de salsas:</strong> ${totalSalsas}</p>
                 <p><strong>Costo total del Pernil:</strong> $${totalCostoPersonas}</p>
-                <p><strong>Costo de empanadas de carne:</strong> $${totalEmpanadasCarne}</p>
-                <p><strong>Costo de empanadas de jamón y queso:</strong> $${totalEmpanadasJamonQueso}</p>
-                <p><strong>Costo de empanadas de choclo:</strong> $${totalEmpanadasChoclo}</p>
-                <p><strong>Costo de empanadas de verdura:</strong> $${totalEmpanadasVerdura}</p>
-                <p><strong>Opción de envío:</strong> $${envio}</p>
-                <p><strong>Número de mozos:</strong> ${mozos}</p>
-                <p><strong>Costo de mozos:</strong> $${costoMozo}</p>
-                ${envio !== 0 ? `<p><strong>Dirección del evento:</strong> ${direccion}</p>` : ''}
-                ${envio !== 0 ? `<p><strong>Fecha y hora del evento:</strong> ${fechaHora}</p>` : ''}
-                <p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>
             `;
-            
-            const whatsappMessage = `
-Hola! Hice un presupuesto en la Web para ${personas} personas:
+
+            let whatsappMessage = `
+Hola! Hice un presupuesto desde la web para ${personas} personas:
 - Nombre: ${nombre}
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
 - Salsas: ${totalSalsas}
 - Costo total del Pernil: $${totalCostoPersonas}
-- Empanadas de carne: ${empanadasCarne} unidades ($${totalEmpanadasCarne})
-- Empanadas de jamón y queso: ${empanadasJamonQueso} unidades ($${totalEmpanadasJamonQueso})
-- Empanadas de choclo: ${empanadasChoclo} unidades ($${totalEmpanadasChoclo})
-- Empanadas de verdura: ${empanadasVerdura} unidades ($${totalEmpanadasVerdura})
-- Opción de envío: $${envio}
-- Número de mozos: ${mozos}
-- Costo de mozos: $${costoMozo}
-${envio !== 0 ? `- Dirección del evento: ${direccion}` : ''}
-${envio !== 0 ? `- Fecha y hora del evento: ${fechaHora}` : ''}
-- Total presupuesto: $${totalPresupuesto}
-GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL
             `;
+
+            if (empanadasCarne > 0) {
+                resultadoHTML += `<p><strong>Costo de empanadas de carne:</strong> $${totalEmpanadasCarne}</p>`;
+                whatsappMessage += `- Empanadas de carne: ${empanadasCarne} unidades ($${totalEmpanadasCarne})\n`;
+            }
+            if (empanadasJamonQueso > 0) {
+                resultadoHTML += `<p><strong>Costo de empanadas de jamón y queso:</strong> $${totalEmpanadasJamonQueso}</p>`;
+                whatsappMessage += `- Empanadas de jamón y queso: ${empanadasJamonQueso} unidades ($${totalEmpanadasJamonQueso})\n`;
+            }
+            if (empanadasChoclo > 0) {
+                resultadoHTML += `<p><strong>Costo de empanadas de choclo:</strong> $${totalEmpanadasChoclo}</p>`;
+                whatsappMessage += `- Empanadas de choclo: ${empanadasChoclo} unidades ($${totalEmpanadasChoclo})\n`;
+            }
+            if (empanadasVerdura > 0) {
+                resultadoHTML += `<p><strong>Costo de empanadas de verdura:</strong> $${totalEmpanadasVerdura}</p>`;
+                whatsappMessage += `- Empanadas de verdura: ${empanadasVerdura} unidades ($${totalEmpanadasVerdura})\n`;
+            }
+            if (tablasChicas > 0) {
+                resultadoHTML += `<p><strong>Tablas de fiambre Chica (5 personas):</strong> ${tablasChicas} unidades ($${totalTablasChicas})</p>`;
+                whatsappMessage += `- Tablas de fiambre Chica (5 personas): ${tablasChicas} unidades ($${totalTablasChicas})\n`;
+            }
+            if (tablasMedianas > 0) {
+                resultadoHTML += `<p><strong>Tablas de fiambre Mediana (10 personas):</strong> ${tablasMedianas} unidades ($${totalTablasMedianas})</p>`;
+                whatsappMessage += `- Tablas de fiambre Mediana (10 personas): ${tablasMedianas} unidades ($${totalTablasMedianas})\n`;
+            }
+            if (tablasGrandes > 0) {
+                resultadoHTML += `<p><strong>Tablas de fiambre Grande (15 personas):</strong> ${tablasGrandes} unidades ($${totalTablasGrandes})</p>`;
+                whatsappMessage += `- Tablas de fiambre Grande (15 personas): ${tablasGrandes} unidades ($${totalTablasGrandes})\n`;
+            }
+            if (envio !== 0) {
+                resultadoHTML += `<p><strong>Opción de envío:</strong> $${envio}</p>`;
+                whatsappMessage += `- Opción de envío: $${envio}\n`;
+            }
+            if (mozo !== 0) {
+                resultadoHTML += `<p><strong>Servicio de mozo de corte:</strong> $${mozo}</p>`;
+                whatsappMessage += `- Servicio de mozo de corte: $${mozo}\n`;
+            }
+            if (envio !== 0 || mozo !== 0) {
+                resultadoHTML += `<p><strong>Dirección del evento:</strong> ${direccion}</p>`;
+                resultadoHTML += `<p><strong>Fecha y hora del evento:</strong> ${fechaHora}</p>`;
+                whatsappMessage += `- Dirección del evento: ${direccion}\n`;
+                whatsappMessage += `- Fecha y hora del evento: ${fechaHora}\n`;
+            } else {
+                whatsappMessage += `- Retiro en el local (traer bandeja de horno o pizzera)\n`;
+            }
+
+            resultadoHTML += `<p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>`;
+            whatsappMessage += `- Total presupuesto: $${totalPresupuesto}\nGRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - TEL: 447-4330 - NEUQUEN CAPITAL`;
+
+            document.getElementById('resultado').innerHTML = resultadoHTML;
             const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage.trim())}`;
             document.getElementById('whatsapp-link').href = whatsappLink;
         }
