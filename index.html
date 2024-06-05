@@ -31,14 +31,14 @@
             display: block;
             margin-top: 10px;
         }
-        input[type="number"], select, input[type="text"], input[type="datetime-local"] {
+        input[type="number"], select, input[type="text"], input[type="datetime-local"], textarea {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
             border: 2px solid #ccc;
             box-sizing: border-box;
         }
-        input.invalid {
+        input.invalid, textarea.invalid {
             border-color: red;
         }
         button {
@@ -113,8 +113,8 @@
         <label for="mozo">Servicio de mozo de corte:</label>
         <select id="mozo" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
-            <option value="15000">Mozo de corte en Neuquén Capital ($15000)</option>
-            <option value="20000">Mozo de corte en Alrededores ($20000)</option>
+            <option value="15000">Mozo de corte en Neuquén Capital</option>
+            <option value="20000">Mozo de corte en Alrededores</option>
         </select>
 
         <div id="datosEvento" style="display: none;">
@@ -146,6 +146,9 @@
         <label for="tablasGrandes">Tablas de fiambre Grande (15 personas):</label>
         <input type="number" id="tablasGrandes" min="0" value="0">
         
+        <label for="observaciones">Observaciones:</label>
+        <textarea id="observaciones" rows="4" placeholder="Ingrese aquí cualquier observación o comentario adicional..."></textarea>
+
         <button id="calcularButton" onclick="calcularPresupuesto()" disabled>Calcular Presupuesto</button>
         
         <div class="result" id="resultado"></div>
@@ -199,6 +202,7 @@
             const mozo = parseInt(document.getElementById('mozo').value);
             const direccion = document.getElementById('direccion').value.trim();
             const fechaHora = document.getElementById('fechaHora').value;
+            const observaciones = document.getElementById('observaciones').value.trim();
 
             const calcularButton = document.getElementById('calcularButton');
             const whatsappButton = document.getElementById('whatsapp-link');
@@ -251,11 +255,12 @@
         function calcularPresupuesto() {
             const nombre = document.getElementById('nombre').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
-            const envio = parseInt(document.getElementById('envio').value);
-            const mozo = parseInt(document.getElementById('mozo').value);
+            let envio = parseInt(document.getElementById('envio').value);
+            let mozo = parseInt(document.getElementById('mozo').value);
             const tipo = document.getElementById('tipo').value;
             const direccion = document.getElementById('direccion').value.trim();
             const fechaHora = document.getElementById('fechaHora').value;
+            const observaciones = document.getElementById('observaciones').value.trim();
             const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value);
             const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value);
             const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value);
@@ -292,7 +297,21 @@
             
             const totalCostoEmpanadas = totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura;
             const totalCostoTablas = totalTablasChicas + totalTablasMedianas + totalTablasGrandes;
+
+            // Calcular el número de mozos necesarios
+            const mozos = Math.ceil(personas / 50);
             
+            // Calcular el costo del mozo dependiendo del número de personas y la ubicación
+            if (mozo !== 0) {
+                if (personas <= 45) {
+                    mozo = mozo === 15000 ? 15000 : 20000;
+                } else {
+                    mozo = mozo === 15000 ? 20000 : 25000;
+                }
+                mozo = mozo * mozos;
+                envio = 0; // Envío gratis si se elige mozo
+            }
+
             const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + totalCostoTablas + envio + mozo;
             
             let resultadoHTML = `
@@ -305,7 +324,7 @@
             `;
 
             let whatsappMessage = `
-Hola! Hice un presupuesto desde la web para ${personas} personas:
+Hola! Quisiera un presupuesto para ${personas} personas:
 - Nombre: ${nombre}
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
@@ -347,7 +366,9 @@ Hola! Hice un presupuesto desde la web para ${personas} personas:
             }
             if (mozo !== 0) {
                 resultadoHTML += `<p><strong>Servicio de mozo de corte:</strong> $${mozo}</p>`;
+                resultadoHTML += `<p><strong>Cantidad de mozos:</strong> ${mozos}</p>`;
                 whatsappMessage += `- Servicio de mozo de corte: $${mozo}\n`;
+                whatsappMessage += `- Cantidad de mozos: ${mozos}\n`;
             }
             if (envio !== 0 || mozo !== 0) {
                 resultadoHTML += `<p><strong>Dirección del evento:</strong> ${direccion}</p>`;
@@ -355,11 +376,16 @@ Hola! Hice un presupuesto desde la web para ${personas} personas:
                 whatsappMessage += `- Dirección del evento: ${direccion}\n`;
                 whatsappMessage += `- Fecha y hora del evento: ${fechaHora}\n`;
             } else {
-                whatsappMessage += `- Retiro en el local (traer bandeja de horno o pizzera)\n`;
+                whatsappMessage += `- Retira el cliente\n`;
+            }
+
+            if (observaciones) {
+                resultadoHTML += `<p><strong>Observaciones:</strong> ${observaciones}</p>`;
+                whatsappMessage += `- Observaciones: ${observaciones}\n`;
             }
 
             resultadoHTML += `<p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>`;
-            whatsappMessage += `- Total presupuesto: $${totalPresupuesto}\nGRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - TEL: 447-4330 - NEUQUEN CAPITAL`;
+            whatsappMessage += `- Total presupuesto: $${totalPresupuesto}\nGRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL`;
 
             document.getElementById('resultado').innerHTML = resultadoHTML;
             const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage.trim())}`;
@@ -370,6 +396,7 @@ Hola! Hice un presupuesto desde la web para ${personas} personas:
         document.getElementById('direccion').addEventListener('input', validarDatos);
         document.getElementById('fechaHora').addEventListener('input', validarDatos);
         document.getElementById('personas').addEventListener('input', validarDatos);
+        document.getElementById('observaciones').addEventListener('input', validarDatos);
     </script>
 </body>
 </html>
