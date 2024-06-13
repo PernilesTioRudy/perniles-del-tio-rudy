@@ -183,15 +183,6 @@
         }
         
         function mostrarDatosEvento() {
-            const envio = parseInt(document.getElementById('envio').value);
-            const mozo = parseInt(document.getElementById('mozo').value);
-            const datosEventoDiv = document.getElementById('datosEvento');
-            
-            if (envio !== 0 || mozo !== 0) {
-                datosEventoDiv.style.display = 'block';
-            } else {
-                datosEventoDiv.style.display = 'none';
-            }
             validarDatos();
         }
 
@@ -319,15 +310,17 @@
                 <p><strong>Total de panes árabes:</strong> ${totalPanes}</p>
                 <p><strong>Total de salsas:</strong> ${totalSalsas}</p>
                 <p><strong>Costo total del Pernil:</strong> $${totalCostoPersonas}</p>
+                <p><strong>Fecha y hora del evento:</strong> ${fechaHora}</p>
             `;
 
             let whatsappMessage = `
-Hola! Hice un presupuesto en la página Web para ${personas} personas:
+Hola! Hice este presupuesto desde la página Web para ${personas} personas:
 - Nombre: ${nombre}
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
 - Salsas: ${totalSalsas}
 - Costo total del Pernil: $${totalCostoPersonas}
+- Fecha y hora del evento: ${fechaHora}
             `;
 
             if (empanadasCarne > 0) {
@@ -370,9 +363,7 @@ Hola! Hice un presupuesto en la página Web para ${personas} personas:
             }
             if (envio !== 0 || mozo !== 0) {
                 resultadoHTML += `<p><strong>Dirección del evento:</strong> ${direccion}</p>`;
-                resultadoHTML += `<p><strong>Fecha y hora del evento:</strong> ${fechaHora}</p>`;
                 whatsappMessage += `- Dirección del evento: ${direccion}\n`;
-                whatsappMessage += `- Fecha y hora del evento: ${fechaHora}\n`;
             } else {
                 resultadoHTML += `<p><strong>Retira el cliente en el local</strong></p>`;
                 whatsappMessage += `- Retira el cliente en el local\n`;
