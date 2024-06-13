@@ -117,7 +117,7 @@
             <option value="20000">Mozo de corte en Alrededores</option>
         </select>
 
-        <div id="datosEvento" style="display: none;">
+        <div id="datosEvento">
             <label for="direccion">Dirección del evento:</label>
             <input type="text" id="direccion" class="required-event">
             
@@ -223,20 +223,18 @@
                 document.getElementById('personas').classList.remove('invalid');
             }
 
-            if (envio !== 0 || mozo !== 0) {
-                if (!direccion) {
-                    document.getElementById('direccion').classList.add('invalid');
-                    isValid = false;
-                } else {
-                    document.getElementById('direccion').classList.remove('invalid');
-                }
-                
-                if (!fechaHora) {
-                    document.getElementById('fechaHora').classList.add('invalid');
-                    isValid = false;
-                } else {
-                    document.getElementById('fechaHora').classList.remove('invalid');
-                }
+            if (!fechaHora) {
+                document.getElementById('fechaHora').classList.add('invalid');
+                isValid = false;
+            } else {
+                document.getElementById('fechaHora').classList.remove('invalid');
+            }
+
+            if ((envio !== 0 || mozo !== 0) && !direccion) {
+                document.getElementById('direccion').classList.add('invalid');
+                isValid = false;
+            } else {
+                document.getElementById('direccion').classList.remove('invalid');
             }
 
             if (isValid) {
@@ -324,7 +322,7 @@
             `;
 
             let whatsappMessage = `
-Hola! Quisiera un presupuesto para ${personas} personas:
+Hola! Hice un presupuesto en la página Web para ${personas} personas:
 - Nombre: ${nombre}
 - Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
 - Panes árabes: ${totalPanes}
@@ -376,7 +374,8 @@ Hola! Quisiera un presupuesto para ${personas} personas:
                 whatsappMessage += `- Dirección del evento: ${direccion}\n`;
                 whatsappMessage += `- Fecha y hora del evento: ${fechaHora}\n`;
             } else {
-                whatsappMessage += `- Retira el cliente\n`;
+                resultadoHTML += `<p><strong>Retira el cliente en el local</strong></p>`;
+                whatsappMessage += `- Retira el cliente en el local\n`;
             }
 
             if (observaciones) {
