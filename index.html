@@ -114,7 +114,7 @@
         <select id="mozo" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
             <option value="20000">Mozo de corte en Neuquén Capital</option>
-            <option value="25000">Mozo de corte en Alrededores</option>
+            <option value="30000">Mozo de corte en Alrededores</option>
         </select>
 
         <div id="datosEvento">
@@ -293,9 +293,9 @@
             // Calcular el costo del mozo dependiendo del número de personas y la ubicación
             if (mozo !== 0) {
                 if (personas <= 45) {
-                    mozo = mozo === 20000 ? 25000 : 30000;
+                    mozo = mozo === 20000 ? 25000 : 35000;
                 } else {
-                    mozo = mozo === 20000 ? 25000 : 30000;
+                    mozo = mozo === 20000 ? 20000 : 30000;
                 }
                 mozo = mozo * mozos;
                 envio = 0; // Envío gratis si se elige mozo
