@@ -264,7 +264,7 @@
             }
             
             const panesPorPersona = 4;
-            const salsasPorPersona = 1 / 4;
+            const salsasPorPersona = 1 / 5;
             const costoPorPersona = personas < 20 ? 7000 : 6500;
             const costoEmpanada = 1200;
             const costoTablasChicas = 40000;
@@ -272,7 +272,7 @@
             const costoTablasGrandes = 110000;
             
             const totalPanes = panesPorPersona * personas;
-            const totalSalsas = Math.ceil(salsasPorPersona * personas);
+            const totalSalsas = Math.ceil(salsasPorPersona * personas) + 1;
             const totalCostoPersonas = costoPorPersona * personas;
             
             const totalEmpanadasCarne = empanadasCarne * costoEmpanada;
