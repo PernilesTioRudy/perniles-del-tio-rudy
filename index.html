@@ -333,8 +333,7 @@ Hola! Hice este presupuesto desde la página Web:
 - Panes árabes: ${totalPanes}
 - Salsas: ${totalSalsas}
 - Costo total del Pernil: $${totalCostoPersonas}
-- Fecha y hora del evento: ${fechaHora}
-            `;
+- Fecha y hora del evento: ${fechaHora}`.trim();
 
             if (empanadasCarne > 0) {
                 resultadoHTML += `<p><strong>Costo de empanadas de carne:</strong> $${totalEmpanadasCarne}</p>`;
