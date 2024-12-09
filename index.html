@@ -303,9 +303,9 @@
             // Calcular el costo del mozo dependiendo del número de personas y la ubicación
             if (mozo !== 0) {
                 if (personas <= 35) {
-                    mozo = mozo === 25000 ? 25000 : 35000;
+                    mozo = mozo === 30000 ? 30000 : 40000;
                 } else {
-                    mozo = mozo === 25000 ? 30000 : 35000;
+                    mozo = mozo === 30000 ? 35000 : 45000;
                 }
                 mozo = mozo * mozos;
                 envio = 0; // Envío gratis si se elige mozo
