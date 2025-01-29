@@ -277,9 +277,9 @@
             const salsasPorPersona = 1 / 5;
             const costoPorPersona = personas < 20 ? 8500 : 8000;
             const costoEmpanada = 1500;
-            const costoTablasChicas = 40000;
-            const costoTablasMedianas = 80000;
-            const costoTablasGrandes = 120000;
+            const costoTablasChicas = 45000;
+            const costoTablasMedianas = 90000;
+            const costoTablasGrandes = 135000;
             
             const totalPanes = panesPorPersona * personas;
             const totalSalsas = Math.ceil(salsasPorPersona * personas) + 1;
@@ -303,9 +303,9 @@
             // Calcular el costo del mozo dependiendo del número de personas y la ubicación
             if (mozo !== 0) {
                 if (personas <= 35) {
-                    mozo = mozo === 30000 ? 30000 : 40000;
+                    mozo = mozo === 30000 ? 30000 : 45000;
                 } else {
-                    mozo = mozo === 30000 ? 35000 : 45000;
+                    mozo = mozo === 30000 ? 35000 : 50000;
                 }
                 mozo = mozo * mozos;
                 envio = 0; // Envío gratis si se elige mozo
