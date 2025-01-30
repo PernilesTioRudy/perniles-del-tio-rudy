@@ -80,6 +80,30 @@
         footer p {
             margin: 0;
         }
+        #seleccionSalsas {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .salsa-item {
+            margin: 10px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .salsa-item label {
+            display: inline-block;
+            width: 150px;
+        }
+        .salsa-qty {
+            width: 80px;
+            padding: 5px;
+        }
+        #errorSalsas {
+            color: red;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -99,6 +123,47 @@
         <label for="personas">Cantidad de personas:</label>
         <input type="number" id="personas" min="10" oninput="actualizarOpciones()" class="required">
         
+        <label for="salsas">Cantidad de salsas:</label>
+        <input type="number" id="salsas" min="0" value="0" readonly>
+
+        <div id="seleccionSalsas" style="display: none;">
+            <label>Seleccione las salsas (máximo: <span id="maxSalsas">0</span>):</label>
+            
+            <div class="salsa-item">
+                <label>Cuatro Quesos:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Cuatro Quesos">
+            </div>
+            <div class="salsa-item">
+                <label>Provenzal:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Provenzal">
+            </div>
+            <div class="salsa-item">
+                <label>Tartara:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Tartara">
+            </div>
+            <div class="salsa-item">
+                <label>Aceitunas:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Aceitunas">
+            </div>
+            <div class="salsa-item">
+                <label>Criolla:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Criolla">
+            </div>
+            <div class="salsa-item">
+                <label>Berenjenas:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Berenjenas">
+            </div>
+            <div class="salsa-item">
+                <label>Prov. con Verdeo:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Prov. con Verdeo">
+            </div>
+            <div class="salsa-item">
+                <label>Manzanas al Rhum:</label>
+                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Manzanas al Rhum">
+            </div>
+            <p id="errorSalsas">¡No puede exceder la cantidad total de salsas!</p>
+        </div>
+        
         <label for="tipo">Tipo de pernil:</label>
         <select id="tipo">
             <option value="vacuno">Vacuno</option>
@@ -110,14 +175,14 @@
         <select id="envio" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
             <option value="8000">Envío a domicilio Neuquén Capital ($8000)</option>
-            <option value="13000">Envío a domicilio Alrededores ($13000)</option>
+            <option value="15000">Envío a domicilio Alrededores ($13000)</option>
         </select>
         
         <label for="mozo">Servicio de mozo de corte:</label>
         <select id="mozo" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
-            <option value="25000">Mozo de corte en Neuquén Capital</option>
-            <option value="35000">Mozo de corte en Alrededores</option>
+            <option value="30000">Mozo de corte en Neuquén Capital</option>
+            <option value="45000">Mozo de corte en Alrededores</option>
         </select>
 
         <div id="datosEvento">
@@ -169,11 +234,12 @@
         function actualizarOpciones() {
             const personas = parseInt(document.getElementById('personas').value);
             const tipoSelect = document.getElementById('tipo');
-            
-            // Remover todas las opciones
+            const salsasInput = document.getElementById('salsas');
+            const seleccionSalsasDiv = document.getElementById('seleccionSalsas');
+            const maxSalsasSpan = document.getElementById('maxSalsas');
+
+            // Actualizar tipo de pernil según personas
             tipoSelect.innerHTML = '';
-            
-            // Agregar opciones basadas en la cantidad de personas
             if (personas < 20) {
                 tipoSelect.innerHTML += '<option value="vacuno">Vacuno</option>';
                 tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
@@ -182,9 +248,34 @@
                 tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
                 tipoSelect.innerHTML += '<option value="mixto">Mixto</option>';
             }
+
+            // Calcular cantidad de salsas
+            const totalSalsas = Math.ceil((1/5) * personas) + 1;
+            salsasInput.value = totalSalsas;
+            maxSalsasSpan.textContent = totalSalsas;
+
+            // Mostrar sección de salsas
+            seleccionSalsasDiv.style.display = 'block';
+
+            // Validar en tiempo real las salsas
+            document.querySelectorAll('.salsa-qty').forEach(input => {
+                input.addEventListener('input', function() {
+                    const totalSalsas = parseInt(document.getElementById('salsas').value);
+                    const currentSum = Array.from(document.querySelectorAll('.salsa-qty'))
+                                          .reduce((sum, el) => sum + parseInt(el.value || 0), 0);
+                    
+                    if (currentSum > totalSalsas) {
+                        document.getElementById('errorSalsas').style.display = 'block';
+                        this.value = Math.max(0, totalSalsas - (currentSum - parseInt(this.value)));
+                    } else {
+                        document.getElementById('errorSalsas').style.display = 'none';
+                    }
+                });
+            });
+
             validarDatos();
         }
-        
+
         function mostrarDatosEvento() {
             validarDatos();
         }
@@ -204,13 +295,14 @@
 
             let isValid = true;
 
+            // Validar campos obligatorios
             if (!nombre) {
                 document.getElementById('nombre').classList.add('invalid');
                 isValid = false;
             } else {
                 document.getElementById('nombre').classList.remove('invalid');
             }
-             if (!telefono) {
+            if (!telefono) {
                 document.getElementById('telefono').classList.add('invalid');
                 isValid = false;
             } else {
@@ -222,14 +314,12 @@
             } else {
                 document.getElementById('personas').classList.remove('invalid');
             }
-
             if (!fechaHora) {
                 document.getElementById('fechaHora').classList.add('invalid');
                 isValid = false;
             } else {
                 document.getElementById('fechaHora').classList.remove('invalid');
             }
-
             if ((envio !== 0 || mozo !== 0) && !direccion) {
                 document.getElementById('direccion').classList.add('invalid');
                 isValid = false;
@@ -237,6 +327,7 @@
                 document.getElementById('direccion').classList.remove('invalid');
             }
 
+            // Habilitar botón si todo es válido
             if (isValid) {
                 calcularButton.disabled = false;
                 calcularButton.classList.add('enabled');
@@ -250,13 +341,15 @@
             }
         }
 
-        function calcularPresupuesto() {
+function calcularPresupuesto() {
+            // Obtener datos del formulario
             const nombre = document.getElementById('nombre').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
             let envio = parseInt(document.getElementById('envio').value);
             let mozo = parseInt(document.getElementById('mozo').value);
             const tipo = document.getElementById('tipo').value;
+            const salsasInput = parseInt(document.getElementById('salsas').value);
             const direccion = document.getElementById('direccion').value.trim();
             const fechaHora = document.getElementById('fechaHora').value;
             const observaciones = document.getElementById('observaciones').value.trim();
@@ -268,13 +361,29 @@
             const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value);
             const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value);
 
+            // Validar datos básicos
             if (isNaN(personas) || personas < 10) {
                 alert("Por favor, ingrese una cantidad válida de personas (mínimo 10).");
                 return;
             }
-            
+
+            // Obtener salsas seleccionadas
+            const salsas = {};
+            document.querySelectorAll('.salsa-qty').forEach(input => {
+                const salsaName = input.getAttribute('data-salsa');
+                const qty = parseInt(input.value || 0);
+                if (qty > 0) salsas[salsaName] = qty;
+            });
+
+            // Validar suma de salsas
+            const sumaSalsas = Object.values(salsas).reduce((a, b) => a + b, 0);
+            if (sumaSalsas > salsasInput) {
+                alert("¡La suma de salsas supera el máximo permitido!");
+                return;
+            }
+
+            // Calcular costos
             const panesPorPersona = 4;
-            const salsasPorPersona = 1 / 5;
             const costoPorPersona = personas < 20 ? 8500 : 8000;
             const costoEmpanada = 1500;
             const costoTablasChicas = 45000;
@@ -282,7 +391,6 @@
             const costoTablasGrandes = 135000;
             
             const totalPanes = panesPorPersona * personas;
-            const totalSalsas = Math.ceil(salsasPorPersona * personas) + 1;
             const totalCostoPersonas = costoPorPersona * personas;
             
             const totalEmpanadasCarne = empanadasCarne * costoEmpanada;
@@ -297,108 +405,106 @@
             const totalCostoEmpanadas = totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura;
             const totalCostoTablas = totalTablasChicas + totalTablasMedianas + totalTablasGrandes;
 
-            // Calcular el número de mozos necesarios
-            const mozos = Math.ceil(personas / 50);
-            
-            // Calcular el costo del mozo dependiendo del número de personas y la ubicación
+            // Calcular mozos
+            let mozos = 0;
             if (mozo !== 0) {
-                if (personas <= 35) {
-                    mozo = mozo === 30000 ? 30000 : 45000;
-                } else {
-                    mozo = mozo === 30000 ? 35000 : 50000;
-                }
-                mozo = mozo * mozos;
-                envio = 0; // Envío gratis si se elige mozo
+                mozos = Math.ceil(personas / 50);
+                mozo = (personas <= 35) ? 
+                    (mozo === 30000 ? 30000 : 45000) : 
+                    (mozo === 30000 ? 35000 : 50000);
+                mozo *= mozos;
+                envio = 0; // Envío gratis con mozo
             }
 
+            // Calcular total
             const totalPresupuesto = totalCostoPersonas + totalCostoEmpanadas + totalCostoTablas + envio + mozo;
-            
+
+            // Generar HTML del resultado
             let resultadoHTML = `
                 <p><strong>Nombre:</strong> ${nombre}</p>
-                <p><strong>Nro de Telefono:</strong> ${telefono}</p>
-                <p><strong>Cantidad de personas:</strong> ${personas}</p>
+                <p><strong>Teléfono:</strong> ${telefono}</p>
+                <p><strong>Personas:</strong> ${personas}</p>
                 <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
-                <p><strong>Total de panes árabes:</strong> ${totalPanes}</p>
-                <p><strong>Total de salsas:</strong> ${totalSalsas}</p>
-                <p><strong>Costo total del Pernil:</strong> $${totalCostoPersonas}</p>
-                <p><strong>Fecha y hora del evento:</strong> ${fechaHora}</p>
+                <p><strong>Panes árabes:</strong> ${totalPanes}</p>
+                <p><strong>Salsas:</strong> ${Object.entries(salsas).map(([k, v]) => `${k}: ${v}`).join(', ')}</p>
+                <p><strong>Costo Pernil:</strong> $${totalCostoPersonas}</p>
             `;
 
-            let whatsappMessage = `
-Hola! Hice este presupuesto desde la página Web:
-- Nombre: ${nombre}
-- Nro de Telefono: ${telefono}
-- Cantidad de Personas: ${personas}
-- Tipo de pernil: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}
-- Panes árabes: ${totalPanes}
-- Salsas: ${totalSalsas}
-- Costo total del Pernil: $${totalCostoPersonas}
-- Fecha y hora del evento: ${fechaHora}\n`;
-
-            if (empanadasCarne > 0) {
-                resultadoHTML += `<p><strong>Costo de empanadas de carne:</strong> $${totalEmpanadasCarne}</p>`;
-                whatsappMessage += `- Empanadas de carne: ${empanadasCarne} unidades ($${totalEmpanadasCarne})\n`;
-            }
-            if (empanadasJamonQueso > 0) {
-                resultadoHTML += `<p><strong>Costo de empanadas de jamón y queso:</strong> $${totalEmpanadasJamonQueso}</p>`;
-                whatsappMessage += `- Empanadas de jamón y queso: ${empanadasJamonQueso} unidades ($${totalEmpanadasJamonQueso})\n`;
-            }
-            if (empanadasChoclo > 0) {
-                resultadoHTML += `<p><strong>Costo de empanadas de choclo:</strong> $${totalEmpanadasChoclo}</p>`;
-                whatsappMessage += `- Empanadas de choclo: ${empanadasChoclo} unidades ($${totalEmpanadasChoclo})\n`;
-            }
-            if (empanadasVerdura > 0) {
-                resultadoHTML += `<p><strong>Costo de empanadas de verdura:</strong> $${totalEmpanadasVerdura}</p>`;
-                whatsappMessage += `- Empanadas de verdura: ${empanadasVerdura} unidades ($${totalEmpanadasVerdura})\n`;
-            }
-            if (tablasChicas > 0) {
-                resultadoHTML += `<p><strong>Tablas de fiambre Chica (5 personas):</strong> ${tablasChicas} unidades ($${totalTablasChicas})</p>`;
-                whatsappMessage += `- Tablas de fiambre Chica (5 personas): ${tablasChicas} unidades ($${totalTablasChicas})\n`;
-            }
-            if (tablasMedianas > 0) {
-                resultadoHTML += `<p><strong>Tablas de fiambre Mediana (10 personas):</strong> ${tablasMedianas} unidades ($${totalTablasMedianas})</p>`;
-                whatsappMessage += `- Tablas de fiambre Mediana (10 personas): ${tablasMedianas} unidades ($${totalTablasMedianas})\n`;
-            }
-            if (tablasGrandes > 0) {
-                resultadoHTML += `<p><strong>Tablas de fiambre Grande (15 personas):</strong> ${tablasGrandes} unidades ($${totalTablasGrandes})</p>`;
-                whatsappMessage += `- Tablas de fiambre Grande (15 personas): ${tablasGrandes} unidades ($${totalTablasGrandes})\n`;
-            }
-            if (envio !== 0) {
-                resultadoHTML += `<p><strong>Opción de envío:</strong> $${envio}</p>`;
-                whatsappMessage += `- Opción de envío: $${envio}\n`;
-            }
-            if (mozo !== 0) {
-                resultadoHTML += `<p><strong>Servicio de mozo de corte:</strong> $${mozo}</p>`;
-                resultadoHTML += `<p><strong>Cantidad de mozos:</strong> ${mozos}</p>`;
-                whatsappMessage += `- Servicio de mozo de corte: $${mozo}\n`;
-                whatsappMessage += `- Cantidad de mozos: ${mozos}\n`;
-            }
-            if (envio !== 0 || mozo !== 0) {
-                resultadoHTML += `<p><strong>Dirección del evento:</strong> ${direccion}</p>`;
-                whatsappMessage += `- Dirección del evento: ${direccion}\n`;
-            } else {
-                resultadoHTML += `<p><strong>Retira el cliente en el local</strong></p>`;
-                whatsappMessage += `- Retira el cliente en el local\n`;
+            // Agregar empanadas si hay alguna seleccionada
+            if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
+                resultadoHTML += `<p><strong>Empanadas:</strong></p>`;
+                if (empanadasCarne > 0) resultadoHTML += `<p>- Carne: ${empanadasCarne} unid. ($${totalEmpanadasCarne})</p>`;
+                if (empanadasJamonQueso > 0) resultadoHTML += `<p>- Jamón/Queso: ${empanadasJamonQueso} unid. ($${totalEmpanadasJamonQueso})</p>`;
+                if (empanadasChoclo > 0) resultadoHTML += `<p>- Choclo: ${empanadasChoclo} unid. ($${totalEmpanadasChoclo})</p>`;
+                if (empanadasVerdura > 0) resultadoHTML += `<p>- Verdura: ${empanadasVerdura} unid. ($${totalEmpanadasVerdura})</p>`;
             }
 
-            if (observaciones) {
-                resultadoHTML += `<p><strong>Observaciones:</strong> ${observaciones}</p>`;
-                whatsappMessage += `- Observaciones: ${observaciones}\n`;
+            // Agregar tablas de fiambre si hay alguna seleccionada
+            if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
+                resultadoHTML += `<p><strong>Tablas de fiambre:</strong></p>`;
+                if (tablasChicas > 0) resultadoHTML += `<p>- Chica (5 pers.): ${tablasChicas} unid. ($${totalTablasChicas})</p>`;
+                if (tablasMedianas > 0) resultadoHTML += `<p>- Mediana (10 pers.): ${tablasMedianas} unid. ($${totalTablasMedianas})</p>`;
+                if (tablasGrandes > 0) resultadoHTML += `<p>- Grande (15 pers.): ${tablasGrandes} unid. ($${totalTablasGrandes})</p>`;
             }
 
-            resultadoHTML += `<p><strong>Total Presupuesto:</strong> $${totalPresupuesto}</p>`;
-            whatsappMessage += `- Total presupuesto: $${totalPresupuesto}\nGRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL`;
+            // Agregar envío/mozo
+            if (envio !== 0) resultadoHTML += `<p><strong>Envío:</strong> $${envio}</p>`;
+            if (mozo !== 0) resultadoHTML += `<p><strong>Servicio de mozo:</strong> $${mozo} (${mozos} mozo${mozos > 1 ? 's' : ''})</p>`;
+            
+            // Observaciones y total
+            if (observaciones) resultadoHTML += `<p><strong>Observaciones:</strong> ${observaciones}</p>`;
+            resultadoHTML += `<p><strong>TOTAL PRESUPUESTO:</strong> $${totalPresupuesto}</p>`;
 
+            // Actualizar el DOM
             document.getElementById('resultado').innerHTML = resultadoHTML;
-            const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage.trim())}`;
+
+            // Generar mensaje de WhatsApp
+            let whatsappMessage = `Hola! Hice este presupuesto desde la página Web:\n\n`;
+            whatsappMessage += `*Nombre:* ${nombre}\n`;
+            whatsappMessage += `*Teléfono:* ${telefono}\n`;
+            whatsappMessage += `*Personas:* ${personas}\n`;
+            whatsappMessage += `*Tipo de pernil:* ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}\n`;
+            whatsappMessage += `*Salsas:* ${Object.entries(salsas).map(([k, v]) => `${k}: ${v}`).join(', ')}\n`;
+            whatsappMessage += `*Panes árabes:* ${totalPanes}\n`;
+            whatsappMessage += `*Costo Pernil:* $${totalCostoPersonas}\n`;
+
+            // Empanadas
+            if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
+                whatsappMessage += `\n*Empanadas:*\n`;
+                if (empanadasCarne > 0) whatsappMessage += `- Carne: ${empanadasCarne} unid. ($${totalEmpanadasCarne})\n`;
+                if (empanadasJamonQueso > 0) whatsappMessage += `- Jamón/Queso: ${empanadasJamonQueso} unid. ($${totalEmpanadasJamonQueso})\n`;
+                if (empanadasChoclo > 0) whatsappMessage += `- Choclo: ${empanadasChoclo} unid. ($${totalEmpanadasChoclo})\n`;
+                if (empanadasVerdura > 0) whatsappMessage += `- Verdura: ${empanadasVerdura} unid. ($${totalEmpanadasVerdura})\n`;
+            }
+
+            // Tablas de fiambre
+            if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
+                whatsappMessage += `\n*Tablas de fiambre:*\n`;
+                if (tablasChicas > 0) whatsappMessage += `- Chica (5 pers.): ${tablasChicas} unid. ($${totalTablasChicas})\n`;
+                if (tablasMedianas > 0) whatsappMessage += `- Mediana (10 pers.): ${tablasMedianas} unid. ($${totalTablasMedianas})\n`;
+                if (tablasGrandes > 0) whatsappMessage += `- Grande (15 pers.): ${tablasGrandes} unid. ($${totalTablasGrandes})\n`;
+            }
+
+            // Envío y mozo
+            if (envio !== 0) whatsappMessage += `\n*Envío:* $${envio}\n`;
+            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* $${mozo} (${mozos} mozo${mozos > 1 ? 's' : ''})\n`;
+
+            // Observaciones y total
+            if (observaciones) whatsappMessage += `\n*Observaciones:* ${observaciones}\n`;
+            whatsappMessage += `\n*TOTAL PRESUPUESTO:* $${totalPresupuesto}\n\n`;
+            whatsappMessage += `GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL`;
+
+            // Actualizar enlace de WhatsApp
+            const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
             document.getElementById('whatsapp-link').href = whatsappLink;
         }
 
+        // Asegurar que los eventos estén correctamente vinculados
         document.getElementById('nombre').addEventListener('input', validarDatos);
         document.getElementById('telefono').addEventListener('input', validarDatos);
+        document.getElementById('personas').addEventListener('input', validarDatos);
         document.getElementById('direccion').addEventListener('input', validarDatos);
         document.getElementById('fechaHora').addEventListener('input', validarDatos);
-        document.getElementById('personas').addEventListener('input', validarDatos);
         document.getElementById('observaciones').addEventListener('input', validarDatos);
     </script>
 </body>
