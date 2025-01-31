@@ -458,46 +458,57 @@ function calcularPresupuesto() {
             // Actualizar el DOM
             document.getElementById('resultado').innerHTML = resultadoHTML;
 
-            // Generar mensaje de WhatsApp
-            let whatsappMessage = `Hola! Hice este presupuesto desde la página Web:\n\n`;
-            whatsappMessage += `*Nombre:* ${nombre}\n`;
-            whatsappMessage += `*Teléfono:* ${telefono}\n`;
-            whatsappMessage += `*Personas:* ${personas}\n`;
-            whatsappMessage += `*Tipo de pernil:* ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}\n`;
-            whatsappMessage += `*Salsas:* ${Object.entries(salsas).map(([k, v]) => `${k}: ${v}`).join(', ')}\n`;
-            whatsappMessage += `*Panes árabes:* ${totalPanes}\n`;
-            whatsappMessage += `*Costo Pernil:* $${totalCostoPersonas}\n`;
+    // Mensaje para WhatsApp (estructura solicitada)
+    let whatsappMessage = `*PRESUPUESTO PERNILES DEL TÍO RUDY*\n\n`;
+    
+    // Datos básicos
+    whatsappMessage += `*Nombre:* ${nombre}\n`;
+    whatsappMessage += `*Teléfono:* ${telefono}\n`;
+    whatsappMessage += `*Personas:* ${personas}\n`;
+    whatsappMessage += `*Tipo de pernil:* ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}\n`;
+    whatsappMessage += `*Salsas:* ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna'}\n`;
+    whatsappMessage += `*Panes árabes:* ${totalPanes}\n`;
+    whatsappMessage += `*Costo Pernil:* $${totalCostoPersonas}\n`;
 
-            // Empanadas
-            if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
-                whatsappMessage += `\n*Empanadas:*\n`;
-                if (empanadasCarne > 0) whatsappMessage += `- Carne: ${empanadasCarne} unid. ($${totalEmpanadasCarne})\n`;
-                if (empanadasJamonQueso > 0) whatsappMessage += `- Jamón/Queso: ${empanadasJamonQueso} unid. ($${totalEmpanadasJamonQueso})\n`;
-                if (empanadasChoclo > 0) whatsappMessage += `- Choclo: ${empanadasChoclo} unid. ($${totalEmpanadasChoclo})\n`;
-                if (empanadasVerdura > 0) whatsappMessage += `- Verdura: ${empanadasVerdura} unid. ($${totalEmpanadasVerdura})\n`;
-            }
+    // Empanadas (solo si hay)
+    if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
+        whatsappMessage += `\n*Empanadas:*\n`;
+        if (empanadasCarne > 0) whatsappMessage += `- Carne: ${empanadasCarne} unid.\n`;
+        if (empanadasJamonQueso > 0) whatsappMessage += `- Jamón/Queso: ${empanadasJamonQueso} unid.\n`;
+        if (empanadasChoclo > 0) whatsappMessage += `- Choclo: ${empanadasChoclo} unid.\n`;
+        if (empanadasVerdura > 0) whatsappMessage += `- Verdura: ${empanadasVerdura} unid.\n`;
+    }
 
-            // Tablas de fiambre
-            if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
-                whatsappMessage += `\n*Tablas de fiambre:*\n`;
-                if (tablasChicas > 0) whatsappMessage += `- Chica (5 pers.): ${tablasChicas} unid. ($${totalTablasChicas})\n`;
-                if (tablasMedianas > 0) whatsappMessage += `- Mediana (10 pers.): ${tablasMedianas} unid. ($${totalTablasMedianas})\n`;
-                if (tablasGrandes > 0) whatsappMessage += `- Grande (15 pers.): ${tablasGrandes} unid. ($${totalTablasGrandes})\n`;
-            }
+    // Tablas de fiambre (solo si hay)
+    if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
+        whatsappMessage += `\n*Tablas de fiambre:*\n`;
+        if (tablasChicas > 0) whatsappMessage += `- Chica: ${tablasChicas} unid.\n`;
+        if (tablasMedianas > 0) whatsappMessage += `- Mediana: ${tablasMedianas} unid.\n`;
+        if (tablasGrandes > 0) whatsappMessage += `- Grande: ${tablasGrandes} unid.\n`;
+    }
 
-            // Envío y mozo
-            if (envio !== 0) whatsappMessage += `\n*Envío:* $${envio}\n`;
-            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* $${mozo} (${mozos} mozo${mozos > 1 ? 's' : ''})\n`;
+    // Envío
+    whatsappMessage += `\n*Envío:* ${envio !== 0 ? `$${envio}` : 'Ninguno'}\n`;
 
-            // Observaciones y total
-            if (observaciones) whatsappMessage += `\n*Observaciones:* ${observaciones}\n`;
-            whatsappMessage += `\n*TOTAL PRESUPUESTO:* $${totalPresupuesto}\n\n`;
-            whatsappMessage += `GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY - SAN MARTIN 1716 - NEUQUEN CAPITAL`;
+    // Fecha, hora y dirección (si aplica)
+    whatsappMessage += `*Fecha y hora del evento:* ${fechaHora}\n`;
+    if (envio !== 0 || mozo !== 0) {
+        whatsappMessage += `*Dirección:* ${direccion}\n`;
+    }
 
-            // Actualizar enlace de WhatsApp
-            const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
-            document.getElementById('whatsapp-link').href = whatsappLink;
-        }
+    // Observaciones (si hay)
+    if (observaciones) {
+        whatsappMessage += `\n*Observaciones:*\n${observaciones}\n`;
+    }
+
+    // Total
+    whatsappMessage += `\n*TOTAL PRESUPUESTO:* $${totalPresupuesto}\n\n`;
+    whatsappMessage += `_GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY_`;
+
+    // Actualizar enlace de WhatsApp
+    const whatsappLink = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
+    document.getElementById('whatsapp-link').href = whatsappLink;
+}
 
         // Asegurar que los eventos estén correctamente vinculados
         document.getElementById('nombre').addEventListener('input', validarDatos);
