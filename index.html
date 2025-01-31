@@ -181,8 +181,8 @@
         <label for="mozo">Servicio de mozo de corte:</label>
         <select id="mozo" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
-            <option value="30000">Mozo de corte en Neuquén Capital</option>
-            <option value="45000">Mozo de corte en Alrededores</option>
+            <option value="35000">Mozo de corte en Neuquén Capital</option>
+            <option value="50000">Mozo de corte en Alrededores</option>
         </select>
 
         <div id="datosEvento">
@@ -410,8 +410,8 @@ function calcularPresupuesto() {
             if (mozo !== 0) {
                 mozos = Math.ceil(personas / 50);
                 mozo = (personas <= 35) ? 
-                    (mozo === 30000 ? 30000 : 45000) : 
-                    (mozo === 30000 ? 35000 : 50000);
+                    (mozo === 35000 ? 35000 : 50000) : 
+                    (mozo === 35000 ? 35000 : 50000);
                 mozo *= mozos;
                 envio = 0; // Envío gratis con mozo
             }
