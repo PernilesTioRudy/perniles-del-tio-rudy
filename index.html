@@ -181,8 +181,8 @@
         <label for="mozo">Servicio de mozo de corte:</label>
         <select id="mozo" onchange="mostrarDatosEvento()">
             <option value="0">Ninguno</option>
-            <option value="35000">Mozo de corte en Neuquén Capital</option>
-            <option value="55000">Mozo de corte en Alrededores</option>
+            <option value="40000">Mozo de corte en Neuquén Capital</option>
+            <option value="60000">Mozo de corte en Alrededores</option>
         </select>
 
         <div id="datosEvento">
@@ -358,8 +358,8 @@
             if (mozo !== 0) {
                 mozos = Math.ceil(personas / 50);
                 mozo = (personas <= 35) ? 
-                    (mozo === 35000 ? 35000 : 55000) : 
-                    (mozo === 35000 ? 35000 : 55000);
+                    (mozo === 40000 ? 40000 : 60000) : 
+                    (mozo === 40000 ? 40000 : 60000);
                 mozo *= mozos;
                 envio = 0;
             }
