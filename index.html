@@ -358,12 +358,25 @@
             let mozos = 0;
             if (mozo !== 0) {
                 mozos = Math.ceil(personas / 50);
-                mozo = (personas <= 45) ? 
-                    (mozo === 40000 ? 50000 : 60000) : 
-                    (mozo === 50000 ? 60000 : 60000);
-                mozo *= mozos;
-                envio = 0;
-            }
+    
+        // Corrected logic starts here
+            if (personas <= 45) {
+            mozo = 40000;
+            } else if (personas > 45) {
+            mozo = 50000;
+        }
+    
+    // Add logic to check for 'Alrededores' and set to 60000
+    const mozoSelect = document.getElementById('mozo');
+    const mozoValue = parseInt(mozoSelect.value);
+
+    if (mozoValue === 60000) {
+        mozo = 60000;
+    }
+
+    mozo *= mozos;
+    envio = 0;
+}
 
             const totalPresupuesto = totalCostoPersonas + 
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
@@ -439,6 +452,7 @@
     </script>
 </body>
 </html>
+
 
 
 
