@@ -358,9 +358,9 @@
             let mozos = 0;
             if (mozo !== 0) {
                 mozos = Math.ceil(personas / 50);
-                mozo = (personas <= 35) ? 
+                mozo = (personas <= 45) ? 
                     (mozo === 40000 ? 40000 : 60000) : 
-                    (mozo === 40000 ? 40000 : 60000);
+                    (mozo === 50000 ? 50000 : 60000);
                 mozo *= mozos;
                 envio = 0;
             }
@@ -439,4 +439,5 @@
     </script>
 </body>
 </html>
+
 
