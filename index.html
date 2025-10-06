@@ -104,9 +104,107 @@
             color: red;
             display: none;
         }
+        
+        /* Estilos del modal de vacaciones */
+        #modalVacaciones {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 5px solid #dc3545;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-content h2 {
+            color: #dc3545;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .modal-content p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .modal-content .fecha-importante {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ffc107;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        #btnAceptar {
+            background-color: #28a745;
+            color: white;
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        #btnAceptar:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        
+        .ocultar {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
+    <!-- Modal de Vacaciones -->
+    <div id="modalVacaciones">
+        <div class="modal-content">
+            <h2>⚠️ AVISO IMPORTANTE ⚠️</h2>
+            <p><strong>ESTIMADOS CLIENTES:</strong></p>
+            <div class="fecha-importante">
+                DESDE EL 01/01/2026 AL 15/01/2026<br>
+                VAMOS A ESTAR CERRADOS POR VACACIONES
+            </div>
+            <p>CUALQUIER SOLICITUD DE PRESUPUESTO, ES A PARTIR DEL <strong>VIERNES 16-01-2026</strong></p>
+            <p style="font-size: 20px; margin-top: 20px;">¡GRACIAS!</p>
+            <button id="btnAceptar">ACEPTAR Y CONTINUAR</button>
+        </div>
+    </div>
+
     <header>
         <h1>Perniles del Tío Rudy</h1>
     </header>
@@ -230,6 +328,11 @@
     </footer>
     
     <script>
+        // Funcionalidad del modal
+        document.getElementById('btnAceptar').addEventListener('click', function() {
+            document.getElementById('modalVacaciones').classList.add('ocultar');
+        });
+
         function actualizarOpciones() {
             const personas = parseInt(document.getElementById('personas').value);
             const tipoSelect = document.getElementById('tipo');
@@ -317,7 +420,7 @@
             const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value);
             const mozoText = document.getElementById('mozo').options[document.getElementById('mozo').selectedIndex].text;
 
-// Validar salsas (corregido)
+            // Validar salsas (corregido)
             const salsas = {};
             let sumaSalsas = 0;
             document.querySelectorAll('.salsa-qty').forEach(input => {
@@ -355,24 +458,24 @@
             if (mozo !== 0) {
                 mozos = Math.ceil(personas / 50);
     
-        // Corrected logic starts here
-            if (personas <= 45) {
-            mozo = 40000;
-            } else if (personas > 45) {
-            mozo = 50000;
-        }
+                // Corrected logic starts here
+                if (personas <= 45) {
+                    mozo = 40000;
+                } else if (personas > 45) {
+                    mozo = 50000;
+                }
     
-    // Add logic to check for 'Alrededores' and set to 60000
-    const mozoSelect = document.getElementById('mozo');
-    const mozoValue = parseInt(mozoSelect.value);
+                // Add logic to check for 'Alrededores' and set to 60000
+                const mozoSelect = document.getElementById('mozo');
+                const mozoValue = parseInt(mozoSelect.value);
 
-    if (mozoValue === 60000) {
-        mozo = 60000;
-    }
+                if (mozoValue === 60000) {
+                    mozo = 60000;
+                }
 
-    mozo *= mozos;
-    envio = 0;
-}
+                mozo *= mozos;
+                envio = 0;
+            }
 
             const totalPresupuesto = totalCostoPersonas + 
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
@@ -448,9 +551,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
