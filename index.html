@@ -5,107 +5,281 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Presupuestos de Perniles - Perniles del Tío Rudy</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-        }
-        header, footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-        input[type="number"], select, input[type="text"], input[type="datetime-local"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 2px solid #ccc;
             box-sizing: border-box;
         }
-        input.invalid, textarea.invalid {
-            border-color: red;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
         }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .form-section h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section h3::before {
+            content: "📋";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        input[type="number"], 
+        select, 
+        input[type="text"], 
+        input[type="datetime-local"], 
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 5px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.invalid, textarea.invalid {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+
         button {
             display: block;
             width: 100%;
-            padding: 10px;
-            background-color: #28a745;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            margin-top: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
             cursor: not-allowed;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            opacity: 0.6;
         }
+
         button.enabled {
             cursor: pointer;
+            opacity: 1;
         }
+
+        button.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
         .result {
-            margin-top: 20px;
-            padding: 20px;
-            background: #e9ecef;
-            text-align: center;
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
+
+        .result p {
+            margin: 12px 0;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .result strong {
+            font-weight: 700;
+        }
+
         .whatsapp-button {
-            margin-top: 10px;
+            margin-top: 20px;
             display: block;
             width: 100%;
-            padding: 10px;
-            background-color: #25D366;
+            padding: 18px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white;
             text-align: center;
             text-decoration: none;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
             cursor: not-allowed;
+            transition: all 0.3s ease;
+            opacity: 0.6;
         }
+
+        .whatsapp-button::before {
+            content: "📱 ";
+            font-size: 1.2em;
+        }
+
         .whatsapp-button.enabled {
             cursor: pointer;
+            opacity: 1;
         }
+
+        .whatsapp-button.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
+        }
+
         footer p {
-            margin: 0;
+            font-size: 1em;
         }
+
         #seleccionSalsas {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 12px;
         }
+
+        #seleccionSalsas > label {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
         .salsa-item {
-            margin: 10px 0;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
         }
+
+        .salsa-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
         .salsa-item label {
-            display: inline-block;
-            width: 150px;
+            margin: 0;
+            font-weight: 600;
+            color: #495057;
         }
+
         .salsa-qty {
             width: 80px;
-            padding: 5px;
+            padding: 8px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
         }
+
         #errorSalsas {
-            color: red;
+            color: #e74c3c;
             display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fee;
+            border-radius: 8px;
+            font-weight: bold;
         }
-        
-        /* Estilos del modal de vacaciones */
+
+        .nota-importante {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            color: #856404;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .gracias {
+            text-align: center;
+            margin-top: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            font-size: 1.3em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Modal de Vacaciones */
         #modalVacaciones {
             position: fixed;
             top: 0;
@@ -118,7 +292,7 @@
             align-items: center;
             z-index: 9999;
         }
-        
+
         .modal-content {
             background-color: #fff;
             padding: 40px;
@@ -130,7 +304,7 @@
             border: 5px solid #dc3545;
             animation: slideDown 0.5s ease-out;
         }
-        
+
         @keyframes slideDown {
             from {
                 transform: translateY(-100px);
@@ -141,7 +315,7 @@
                 opacity: 1;
             }
         }
-        
+
         .modal-content h2 {
             color: #dc3545;
             font-size: 28px;
@@ -149,14 +323,14 @@
             text-transform: uppercase;
             font-weight: bold;
         }
-        
+
         .modal-content p {
             font-size: 18px;
             line-height: 1.6;
             margin-bottom: 30px;
             color: #333;
         }
-        
+
         .modal-content .fecha-importante {
             background-color: #fff3cd;
             padding: 15px;
@@ -166,7 +340,7 @@
             font-weight: bold;
             color: #856404;
         }
-        
+
         #btnAceptar {
             background-color: #28a745;
             color: white;
@@ -178,14 +352,30 @@
             font-weight: bold;
             transition: all 0.3s ease;
         }
-        
+
         #btnAceptar:hover {
             background-color: #218838;
             transform: scale(1.05);
         }
-        
+
         .ocultar {
             display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 20px 10px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
@@ -206,110 +396,129 @@
     </div>
 
     <header>
-        <h1>Perniles del Tío Rudy</h1>
+        <h1>🍖 Perniles del Tío Rudy 🍖</h1>
+        <p>La mejor calidad para tu evento especial</p>
     </header>
 
     <main class="container">
-        <h1>Calculadora de Presupuestos de Perniles</h1>
+        <h1>Calculadora de Presupuestos</h1>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" class="required">
-        
-        <label for="telefono">Nro de Telefono:</label>
-        <input type="text" id="telefono" class="required">
-        
-        <label for="personas">Cantidad de personas:</label>
-        <input type="number" id="personas" min="10" oninput="actualizarOpciones()" class="required">
-        
-        <label for="salsas">Cantidad de salsas:</label>
-        <input type="number" id="salsas" min="0" value="0" readonly>
-
-        <div id="seleccionSalsas" style="display: none;">
-            <label>Seleccione las salsas (máximo: <span id="maxSalsas">0</span>):</label>
+        <div class="form-section">
+            <h3>Datos del Cliente</h3>
+            <label for="nombre">Nombre completo:</label>
+            <input type="text" id="nombre" class="required" placeholder="Ingrese su nombre">
             
-            <div class="salsa-item">
-                <label>Cuatro Quesos:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Cuatro Quesos">
-            </div>
-            <div class="salsa-item">
-                <label>Provenzal:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Provenzal">
-            </div>
-            <div class="salsa-item">
-                <label>Tartara:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Tartara">
-            </div>
-            <div class="salsa-item">
-                <label>Aceitunas:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Aceitunas">
-            </div>
-            <div class="salsa-item">
-                <label>Criolla:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Criolla">
-            </div>
-            <div class="salsa-item">
-                <label>Berenjenas:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Berenjenas">
-            </div>
-            <div class="salsa-item">
-                <label>Prov. con Verdeo:</label>
-                <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Prov. con Verdeo">
-            </div>
+            <label for="telefono">Número de Teléfono:</label>
+            <input type="text" id="telefono" class="required" placeholder="Ej: 2994520532">
+        </div>
+
+        <div class="form-section">
+            <h3>Detalles del Pernil</h3>
+            <label for="personas">Cantidad de personas:</label>
+            <input type="number" id="personas" min="10" oninput="actualizarOpciones()" class="required" placeholder="Mínimo 10 personas">
+            
+            <label for="tipo">Tipo de pernil:</label>
+            <select id="tipo">
+                <option value="vacuno">Vacuno</option>
+                <option value="cerdo">Cerdo</option>
+                <option value="mixto">Mixto</option>
+            </select>
+
+            <label for="salsas">Cantidad de salsas incluidas:</label>
+            <input type="number" id="salsas" min="0" value="0" readonly>
+
+            <div id="seleccionSalsas" style="display: none;">
+                <label>Seleccione las salsas (máximo: <span id="maxSalsas">0</span>):</label>
+                
+                <div class="salsa-item">
+                    <label>Cuatro Quesos:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Cuatro Quesos">
+                </div>
+                <div class="salsa-item">
+                    <label>Provenzal:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Provenzal">
+                </div>
+                <div class="salsa-item">
+                    <label>Tártara:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Tartara">
+                </div>
+                <div class="salsa-item">
+                    <label>Aceitunas:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Aceitunas">
+                </div>
+                <div class="salsa-item">
+                    <label>Criolla:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Criolla">
+                </div>
+                <div class="salsa-item">
+                    <label>Berenjenas:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Berenjenas">
+                </div>
+                <div class="salsa-item">
+                    <label>Prov. con Verdeo:</label>
+                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Prov. con Verdeo">
+                </div>
                 <p id="errorSalsas">¡No puede exceder la cantidad total de salsas!</p>
+            </div>
         </div>
-        
-        <label for="tipo">Tipo de pernil:</label>
-        <select id="tipo">
-            <option value="vacuno">Vacuno</option>
-            <option value="cerdo">Cerdo</option>
-            <option value="mixto">Mixto</option>
-        </select>
-        
-        <label for="envio">Opción de envío:</label>
-        <select id="envio" onchange="mostrarDatosEvento()">
-            <option value="0">Ninguno</option>
-            <option value="10000">Envío a domicilio Neuquén Capital hasta 3 km ($10000)</option>
-            <option value="25000">Envío a domicilio Alrededores ($25000)</option>
-        </select>
-        
-        <label for="mozo">Servicio de mozo de corte:</label>
-        <select id="mozo" onchange="mostrarDatosEvento()">
-            <option value="0">Ninguno</option>
-            <option value="40000">Mozo de corte en Neuquén Capital</option>
-            <option value="60000">Mozo de corte en Alrededores</option>
-        </select>
 
-        <div id="datosEvento">
-            <label for="direccion">Dirección del evento:</label>
-            <input type="text" id="direccion" class="required-event">
+        <div class="form-section">
+            <h3>Servicios Adicionales</h3>
+            <label for="envio">Opción de envío:</label>
+            <select id="envio" onchange="mostrarDatosEvento()">
+                <option value="0">Ninguno - Retiro en local</option>
+                <option value="10000">Envío a domicilio Neuquén Capital hasta 3 km ($10.000)</option>
+                <option value="25000">Envío a domicilio Alrededores ($25.000)</option>
+            </select>
             
-            <label for="fechaHora">Fecha y hora del evento:</label>
-            <input type="datetime-local" id="fechaHora" class="required-event">
+            <label for="mozo">Servicio de mozo de corte:</label>
+            <select id="mozo" onchange="mostrarDatosEvento()">
+                <option value="0">Ninguno</option>
+                <option value="40000">Mozo de corte en Neuquén Capital</option>
+                <option value="60000">Mozo de corte en Alrededores</option>
+            </select>
+
+            <div id="datosEvento">
+                <label for="direccion">Dirección del evento:</label>
+                <input type="text" id="direccion" class="required-event" placeholder="Calle, número, localidad">
+                
+                <label for="fechaHora">Fecha y hora del evento:</label>
+                <input type="datetime-local" id="fechaHora" class="required-event">
+            </div>
         </div>
-        
-        <label for="empanadasCarne">Empanadas de carne (unidad):</label>
-        <input type="number" id="empanadasCarne" min="0" value="0">
-        
-        <label for="empanadasJamonQueso">Empanadas de jamón y queso (unidad):</label>
-        <input type="number" id="empanadasJamonQueso" min="0" value="0">
-        
-        <label for="empanadasChoclo">Empanadas de choclo (unidad):</label>
-        <input type="number" id="empanadasChoclo" min="0" value="0">
 
-        <label for="empanadasVerdura">Empanadas de verdura (unidad):</label>
-        <input type="number" id="empanadasVerdura" min="0" value="0">
+        <div class="form-section">
+            <h3>Empanadas (Opcional)</h3>
+            <label for="empanadasCarne">Empanadas de carne (unidad - $2.000 c/u):</label>
+            <input type="number" id="empanadasCarne" min="0" value="0" placeholder="0">
+            
+            <label for="empanadasJamonQueso">Empanadas de jamón y queso (unidad - $2.000 c/u):</label>
+            <input type="number" id="empanadasJamonQueso" min="0" value="0" placeholder="0">
+            
+            <label for="empanadasChoclo">Empanadas de choclo (unidad - $2.000 c/u):</label>
+            <input type="number" id="empanadasChoclo" min="0" value="0" placeholder="0">
 
-        <label for="tablasChicas">Tablas de fiambre Chica (5 personas):</label>
-        <input type="number" id="tablasChicas" min="0" value="0">
-        
-        <label for="tablasMedianas">Tablas de fiambre Mediana (10 personas):</label>
-        <input type="number" id="tablasMedianas" min="0" value="0">
-        
-        <label for="tablasGrandes">Tablas de fiambre Grande (15 personas):</label>
-        <input type="number" id="tablasGrandes" min="0" value="0">
-        
-        <label for="observaciones">Observaciones:</label>
-        <textarea id="observaciones" rows="4" placeholder="Ingrese aquí cualquier observación o comentario adicional..."></textarea>
+            <label for="empanadasVerdura">Empanadas de verdura (unidad - $2.000 c/u):</label>
+            <input type="number" id="empanadasVerdura" min="0" value="0" placeholder="0">
+        </div>
+
+        <div class="form-section">
+            <h3>Tablas de Fiambre (Opcional)</h3>
+            <label for="tablasChicas">Tablas de fiambre Chica - 5 personas ($50.000):</label>
+            <input type="number" id="tablasChicas" min="0" value="0" placeholder="0">
+            
+            <label for="tablasMedianas">Tablas de fiambre Mediana - 10 personas ($95.000):</label>
+            <input type="number" id="tablasMedianas" min="0" value="0" placeholder="0">
+            
+            <label for="tablasGrandes">Tablas de fiambre Grande - 15 personas ($140.000):</label>
+            <input type="number" id="tablasGrandes" min="0" value="0" placeholder="0">
+        </div>
+
+        <div class="form-section">
+            <h3>Observaciones</h3>
+            <label for="observaciones">Comentarios adicionales:</label>
+            <textarea id="observaciones" rows="4" placeholder="Ingrese aquí cualquier observación o comentario adicional..."></textarea>
+        </div>
 
         <button id="calcularButton" onclick="calcularPresupuesto()" disabled>Calcular Presupuesto</button>
         
@@ -317,10 +526,13 @@
 
         <a id="whatsapp-link" class="whatsapp-button" href="#" target="_blank" style="display: none;">Enviar presupuesto por WhatsApp</a>
 
-        <p style="text-align: center; margin-top: 20px;">Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte</p>
-        
+        <div class="nota-importante">
+            ⚠️ Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte
+        </div>
 
-        <p style="text-align: center; margin-top: 20px;">GRACIAS POR ELEGIR A PERNILES DEL TIO RUDY</p>
+        <div class="gracias">
+            ❤️ GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY ❤️
+        </div>
     </main>
 
     <footer>
@@ -506,12 +718,12 @@
                 if (tablasGrandes > 0) whatsappMessage += `- Grande: ${tablasGrandes} unid.\n`;
             }
 
-            whatsappMessage += `\n*Envío:* ${envio !== 0 ? `$${envio}` : 'Ninguno'}\n`;
-            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* ${mozoText} ($${mozo})\n`;
+            whatsappMessage += `\n*Envío:* ${envio !== 0 ? `${envio}` : 'Ninguno'}\n`;
+            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo})\n`;
             whatsappMessage += `*Fecha y hora del evento:* ${fechaHora}\n`;
             if (envio !== 0 || mozo !== 0) whatsappMessage += `*Dirección:* ${direccion}\n`;
             if (observaciones) whatsappMessage += `\n*Observaciones:*\n${observaciones}\n`;
-            whatsappMessage += `\n*TOTAL PRESUPUESTO:* $${totalPresupuesto}\n\n`;
+            whatsappMessage += `\n*TOTAL PRESUPUESTO:* ${totalPresupuesto}\n\n`;
             whatsappMessage += `_Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte - GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY_`;
                        
             // Actualizar resultados
@@ -522,20 +734,20 @@
                 <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
                 <p><strong>Salsas:</strong> ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ')}</p>
                 <p><strong>Panes árabes:</strong> ${totalPanes}</p>
-                <p><strong>Costo Pernil:</strong> $${totalCostoPersonas}</p>
-                ${empanadasCarne > 0 ? `<p><strong>Empanadas de carne:</strong> $${totalEmpanadasCarne}</p>` : ''}
-                ${empanadasJamonQueso > 0 ? `<p><strong>Empanadas de jamón y queso:</strong> $${totalEmpanadasJamonQueso}</p>` : ''}
-                ${empanadasChoclo > 0 ? `<p><strong>Empanadas de choclo:</strong> $${totalEmpanadasChoclo}</p>` : ''}
-                ${empanadasVerdura > 0 ? `<p><strong>Empanadas de verdura:</strong> $${totalEmpanadasVerdura}</p>` : ''}
-                ${tablasChicas > 0 ? `<p><strong>Tablas Chicas:</strong> $${totalTablasChicas}</p>` : ''}
-                ${tablasMedianas > 0 ? `<p><strong>Tablas Medianas:</strong> $${totalTablasMedianas}</p>` : ''}
-                ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> $${totalTablasGrandes}</p>` : ''}
-                ${envio !== 0 ? `<p><strong>Envío:</strong> $${envio}</p>` : ''}
-                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> $${mozo}</p>` : ''}
+                <p><strong>Costo Pernil:</strong> ${totalCostoPersonas}</p>
+                ${empanadasCarne > 0 ? `<p><strong>Empanadas de carne:</strong> ${totalEmpanadasCarne}</p>` : ''}
+                ${empanadasJamonQueso > 0 ? `<p><strong>Empanadas de jamón y queso:</strong> ${totalEmpanadasJamonQueso}</p>` : ''}
+                ${empanadasChoclo > 0 ? `<p><strong>Empanadas de choclo:</strong> ${totalEmpanadasChoclo}</p>` : ''}
+                ${empanadasVerdura > 0 ? `<p><strong>Empanadas de verdura:</strong> ${totalEmpanadasVerdura}</p>` : ''}
+                ${tablasChicas > 0 ? `<p><strong>Tablas Chicas:</strong> ${totalTablasChicas}</p>` : ''}
+                ${tablasMedianas > 0 ? `<p><strong>Tablas Medianas:</strong> ${totalTablasMedianas}</p>` : ''}
+                ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes}</p>` : ''}
+                ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio}</p>` : ''}
+                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozo}</p>` : ''}
                 <p><strong>Fecha y hora:</strong> ${fechaHora}</p>
                 ${(envio !== 0 || mozo !== 0) ? `<p><strong>Dirección:</strong> ${direccion}</p>` : ''}
                 ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
-                <p><strong>TOTAL:</strong> $${totalPresupuesto}</p>
+                <p><strong>TOTAL:</strong> ${totalPresupuesto}</p>
             `;
 
             document.getElementById('whatsapp-link').href = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
