@@ -136,6 +136,81 @@
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
 
+        button.loading {
+            opacity: 0.7;
+            cursor: wait;
+            position: relative;
+        }
+
+        button.loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 20px;
+            margin-top: -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spinner 0.8s ease infinite;
+        }
+
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-content h3 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .loading-content p {
+            color: #666;
+            font-size: 1em;
+        }
+
         .result {
             margin-top: 30px;
             padding: 30px;
@@ -395,6 +470,16 @@
         </div>
     </div>
 
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>⏳ Procesando presupuesto...</h3>
+            <p>Guardando datos en el sistema</p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #999;">Por favor espere un momento</p>
+        </div>
+    </div>
+
     <header>
         <h1>🐖 Perniles del Tío Rudy 🐖</h1>
         <p>La mejor calidad para tu evento especial</p>
@@ -541,7 +626,7 @@
     
     <script>
         // ⚠️ CONFIGURACIÓN IMPORTANTE: Reemplaza esta URL con la de tu Google Apps Script
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpcZx5CXLe5_ymXUMlFjwpDGNjIXZfkHtj1uYcA0dTqAXya04bNYe6PcsJkjK5XmmwQw/exec';
+        const GOOGLE_SCRIPT_URL = 'TU_URL_DE_GOOGLE_SCRIPT_AQUI';
         
         // Funcionalidad del modal
         document.getElementById('btnAceptar').addEventListener('click', function() {
@@ -565,6 +650,24 @@
             } catch (error) {
                 console.error('❌ Error al enviar a Google Sheets:', error);
                 return false;
+            }
+        }
+
+        // Función para mostrar/ocultar loading
+        function mostrarLoading(mostrar) {
+            const overlay = document.getElementById('loadingOverlay');
+            const calcularButton = document.getElementById('calcularButton');
+            
+            if (mostrar) {
+                overlay.classList.add('active');
+                calcularButton.disabled = true;
+                calcularButton.classList.add('loading');
+                calcularButton.textContent = 'Procesando...';
+            } else {
+                overlay.classList.remove('active');
+                calcularButton.classList.remove('loading');
+                calcularButton.textContent = 'Calcular Presupuesto';
+                // No reactivamos el botón aquí, lo hace validarDatos()
             }
         }
 
@@ -636,6 +739,12 @@
         }
 
         async function calcularPresupuesto() {
+            // Mostrar loading y desactivar controles
+            mostrarLoading(true);
+            
+            // Pequeña pausa para que se vea el loading
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
             const nombre = document.getElementById('nombre').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
@@ -741,6 +850,9 @@
 
             // Enviar a Google Sheets (esto se ejecuta en segundo plano)
             await enviarAGoogleSheets(datosParaSheets);
+            
+            // Ocultar loading
+            mostrarLoading(false);
 
             // Mensaje WhatsApp
             let whatsappMessage = `*PRESUPUESTO PERNILES DEL TÍO RUDY*\n\n`;
@@ -815,3 +927,4 @@
     </script>
 </body>
 </html>
+
