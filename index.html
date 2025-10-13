@@ -396,7 +396,7 @@
     </div>
 
     <header>
-        <h1>🍖 Perniles del Tío Rudy 🍖</h1>
+        <h1>🐖 Perniles del Tío Rudy 🐖</h1>
         <p>La mejor calidad para tu evento especial</p>
     </header>
 
@@ -540,10 +540,33 @@
     </footer>
     
     <script>
+        // ⚠️ CONFIGURACIÓN IMPORTANTE: Reemplaza esta URL con la de tu Google Apps Script
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpcZx5CXLe5_ymXUMlFjwpDGNjIXZfkHtj1uYcA0dTqAXya04bNYe6PcsJkjK5XmmwQw/exec';
+        
         // Funcionalidad del modal
         document.getElementById('btnAceptar').addEventListener('click', function() {
             document.getElementById('modalVacaciones').classList.add('ocultar');
         });
+
+        // Función para enviar datos a Google Sheets
+        async function enviarAGoogleSheets(datos) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos)
+                });
+                
+                console.log('✅ Datos enviados a Google Sheets correctamente');
+                return true;
+            } catch (error) {
+                console.error('❌ Error al enviar a Google Sheets:', error);
+                return false;
+            }
+        }
 
         function actualizarOpciones() {
             const personas = parseInt(document.getElementById('personas').value);
@@ -612,7 +635,7 @@
             whatsappButton.classList.toggle('enabled', camposValidos);
         }
 
-        function calcularPresupuesto() {
+        async function calcularPresupuesto() {
             const nombre = document.getElementById('nombre').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
@@ -648,6 +671,7 @@
                 alert("¡La suma de salsas supera el máximo permitido!");
                 return;
             }
+            
             // Cálculos
             const panesPorPersona = 4;
             const costoPorPersona = personas < 20 ? 11000 : 10000;
@@ -670,14 +694,12 @@
             if (mozo !== 0) {
                 mozos = Math.ceil(personas / 50);
     
-                // Corrected logic starts here
                 if (personas <= 45) {
                     mozo = 40000;
                 } else if (personas > 45) {
                     mozo = 50000;
                 }
     
-                // Add logic to check for 'Alrededores' and set to 60000
                 const mozoSelect = document.getElementById('mozo');
                 const mozoValue = parseInt(mozoSelect.value);
 
@@ -693,6 +715,33 @@
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
                 totalTablasChicas + totalTablasMedianas + totalTablasGrandes + envio + mozo;
 
+            // 🆕 ENVIAR DATOS A GOOGLE SHEETS
+            const datosParaSheets = {
+                nombre: nombre,
+                telefono: telefono,
+                personas: personas,
+                tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1),
+                salsas: Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna',
+                panes: totalPanes,
+                costoPernil: totalCostoPersonas,
+                empanadasCarne: empanadasCarne > 0 ? empanadasCarne : 0,
+                empanadasJamonQueso: empanadasJamonQueso > 0 ? empanadasJamonQueso : 0,
+                empanadasChoclo: empanadasChoclo > 0 ? empanadasChoclo : 0,
+                empanadasVerdura: empanadasVerdura > 0 ? empanadasVerdura : 0,
+                tablasChicas: tablasChicas > 0 ? tablasChicas : 0,
+                tablasMedianas: tablasMedianas > 0 ? tablasMedianas : 0,
+                tablasGrandes: tablasGrandes > 0 ? tablasGrandes : 0,
+                envio: envio !== 0 ? envio : 0,
+                mozo: mozo !== 0 ? mozo : 0,
+                fechaEvento: fechaHora,
+                direccion: (envio !== 0 || mozo !== 0) ? direccion : 'N/A',
+                observaciones: observaciones || 'N/A',
+                total: totalPresupuesto
+            };
+
+            // Enviar a Google Sheets (esto se ejecuta en segundo plano)
+            await enviarAGoogleSheets(datosParaSheets);
+
             // Mensaje WhatsApp
             let whatsappMessage = `*PRESUPUESTO PERNILES DEL TÍO RUDY*\n\n`;
             whatsappMessage += `*Nombre:* ${nombre}\n`;
@@ -701,7 +750,7 @@
             whatsappMessage += `*Tipo de pernil:* ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}\n`;
             whatsappMessage += `*Salsas:* ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna'}\n`;
             whatsappMessage += `*Panes árabes:* ${totalPanes}\n`;
-            whatsappMessage += `*Costo Pernil:* $${totalCostoPersonas}\n`;
+            whatsappMessage += `*Costo Pernil:* ${totalCostoPersonas}\n`;
 
             if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
                 whatsappMessage += `\n*Empanadas:*\n`;
@@ -748,6 +797,9 @@
                 ${(envio !== 0 || mozo !== 0) ? `<p><strong>Dirección:</strong> ${direccion}</p>` : ''}
                 ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
                 <p><strong>TOTAL:</strong> ${totalPresupuesto}</p>
+                <p style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.3); border-radius: 8px; font-size: 0.9em;">
+                    ✅ <strong>Presupuesto registrado automáticamente en Google Sheets</strong>
+                </p>
             `;
 
             document.getElementById('whatsapp-link').href = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
