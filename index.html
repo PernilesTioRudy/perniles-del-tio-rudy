@@ -263,6 +263,11 @@
             box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
         }
 
+        .whatsapp-button.loading {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
         footer {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
@@ -474,14 +479,14 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
             <div class="spinner"></div>
-            <h3>⏳ Procesando presupuesto...</h3>
-            <p>Guardando datos en el sistema</p>
+            <h3>⏳ Enviando a WhatsApp...</h3>
+            <p>Guardando presupuesto en el sistema</p>
             <p style="margin-top: 10px; font-size: 0.9em; color: #999;">Por favor espere un momento</p>
         </div>
     </div>
 
     <header>
-        <h1>🐖 Perniles del Tío Rudy 🐖</h1>
+        <h1>🍖 Perniles del Tío Rudy 🍖</h1>
         <p>La mejor calidad para tu evento especial</p>
     </header>
 
@@ -628,6 +633,9 @@
         // ⚠️ CONFIGURACIÓN IMPORTANTE: Reemplaza esta URL con la de tu Google Apps Script
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpcZx5CXLe5_ymXUMlFjwpDGNjIXZfkHtj1uYcA0dTqAXya04bNYe6PcsJkjK5XmmwQw/exec';
         
+        // Variable global para almacenar los datos del presupuesto
+        let datosPresupuestoActual = null;
+        
         // Funcionalidad del modal
         document.getElementById('btnAceptar').addEventListener('click', function() {
             document.getElementById('modalVacaciones').classList.add('ocultar');
@@ -656,18 +664,11 @@
         // Función para mostrar/ocultar loading
         function mostrarLoading(mostrar) {
             const overlay = document.getElementById('loadingOverlay');
-            const calcularButton = document.getElementById('calcularButton');
             
             if (mostrar) {
                 overlay.classList.add('active');
-                calcularButton.disabled = true;
-                calcularButton.classList.add('loading');
-                calcularButton.textContent = 'Procesando...';
             } else {
                 overlay.classList.remove('active');
-                calcularButton.classList.remove('loading');
-                calcularButton.textContent = 'Calcular Presupuesto';
-                // No reactivamos el botón aquí, lo hace validarDatos()
             }
         }
 
@@ -738,13 +739,7 @@
             whatsappButton.classList.toggle('enabled', camposValidos);
         }
 
-        async function calcularPresupuesto() {
-            // Mostrar loading y desactivar controles
-            mostrarLoading(true);
-            
-            // Pequeña pausa para que se vea el loading
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
+        function calcularPresupuesto() {
             const nombre = document.getElementById('nombre').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
@@ -755,16 +750,16 @@
             const direccion = document.getElementById('direccion').value.trim();
             const fechaHora = document.getElementById('fechaHora').value;
             const observaciones = document.getElementById('observaciones').value.trim();
-            const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value);
-            const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value);
-            const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value);
-            const empanadasVerdura = parseInt(document.getElementById('empanadasVerdura').value);
-            const tablasChicas = parseInt(document.getElementById('tablasChicas').value);
-            const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value);
-            const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value);
+            const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value) || 0;
+            const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value) || 0;
+            const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value) || 0;
+            const empanadasVerdura = parseInt(document.getElementById('empanadasVerdura').value) || 0;
+            const tablasChicas = parseInt(document.getElementById('tablasChicas').value) || 0;
+            const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value) || 0;
+            const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value) || 0;
             const mozoText = document.getElementById('mozo').options[document.getElementById('mozo').selectedIndex].text;
 
-            // Validar salsas (corregido)
+            // Validar salsas
             const salsas = {};
             let sumaSalsas = 0;
             document.querySelectorAll('.salsa-qty').forEach(input => {
@@ -824,8 +819,8 @@
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
                 totalTablasChicas + totalTablasMedianas + totalTablasGrandes + envio + mozo;
 
-            // 🆕 ENVIAR DATOS A GOOGLE SHEETS
-            const datosParaSheets = {
+            // 🔴 GUARDAR los datos en la variable global pero NO enviar a Google Sheets aún
+            datosPresupuestoActual = {
                 nombre: nombre,
                 telefono: telefono,
                 personas: personas,
@@ -848,12 +843,6 @@
                 total: totalPresupuesto
             };
 
-            // Enviar a Google Sheets (esto se ejecuta en segundo plano)
-            await enviarAGoogleSheets(datosParaSheets);
-            
-            // Ocultar loading
-            mostrarLoading(false);
-
             // Mensaje WhatsApp
             let whatsappMessage = `*PRESUPUESTO PERNILES DEL TÍO RUDY*\n\n`;
             whatsappMessage += `*Nombre:* ${nombre}\n`;
@@ -862,59 +851,102 @@
             whatsappMessage += `*Tipo de pernil:* ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}\n`;
             whatsappMessage += `*Salsas:* ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna'}\n`;
             whatsappMessage += `*Panes árabes:* ${totalPanes}\n`;
-            whatsappMessage += `*Costo Pernil:* ${totalCostoPersonas}\n`;
+            whatsappMessage += `*Costo Pernil:* ${totalCostoPersonas.toLocaleString('es-AR')}\n`;
 
             if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
                 whatsappMessage += `\n*Empanadas:*\n`;
-                if (empanadasCarne > 0) whatsappMessage += `- Carne: ${empanadasCarne} unid.\n`;
-                if (empanadasJamonQueso > 0) whatsappMessage += `- Jamón/Queso: ${empanadasJamonQueso} unid.\n`;
-                if (empanadasChoclo > 0) whatsappMessage += `- Choclo: ${empanadasChoclo} unid.\n`;
-                if (empanadasVerdura > 0) whatsappMessage += `- Verdura: ${empanadasVerdura} unid.\n`;
+                if (empanadasCarne > 0) whatsappMessage += `- Carne: ${empanadasCarne} unid. (${totalEmpanadasCarne.toLocaleString('es-AR')})\n`;
+                if (empanadasJamonQueso > 0) whatsappMessage += `- Jamón/Queso: ${empanadasJamonQueso} unid. (${totalEmpanadasJamonQueso.toLocaleString('es-AR')})\n`;
+                if (empanadasChoclo > 0) whatsappMessage += `- Choclo: ${empanadasChoclo} unid. (${totalEmpanadasChoclo.toLocaleString('es-AR')})\n`;
+                if (empanadasVerdura > 0) whatsappMessage += `- Verdura: ${empanadasVerdura} unid. (${totalEmpanadasVerdura.toLocaleString('es-AR')})\n`;
             }
 
             if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
                 whatsappMessage += `\n*Tablas de fiambre:*\n`;
-                if (tablasChicas > 0) whatsappMessage += `- Chica: ${tablasChicas} unid.\n`;
-                if (tablasMedianas > 0) whatsappMessage += `- Mediana: ${tablasMedianas} unid.\n`;
-                if (tablasGrandes > 0) whatsappMessage += `- Grande: ${tablasGrandes} unid.\n`;
+                if (tablasChicas > 0) whatsappMessage += `- Chica: ${tablasChicas} unid. (${totalTablasChicas.toLocaleString('es-AR')})\n`;
+                if (tablasMedianas > 0) whatsappMessage += `- Mediana: ${tablasMedianas} unid. (${totalTablasMedianas.toLocaleString('es-AR')})\n`;
+                if (tablasGrandes > 0) whatsappMessage += `- Grande: ${tablasGrandes} unid. (${totalTablasGrandes.toLocaleString('es-AR')})\n`;
             }
 
-            whatsappMessage += `\n*Envío:* ${envio !== 0 ? `${envio}` : 'Ninguno'}\n`;
-            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo})\n`;
+            whatsappMessage += `\n*Envío:* ${envio !== 0 ? `${envio.toLocaleString('es-AR')}` : 'Ninguno'}\n`;
+            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo.toLocaleString('es-AR')})\n`;
             whatsappMessage += `*Fecha y hora del evento:* ${fechaHora}\n`;
             if (envio !== 0 || mozo !== 0) whatsappMessage += `*Dirección:* ${direccion}\n`;
             if (observaciones) whatsappMessage += `\n*Observaciones:*\n${observaciones}\n`;
-            whatsappMessage += `\n*TOTAL PRESUPUESTO:* ${totalPresupuesto}\n\n`;
+            whatsappMessage += `\n*TOTAL PRESUPUESTO:* ${totalPresupuesto.toLocaleString('es-AR')}\n\n`;
             whatsappMessage += `_Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte - GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY_`;
                        
-            // Actualizar resultados
+            // Actualizar resultados (sin mensaje de Google Sheets)
             document.getElementById('resultado').innerHTML = `
                 <p><strong>Nombre:</strong> ${nombre}</p>
                 <p><strong>Teléfono:</strong> ${telefono}</p>
                 <p><strong>Personas:</strong> ${personas}</p>
                 <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
-                <p><strong>Salsas:</strong> ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ')}</p>
+                <p><strong>Salsas:</strong> ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna'}</p>
                 <p><strong>Panes árabes:</strong> ${totalPanes}</p>
-                <p><strong>Costo Pernil:</strong> ${totalCostoPersonas}</p>
-                ${empanadasCarne > 0 ? `<p><strong>Empanadas de carne:</strong> ${totalEmpanadasCarne}</p>` : ''}
-                ${empanadasJamonQueso > 0 ? `<p><strong>Empanadas de jamón y queso:</strong> ${totalEmpanadasJamonQueso}</p>` : ''}
-                ${empanadasChoclo > 0 ? `<p><strong>Empanadas de choclo:</strong> ${totalEmpanadasChoclo}</p>` : ''}
-                ${empanadasVerdura > 0 ? `<p><strong>Empanadas de verdura:</strong> ${totalEmpanadasVerdura}</p>` : ''}
-                ${tablasChicas > 0 ? `<p><strong>Tablas Chicas:</strong> ${totalTablasChicas}</p>` : ''}
-                ${tablasMedianas > 0 ? `<p><strong>Tablas Medianas:</strong> ${totalTablasMedianas}</p>` : ''}
-                ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes}</p>` : ''}
-                ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio}</p>` : ''}
-                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozo}</p>` : ''}
+                <p><strong>Costo Pernil:</strong> ${totalCostoPersonas.toLocaleString('es-AR')}</p>
+                ${empanadasCarne > 0 ? `<p><strong>Empanadas de carne:</strong> ${totalEmpanadasCarne.toLocaleString('es-AR')}</p>` : ''}
+                ${empanadasJamonQueso > 0 ? `<p><strong>Empanadas de jamón y queso:</strong> ${totalEmpanadasJamonQueso.toLocaleString('es-AR')}</p>` : ''}
+                ${empanadasChoclo > 0 ? `<p><strong>Empanadas de choclo:</strong> ${totalEmpanadasChoclo.toLocaleString('es-AR')}</p>` : ''}
+                ${empanadasVerdura > 0 ? `<p><strong>Empanadas de verdura:</strong> ${totalEmpanadasVerdura.toLocaleString('es-AR')}</p>` : ''}
+                ${tablasChicas > 0 ? `<p><strong>Tablas Chicas:</strong> ${totalTablasChicas.toLocaleString('es-AR')}</p>` : ''}
+                ${tablasMedianas > 0 ? `<p><strong>Tablas Medianas:</strong> ${totalTablasMedianas.toLocaleString('es-AR')}</p>` : ''}
+                ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes.toLocaleString('es-AR')}</p>` : ''}
+                ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio.toLocaleString('es-AR')}</p>` : ''}
+                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozo.toLocaleString('es-AR')}</p>` : ''}
                 <p><strong>Fecha y hora:</strong> ${fechaHora}</p>
                 ${(envio !== 0 || mozo !== 0) ? `<p><strong>Dirección:</strong> ${direccion}</p>` : ''}
                 ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
-                <p><strong>TOTAL:</strong> ${totalPresupuesto}</p>
-                <p style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.3); border-radius: 8px; font-size: 0.9em;">
-                    ✅ <strong>Presupuesto registrado automáticamente en Google Sheets</strong>
-                </p>
+                <p style="font-size: 1.3em; margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.5);"><strong>TOTAL:</strong> ${totalPresupuesto.toLocaleString('es-AR')}</p>
             `;
 
-            document.getElementById('whatsapp-link').href = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
+            // Configurar el botón de WhatsApp pero NO abrir aún
+            const whatsappLink = document.getElementById('whatsapp-link');
+            whatsappLink.href = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
+            
+            // Remover cualquier evento anterior y agregar el nuevo
+            whatsappLink.onclick = async function(e) {
+                e.preventDefault(); // Prevenir la apertura inmediata
+                
+                // Mostrar loading
+                mostrarLoading(true);
+                whatsappLink.classList.add('loading');
+                whatsappLink.style.pointerEvents = 'none';
+                whatsappLink.textContent = '⏳ Enviando...';
+                
+                // Enviar a Google Sheets
+                const enviado = await enviarAGoogleSheets(datosPresupuestoActual);
+                
+                // Esperar un momento para que se vea el loading
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Ocultar loading
+                mostrarLoading(false);
+                whatsappLink.classList.remove('loading');
+                whatsappLink.style.pointerEvents = 'auto';
+                whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
+                
+                if (enviado) {
+                    // Si se envió correctamente, abrir WhatsApp
+                    window.open(whatsappLink.href, '_blank');
+                    
+                    // Mostrar mensaje de éxito en el resultado
+                    const resultDiv = document.getElementById('resultado');
+                    const successMsg = document.createElement('p');
+                    successMsg.style.cssText = 'margin-top: 15px; padding: 10px; background: rgba(40, 167, 69, 0.2); border-radius: 8px; font-size: 1em; color: #28a745; font-weight: bold; text-align: center;';
+                    successMsg.innerHTML = '✅ Presupuesto guardado exitosamente en el sistema';
+                    
+                    // Agregar el mensaje si no existe ya
+                    if (!resultDiv.querySelector('.success-message')) {
+                        successMsg.className = 'success-message';
+                        resultDiv.appendChild(successMsg);
+                    }
+                } else {
+                    // Si falló, mostrar alerta pero permitir enviar WhatsApp igual
+                    alert('⚠️ No se pudo guardar en el sistema, pero puedes enviar el presupuesto por WhatsApp');
+                    window.open(whatsappLink.href, '_blank');
+                }
+            };
         }
 
         // Event listeners
@@ -927,5 +959,6 @@
     </script>
 </body>
 </html>
+
 
 
