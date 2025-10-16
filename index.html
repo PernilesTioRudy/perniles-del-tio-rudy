@@ -900,13 +900,14 @@
                 <p style="font-size: 1.3em; margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.5);"><strong>TOTAL:</strong> ${totalPresupuesto.toLocaleString('es-AR')}</p>
             `;
 
-            // Configurar el botón de WhatsApp pero NO abrir aún
+            // Configurar el enlace de WhatsApp
             const whatsappLink = document.getElementById('whatsapp-link');
-            whatsappLink.href = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
+            const whatsappUrl = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
+            whatsappLink.href = '#'; // Usar # temporalmente para evitar navegación directa
             
             // Remover cualquier evento anterior y agregar el nuevo
             whatsappLink.onclick = async function(e) {
-                e.preventDefault(); // Prevenir la apertura inmediata
+                e.preventDefault(); // Prevenir comportamiento por defecto
                 
                 // Mostrar loading
                 mostrarLoading(true);
@@ -914,38 +915,57 @@
                 whatsappLink.style.pointerEvents = 'none';
                 whatsappLink.textContent = '⏳ Enviando...';
                 
-                // Enviar a Google Sheets
-                const enviado = await enviarAGoogleSheets(datosPresupuestoActual);
-                
-                // Esperar un momento para que se vea el loading
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Ocultar loading
-                mostrarLoading(false);
-                whatsappLink.classList.remove('loading');
-                whatsappLink.style.pointerEvents = 'auto';
-                whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
-                
-                if (enviado) {
-                    // Si se envió correctamente, abrir WhatsApp
-                    window.open(whatsappLink.href, '_blank');
+                try {
+                    // Enviar a Google Sheets
+                    const enviado = await enviarAGoogleSheets(datosPresupuestoActual);
                     
-                    // Mostrar mensaje de éxito en el resultado
-                    const resultDiv = document.getElementById('resultado');
-                    const successMsg = document.createElement('p');
-                    successMsg.style.cssText = 'margin-top: 15px; padding: 10px; background: rgba(40, 167, 69, 0.2); border-radius: 8px; font-size: 1em; color: #28a745; font-weight: bold; text-align: center;';
-                    successMsg.innerHTML = '✅ Presupuesto guardado exitosamente en el sistema';
+                    // Esperar un momento para que se vea el loading
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                     
-                    // Agregar el mensaje si no existe ya
-                    if (!resultDiv.querySelector('.success-message')) {
-                        successMsg.className = 'success-message';
-                        resultDiv.appendChild(successMsg);
+                    // Ocultar loading
+                    mostrarLoading(false);
+                    whatsappLink.classList.remove('loading');
+                    whatsappLink.style.pointerEvents = 'auto';
+                    whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
+                    
+                    if (enviado) {
+                        // Mostrar mensaje de éxito en el resultado
+                        const resultDiv = document.getElementById('resultado');
+                        let successMsg = resultDiv.querySelector('.success-message');
+                        
+                        if (!successMsg) {
+                            successMsg = document.createElement('p');
+                            successMsg.className = 'success-message';
+                            successMsg.style.cssText = 'margin-top: 15px; padding: 10px; background: rgba(40, 167, 69, 0.2); border-radius: 8px; font-size: 1em; color: #28a745; font-weight: bold; text-align: center;';
+                            resultDiv.appendChild(successMsg);
+                        }
+                        successMsg.innerHTML = '✅ Presupuesto guardado exitosamente en el sistema';
+                    } else {
+                        console.warn('No se pudo guardar en Google Sheets, pero se procederá con WhatsApp');
                     }
-                } else {
-                    // Si falló, mostrar alerta pero permitir enviar WhatsApp igual
-                    alert('⚠️ No se pudo guardar en el sistema, pero puedes enviar el presupuesto por WhatsApp');
-                    window.open(whatsappLink.href, '_blank');
+                    
+                    // Abrir WhatsApp en nueva ventana/pestaña
+                    // Pequeña pausa para asegurar que el mensaje de éxito se muestre
+                    setTimeout(() => {
+                        window.open(whatsappUrl, '_blank');
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Error durante el proceso:', error);
+                    
+                    // Ocultar loading
+                    mostrarLoading(false);
+                    whatsappLink.classList.remove('loading');
+                    whatsappLink.style.pointerEvents = 'auto';
+                    whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
+                    
+                    // Aun así intentar abrir WhatsApp
+                    if (confirm('⚠️ Hubo un problema al guardar en el sistema.\n¿Desea enviar el presupuesto por WhatsApp de todas formas?')) {
+                        window.open(whatsappUrl, '_blank');
+                    }
                 }
+                
+                return false; // Asegurar que no se siga el enlace
             };
         }
 
@@ -959,6 +979,7 @@
     </script>
 </body>
 </html>
+
 
 
 
