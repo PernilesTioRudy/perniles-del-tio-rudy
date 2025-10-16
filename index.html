@@ -909,6 +909,10 @@
             whatsappLink.onclick = async function(e) {
                 e.preventDefault(); // Prevenir comportamiento por defecto
                 
+                // IMPORTANTE: Abrir la ventana INMEDIATAMENTE (antes de operaciones asíncronas)
+                // para evitar que el navegador la bloquee
+                const whatsappWindow = window.open('', '_blank');
+                
                 // Mostrar loading
                 mostrarLoading(true);
                 whatsappLink.classList.add('loading');
@@ -944,11 +948,13 @@
                         console.warn('No se pudo guardar en Google Sheets, pero se procederá con WhatsApp');
                     }
                     
-                    // Abrir WhatsApp en nueva ventana/pestaña
-                    // Pequeña pausa para asegurar que el mensaje de éxito se muestre
-                    setTimeout(() => {
+                    // Redirigir la ventana ya abierta a WhatsApp
+                    if (whatsappWindow) {
+                        whatsappWindow.location.href = whatsappUrl;
+                    } else {
+                        // Fallback: si por alguna razón la ventana no se abrió, intentar de nuevo
                         window.open(whatsappUrl, '_blank');
-                    }, 500);
+                    }
                     
                 } catch (error) {
                     console.error('Error durante el proceso:', error);
@@ -959,8 +965,10 @@
                     whatsappLink.style.pointerEvents = 'auto';
                     whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
                     
-                    // Aun así intentar abrir WhatsApp
-                    if (confirm('⚠️ Hubo un problema al guardar en el sistema.\n¿Desea enviar el presupuesto por WhatsApp de todas formas?')) {
+                    // Intentar abrir WhatsApp en la ventana ya creada
+                    if (whatsappWindow) {
+                        whatsappWindow.location.href = whatsappUrl;
+                    } else if (confirm('⚠️ Hubo un problema al guardar en el sistema.\n¿Desea enviar el presupuesto por WhatsApp de todas formas?')) {
                         window.open(whatsappUrl, '_blank');
                     }
                 }
@@ -979,6 +987,7 @@
     </script>
 </body>
 </html>
+
 
 
 
