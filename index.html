@@ -778,7 +778,20 @@
             
             // Cálculos
             const panesPorPersona = 4;
-            const costoPorPersona = personas < 20 ? 11000 : 10000;
+            
+            // Determinar el precio del pernil según la fecha del evento
+            let costoPorPersona;
+            const fechaEvento = new Date(fechaHora);
+            const fechaLimite = new Date('2025-12-01T00:00:00');
+            
+            if (fechaEvento >= fechaLimite) {
+                // Precios a partir del 01/12/2025
+                costoPorPersona = personas < 20 ? 12500 : 12000;
+            } else {
+                // Precios antes del 01/12/2025
+                costoPorPersona = personas < 20 ? 11000 : 10000;
+            }
+            
             const costoEmpanada = 2000;
             const costoTablasChicas = 50000;
             const costoTablasMedianas = 95000;
@@ -987,6 +1000,7 @@
     </script>
 </body>
 </html>
+
 
 
 
