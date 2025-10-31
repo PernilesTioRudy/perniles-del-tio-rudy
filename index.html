@@ -13,17 +13,41 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #d4a574 0%, #8b5a3c 100%);
             min-height: 100vh;
             padding: 20px 0;
         }
 
         header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #2a1810 0%, #5c3a1e 100%);
             color: white;
             text-align: center;
             padding: 30px 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border: 4px solid #d4a574;
+            background: white;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         header h1 {
@@ -48,7 +72,7 @@
 
         h1 {
             text-align: center;
-            color: #1e3c72;
+            color: #2a1810;
             margin-bottom: 30px;
             font-size: 2em;
         }
@@ -58,11 +82,11 @@
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 25px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #d4a574;
         }
 
         .form-section h3 {
-            color: #1e3c72;
+            color: #2a1810;
             margin-bottom: 20px;
             font-size: 1.3em;
             display: flex;
@@ -101,8 +125,8 @@
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #d4a574;
+            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
         }
 
         input.invalid, textarea.invalid {
@@ -114,7 +138,7 @@
             display: block;
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #d4a574 0%, #8b5a3c 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -133,7 +157,7 @@
 
         button.enabled:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(212, 165, 116, 0.4);
         }
 
         button.loading {
@@ -187,7 +211,7 @@
 
         .spinner {
             border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
+            border-top: 5px solid #d4a574;
             border-radius: 50%;
             width: 60px;
             height: 60px;
@@ -201,7 +225,7 @@
         }
 
         .loading-content h3 {
-            color: #1e3c72;
+            color: #2a1810;
             margin-bottom: 10px;
             font-size: 1.3em;
         }
@@ -214,7 +238,7 @@
         .result {
             margin-top: 30px;
             padding: 30px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #e8a04e 0%, #d68438 100%);
             border-radius: 15px;
             color: white;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
@@ -269,7 +293,7 @@
         }
 
         footer {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #2a1810 0%, #5c3a1e 100%);
             color: white;
             text-align: center;
             padding: 25px;
@@ -285,12 +309,12 @@
             margin-top: 20px;
             padding: 20px;
             background: white;
-            border: 2px solid #667eea;
+            border: 2px solid #d4a574;
             border-radius: 12px;
         }
 
         #seleccionSalsas > label {
-            color: #667eea;
+            color: #d4a574;
             font-weight: bold;
             font-size: 1.1em;
             margin-bottom: 15px;
@@ -351,7 +375,7 @@
             text-align: center;
             margin-top: 20px;
             padding: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #d4a574 0%, #8b5a3c 100%);
             color: white;
             border-radius: 12px;
             font-size: 1.3em;
@@ -456,6 +480,11 @@
             h1 {
                 font-size: 1.5em;
             }
+
+            .logo-container {
+                width: 90px;
+                height: 90px;
+            }
         }
     </style>
 </head>
@@ -486,8 +515,15 @@
     </div>
 
     <header>
-        <h1>🍖 Perniles del Tío Rudy 🍖</h1>
-        <p>La mejor calidad para tu evento especial</p>
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="logo.png" alt="Logo Perniles del Tío Rudy">
+            </div>
+            <div>
+                <h1>🍖 Perniles del Tío Rudy 🍖</h1>
+                <p>La mejor calidad para tu evento especial</p>
+            </div>
+        </div>
     </header>
 
     <main class="container">
@@ -1000,6 +1036,7 @@
     </script>
 </body>
 </html>
+
 
 
 
