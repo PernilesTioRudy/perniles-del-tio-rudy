@@ -161,98 +161,26 @@
             box-shadow: 0 8px 20px rgba(212, 165, 116, 0.4);
         }
 
-        button.loading {
-            opacity: 0.7;
-            cursor: wait;
-            position: relative;
-        }
-
-        button.loading::after {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            top: 50%;
-            left: 20px;
-            margin-top: -10px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spinner 0.8s ease infinite;
-        }
-
-        @keyframes spinner {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9998;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .loading-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #d4a574;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-content h3 {
-            color: #2a1810;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .loading-content p {
-            color: #666;
-            font-size: 1em;
-        }
-
         .result {
             margin-top: 30px;
             padding: 30px;
-            background: linear-gradient(135deg, #e8a04e 0%, #d68438 100%);
+            background: white;
             border-radius: 15px;
-            color: white;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 3px solid #d4a574;
+            color: #2a1810;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .result p {
             margin: 12px 0;
             font-size: 1.05em;
             line-height: 1.6;
+            color: #333;
         }
 
         .result strong {
             font-weight: 700;
+            color: #2a1810;
         }
 
         .whatsapp-button {
@@ -286,11 +214,6 @@
         .whatsapp-button.enabled:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
-        }
-
-        .whatsapp-button.loading {
-            opacity: 0.7;
-            cursor: wait;
         }
 
         footer {
@@ -505,16 +428,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <h3>⏳ Enviando a WhatsApp...</h3>
-            <p>Guardando presupuesto en el sistema</p>
-            <p style="margin-top: 10px; font-size: 0.9em; color: #999;">Por favor espere un momento</p>
-        </div>
-    </div>
-
     <header>
         <div class="header-content">
             <div class="logo-container">
@@ -531,16 +444,16 @@
         <h1>Calculadora de Presupuestos</h1>
 
         <div class="form-section">
-            <h3>Datos del Cliente</h3>
+            <h3>Campos Obligatorios</h3>
             <label for="nombre">Nombre completo:</label>
             <input type="text" id="nombre" class="required" placeholder="Ingrese su nombre">
             
             <label for="telefono">Número de Teléfono:</label>
             <input type="text" id="telefono" class="required" placeholder="Ej: 2994520532">
-        </div>
-
-        <div class="form-section">
-            <h3>Detalles del Pernil</h3>
+            
+            <label for="fechaHora">Fecha y hora del evento:</label>
+            <input type="datetime-local" id="fechaHora" class="required-event">
+            
             <label for="personas">Cantidad de personas:</label>
             <input type="number" id="personas" min="10" oninput="actualizarOpciones()" class="required" placeholder="Mínimo 10 personas">
             
@@ -550,7 +463,10 @@
                 <option value="cerdo">Cerdo</option>
                 <option value="mixto">Mixto</option>
             </select>
+        </div>
 
+        <div class="form-section">
+            <h3>Salsas Incluidas</h3>
             <label for="salsas">Cantidad de salsas incluidas:</label>
             <input type="number" id="salsas" min="0" value="0" readonly>
 
@@ -593,7 +509,7 @@
             <h3>Servicios Adicionales</h3>
             <label for="envio">Opción de envío:</label>
             <select id="envio" onchange="mostrarDatosEvento()">
-                <option value="0">Ninguno - Retiro en local</option>
+                <option value="0">Retiro en local (Se retira con una bandeja de horno)</option>
                 <option value="10000">Envío a domicilio Neuquén Capital hasta 3 km ($10.000)</option>
                 <option value="25000">Envío a domicilio Alrededores ($25.000)</option>
             </select>
@@ -601,16 +517,13 @@
             <label for="mozo">Servicio de mozo de corte:</label>
             <select id="mozo" onchange="mostrarDatosEvento()">
                 <option value="0">Ninguno</option>
-                <option value="50000">Mozo de corte en Neuquén Capital</option>
-                <option value="70000">Mozo de corte en Alrededores</option>
+                <option value="neuquen">Mozo de corte en Neuquén Capital</option>
+                <option value="alrededores">Mozo de corte en Alrededores (hasta 20 kms)</option>
             </select>
 
-            <div id="datosEvento">
+            <div id="datosEvento" style="display: none;">
                 <label for="direccion">Dirección del evento:</label>
                 <input type="text" id="direccion" class="required-event" placeholder="Calle, número, localidad">
-                
-                <label for="fechaHora">Fecha y hora del evento:</label>
-                <input type="datetime-local" id="fechaHora" class="required-event">
             </div>
         </div>
 
@@ -631,18 +544,18 @@
 
         <div class="form-section">
             <h3>Tablas de Fiambre (Opcional)</h3>
-            <label for="tablasChicas">Tablas de fiambre Chica - 5 personas ($50.000):</label>
+            <label for="tablasChicas">Tablas de fiambre Chica - 5 personas - 1 kg aprox. de fiambre ($50.000):</label>
             <input type="number" id="tablasChicas" min="0" value="0" placeholder="0">
             
-            <label for="tablasMedianas">Tablas de fiambre Mediana - 10 personas ($95.000):</label>
+            <label for="tablasMedianas">Tablas de fiambre Mediana - 10 personas - 2 kg aprox. de fiambre ($100.000):</label>
             <input type="number" id="tablasMedianas" min="0" value="0" placeholder="0">
             
-            <label for="tablasGrandes">Tablas de fiambre Grande - 15 personas ($140.000):</label>
+            <label for="tablasGrandes">Tablas de fiambre Grande - 15 personas - 3 kg aprox. de fiambre ($150.000):</label>
             <input type="number" id="tablasGrandes" min="0" value="0" placeholder="0">
         </div>
 
         <div class="form-section">
-            <h3>Pan Sin TACC (Opcional - Se vende por docena)</h3>
+            <h3>Pan Sin TACC (Opcional)</h3>
             <label for="panSinTacc">Cantidad de docenas de Pan Sin TACC ($15.000 por docena):</label>
             <input type="number" id="panSinTacc" min="0" value="0" placeholder="0" oninput="validarPanSinTacc()">
             <p id="errorPanSinTacc" style="color: #e74c3c; display: none; margin-top: 10px; padding: 10px; background: #fee; border-radius: 8px; font-weight: bold;">
@@ -679,47 +592,10 @@
     </footer>
     
     <script>
-        // ⚠️ CONFIGURACIÓN IMPORTANTE: Reemplaza esta URL con la de tu Google Apps Script
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpcZx5CXLe5_ymXUMlFjwpDGNjIXZfkHtj1uYcA0dTqAXya04bNYe6PcsJkjK5XmmwQw/exec';
-        
-        // Variable global para almacenar los datos del presupuesto
-        let datosPresupuestoActual = null;
-        
         // Funcionalidad del modal
         document.getElementById('btnAceptar').addEventListener('click', function() {
             document.getElementById('modalVacaciones').classList.add('ocultar');
         });
-
-        // Función para enviar datos a Google Sheets
-        async function enviarAGoogleSheets(datos) {
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(datos)
-                });
-                
-                console.log('✅ Datos enviados a Google Sheets correctamente');
-                return true;
-            } catch (error) {
-                console.error('❌ Error al enviar a Google Sheets:', error);
-                return false;
-            }
-        }
-
-        // Función para mostrar/ocultar loading
-        function mostrarLoading(mostrar) {
-            const overlay = document.getElementById('loadingOverlay');
-            
-            if (mostrar) {
-                overlay.classList.add('active');
-            } else {
-                overlay.classList.remove('active');
-            }
-        }
 
         function actualizarOpciones() {
             const personas = parseInt(document.getElementById('personas').value);
@@ -781,6 +657,18 @@
         }
 
         function mostrarDatosEvento() {
+            const envio = parseInt(document.getElementById('envio').value);
+            const mozo = document.getElementById('mozo').value;
+            const datosEventoDiv = document.getElementById('datosEvento');
+            
+            // Mostrar campo de dirección si hay envío o mozo
+            if (envio !== 0 || mozo !== '0') {
+                datosEventoDiv.style.display = 'block';
+            } else {
+                datosEventoDiv.style.display = 'none';
+                document.getElementById('direccion').value = ''; // Limpiar dirección si no se necesita
+            }
+            
             validarDatos();
         }
 
@@ -790,7 +678,7 @@
             const personas = parseInt(document.getElementById('personas').value);
             const fechaHora = document.getElementById('fechaHora').value;
             const envio = parseInt(document.getElementById('envio').value);
-            const mozo = parseInt(document.getElementById('mozo').value);
+            const mozo = document.getElementById('mozo').value;
             const direccion = document.getElementById('direccion').value.trim();
             
             const calcularButton = document.getElementById('calcularButton');
@@ -803,7 +691,7 @@
             if (!telefono) camposFaltantes.push('Número de Teléfono');
             if (isNaN(personas) || personas < 10) camposFaltantes.push('Cantidad de personas (mínimo 10)');
             if (!fechaHora) camposFaltantes.push('Fecha y hora del evento');
-            if ((envio !== 0 || mozo !== 0) && !direccion) camposFaltantes.push('Dirección del evento');
+            if ((envio !== 0 || mozo !== '0') && !direccion) camposFaltantes.push('Dirección del evento');
             
             const camposValidos = camposFaltantes.length === 0;
             
@@ -827,7 +715,7 @@
             const telefono = document.getElementById('telefono').value.trim();
             const personas = parseInt(document.getElementById('personas').value);
             let envio = parseInt(document.getElementById('envio').value);
-            let mozo = parseInt(document.getElementById('mozo').value);
+            const mozoSelect = document.getElementById('mozo').value;
             const tipo = document.getElementById('tipo').value;
             const salsasInput = parseInt(document.getElementById('salsas').value);
             const direccion = document.getElementById('direccion').value.trim();
@@ -841,7 +729,6 @@
             const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value) || 0;
             const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value) || 0;
             const panSinTacc = parseInt(document.getElementById('panSinTacc').value) || 0;
-            const mozoText = document.getElementById('mozo').options[document.getElementById('mozo').selectedIndex].text;
 
             // Validar salsas
             const salsas = {};
@@ -894,54 +781,38 @@
             const totalPanSinTacc = panSinTacc * costoPanSinTacc;
             
             let mozos = 0;
-            if (mozo !== 0) {
+            let mozo = 0;
+            let mozoText = 'Ninguno';
+            
+            if (mozoSelect !== '0') {
                 mozos = Math.ceil(personas / 50);
-    
-                if (personas <= 39) {
-                    mozo = 40000;
-                } else if (personas > 39) {
-                    mozo = 50000;
+                
+                // Calcular precio por mozo según cantidad de personas y ubicación
+                if (personas >= 10 && personas <= 39) {
+                    if (mozoSelect === 'neuquen') {
+                        mozo = 40000;
+                        mozoText = 'Mozo de corte en Neuquén Capital';
+                    } else if (mozoSelect === 'alrededores') {
+                        mozo = 60000;
+                        mozoText = 'Mozo de corte en Alrededores (hasta 20 kms)';
+                    }
+                } else if (personas >= 40) {
+                    if (mozoSelect === 'neuquen') {
+                        mozo = 50000;
+                        mozoText = 'Mozo de corte en Neuquén Capital';
+                    } else if (mozoSelect === 'alrededores') {
+                        mozo = 70000;
+                        mozoText = 'Mozo de corte en Alrededores (hasta 20 kms)';
+                    }
                 }
-    
-                const mozoSelect = document.getElementById('mozo');
-                const mozoValue = parseInt(mozoSelect.value);
-
-                if (mozoValue === 70000) {
-                    mozo = 70000;
-                }
-
+                
                 mozo *= mozos;
-                envio = 0;
+                envio = 0; // Si hay mozo, no hay envío
             }
 
             const totalPresupuesto = totalCostoPersonas + 
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
                 totalTablasChicas + totalTablasMedianas + totalTablasGrandes + totalPanSinTacc + envio + mozo;
-
-            // 🔴 GUARDAR los datos en la variable global pero NO enviar a Google Sheets aún
-            datosPresupuestoActual = {
-                nombre: nombre,
-                telefono: telefono,
-                personas: personas,
-                tipo: tipo.charAt(0).toUpperCase() + tipo.slice(1),
-                salsas: Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna',
-                panes: totalPanes,
-                costoPernil: totalCostoPersonas,
-                empanadasCarne: empanadasCarne > 0 ? empanadasCarne : 0,
-                empanadasJamonQueso: empanadasJamonQueso > 0 ? empanadasJamonQueso : 0,
-                empanadasChoclo: empanadasChoclo > 0 ? empanadasChoclo : 0,
-                empanadasVerdura: empanadasVerdura > 0 ? empanadasVerdura : 0,
-                tablasChicas: tablasChicas > 0 ? tablasChicas : 0,
-                tablasMedianas: tablasMedianas > 0 ? tablasMedianas : 0,
-                tablasGrandes: tablasGrandes > 0 ? tablasGrandes : 0,
-                panSinTacc: panSinTacc > 0 ? panSinTacc : 0,
-                envio: envio !== 0 ? envio : 0,
-                mozo: mozo !== 0 ? mozo : 0,
-                fechaEvento: fechaHora,
-                direccion: (envio !== 0 || mozo !== 0) ? direccion : 'N/A',
-                observaciones: observaciones || 'N/A',
-                total: totalPresupuesto
-            };
 
             // Mensaje WhatsApp
             let whatsappMessage = `*PRESUPUESTO PERNILES DEL TÍO RUDY*\n\n`;
@@ -973,10 +844,20 @@
                 whatsappMessage += `⚠️ *IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN*\n`;
             }
 
-            whatsappMessage += `\n*Envío:* ${envio !== 0 ? `${envio.toLocaleString('es-AR')}` : 'Ninguno'}\n`;
-            if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo.toLocaleString('es-AR')})\n`;
+            whatsappMessage += `\n`;
+            if (envio === 0 && mozo === 0) {
+                whatsappMessage += `*Retiro:* En local (Se retira con una bandeja de horno)\n`;
+            } else if (envio !== 0) {
+                whatsappMessage += `*Envío:* ${envio.toLocaleString('es-AR')}\n`;
+                whatsappMessage += `*Dirección:* ${direccion}\n`;
+            }
+            
+            if (mozo !== 0) {
+                whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo.toLocaleString('es-AR')})\n`;
+                whatsappMessage += `*Dirección:* ${direccion}\n`;
+            }
+            
             whatsappMessage += `*Fecha y hora del evento:* ${fechaHora}\n`;
-            if (envio !== 0 || mozo !== 0) whatsappMessage += `*Dirección:* ${direccion}\n`;
             if (observaciones) whatsappMessage += `\n*Observaciones:*\n${observaciones}\n`;
             whatsappMessage += `\n*TOTAL PRESUPUESTO:* ${totalPresupuesto.toLocaleString('es-AR')}\n\n`;
             whatsappMessage += `_Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte - GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY_`;
@@ -999,89 +880,19 @@
                 ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes.toLocaleString('es-AR')}</p>` : ''}
                 ${panSinTacc > 0 ? `<p><strong>Pan Sin TACC:</strong> ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades (${totalPanSinTacc.toLocaleString('es-AR')})</p>
                 <p style="background: rgba(255,193,7,0.3); padding: 10px; border-radius: 8px; margin-top: 5px; font-weight: bold; color: #2a1810; font-size: 0.95em;">⚠️ IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN</p>` : ''}
+                ${envio === 0 && mozo === 0 ? `<p><strong>Retiro:</strong> En local (Se retira con una bandeja de horno)</p>` : ''}
                 ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio.toLocaleString('es-AR')}</p>` : ''}
-                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozo.toLocaleString('es-AR')}</p>` : ''}
+                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozoText} (${mozo.toLocaleString('es-AR')})</p>` : ''}
                 <p><strong>Fecha y hora:</strong> ${fechaHora}</p>
                 ${(envio !== 0 || mozo !== 0) ? `<p><strong>Dirección:</strong> ${direccion}</p>` : ''}
                 ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
-                <p style="font-size: 1.3em; margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.5);"><strong>TOTAL:</strong> ${totalPresupuesto.toLocaleString('es-AR')}</p>
+                <p style="font-size: 1.4em; margin-top: 20px; padding: 15px; background: #f8f9fa; border: 2px solid #d4a574; border-radius: 10px; color: #2a1810;"><strong>TOTAL:</strong> $${totalPresupuesto.toLocaleString('es-AR')}</p>
             `;
 
-            // Configurar el enlace de WhatsApp
+            // Configurar el enlace de WhatsApp para que abra directamente
             const whatsappLink = document.getElementById('whatsapp-link');
             const whatsappUrl = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
-            whatsappLink.href = '#'; // Usar # temporalmente para evitar navegación directa
-            
-            // Remover cualquier evento anterior y agregar el nuevo
-            whatsappLink.onclick = async function(e) {
-                e.preventDefault(); // Prevenir comportamiento por defecto
-                
-                // IMPORTANTE: Abrir la ventana INMEDIATAMENTE (antes de operaciones asíncronas)
-                // para evitar que el navegador la bloquee
-                const whatsappWindow = window.open('', '_blank');
-                
-                // Mostrar loading
-                mostrarLoading(true);
-                whatsappLink.classList.add('loading');
-                whatsappLink.style.pointerEvents = 'none';
-                whatsappLink.textContent = '⏳ Enviando...';
-                
-                try {
-                    // Enviar a Google Sheets
-                    const enviado = await enviarAGoogleSheets(datosPresupuestoActual);
-                    
-                    // Esperar un momento para que se vea el loading
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    // Ocultar loading
-                    mostrarLoading(false);
-                    whatsappLink.classList.remove('loading');
-                    whatsappLink.style.pointerEvents = 'auto';
-                    whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
-                    
-                    if (enviado) {
-                        // Mostrar mensaje de éxito en el resultado
-                        const resultDiv = document.getElementById('resultado');
-                        let successMsg = resultDiv.querySelector('.success-message');
-                        
-                        if (!successMsg) {
-                            successMsg = document.createElement('p');
-                            successMsg.className = 'success-message';
-                            successMsg.style.cssText = 'margin-top: 15px; padding: 10px; background: rgba(40, 167, 69, 0.2); border-radius: 8px; font-size: 1em; color: #28a745; font-weight: bold; text-align: center;';
-                            resultDiv.appendChild(successMsg);
-                        }
-                        successMsg.innerHTML = '✅ Presupuesto guardado exitosamente en el sistema';
-                    } else {
-                        console.warn('No se pudo guardar en Google Sheets, pero se procederá con WhatsApp');
-                    }
-                    
-                    // Redirigir la ventana ya abierta a WhatsApp
-                    if (whatsappWindow) {
-                        whatsappWindow.location.href = whatsappUrl;
-                    } else {
-                        // Fallback: si por alguna razón la ventana no se abrió, intentar de nuevo
-                        window.open(whatsappUrl, '_blank');
-                    }
-                    
-                } catch (error) {
-                    console.error('Error durante el proceso:', error);
-                    
-                    // Ocultar loading
-                    mostrarLoading(false);
-                    whatsappLink.classList.remove('loading');
-                    whatsappLink.style.pointerEvents = 'auto';
-                    whatsappLink.innerHTML = '📱 Enviar presupuesto por WhatsApp';
-                    
-                    // Intentar abrir WhatsApp en la ventana ya creada
-                    if (whatsappWindow) {
-                        whatsappWindow.location.href = whatsappUrl;
-                    } else if (confirm('⚠️ Hubo un problema al guardar en el sistema.\n¿Desea enviar el presupuesto por WhatsApp de todas formas?')) {
-                        window.open(whatsappUrl, '_blank');
-                    }
-                }
-                
-                return false; // Asegurar que no se siga el enlace
-            };
+            whatsappLink.href = whatsappUrl;
         }
 
         // Event listeners
