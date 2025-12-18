@@ -642,6 +642,18 @@
         </div>
 
         <div class="form-section">
+            <h3>Pan Sin TACC (Opcional - Se vende por docena)</h3>
+            <label for="panSinTacc">Cantidad de docenas de Pan Sin TACC ($15.000 por docena):</label>
+            <input type="number" id="panSinTacc" min="0" value="0" placeholder="0" oninput="validarPanSinTacc()">
+            <p id="errorPanSinTacc" style="color: #e74c3c; display: none; margin-top: 10px; padding: 10px; background: #fee; border-radius: 8px; font-weight: bold;">
+                ⚠️ El pedido mínimo es de 1 docena (12 unidades)
+            </p>
+            <p style="color: #856404; margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 8px; font-weight: 600; font-size: 0.95em;">
+                ℹ️ Nota: La disponibilidad del Pan Sin TACC queda sujeta a confirmación
+            </p>
+        </div>
+
+        <div class="form-section">
             <h3>Observaciones</h3>
             <label for="observaciones">Comentarios adicionales:</label>
             <textarea id="observaciones" rows="4" placeholder="Ingrese aquí cualquier observación o comentario adicional..."></textarea>
@@ -753,23 +765,57 @@
             validarDatos();
         }
 
+        function validarPanSinTacc() {
+            const panSinTacc = parseInt(document.getElementById('panSinTacc').value) || 0;
+            const errorPanSinTacc = document.getElementById('errorPanSinTacc');
+            
+            // Si hay valor pero es menor a 1 docena, mostrar error
+            if (panSinTacc > 0 && panSinTacc < 1) {
+                errorPanSinTacc.style.display = 'block';
+                document.getElementById('panSinTacc').value = 0;
+            } else {
+                errorPanSinTacc.style.display = 'none';
+            }
+            
+            validarDatos();
+        }
+
         function mostrarDatosEvento() {
             validarDatos();
         }
 
         function validarDatos() {
-            const camposValidos = [
-                document.getElementById('nombre').value.trim(),
-                document.getElementById('telefono').value.trim(),
-                !isNaN(parseInt(document.getElementById('personas').value)) && parseInt(document.getElementById('personas').value) >= 10,
-                document.getElementById('fechaHora').value,
-                (parseInt(document.getElementById('envio').value) !== 0 || parseInt(document.getElementById('mozo').value) !== 0) ? 
-                    document.getElementById('direccion').value.trim() : true
-            ].every(Boolean);
-
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const personas = parseInt(document.getElementById('personas').value);
+            const fechaHora = document.getElementById('fechaHora').value;
+            const envio = parseInt(document.getElementById('envio').value);
+            const mozo = parseInt(document.getElementById('mozo').value);
+            const direccion = document.getElementById('direccion').value.trim();
+            
             const calcularButton = document.getElementById('calcularButton');
             const whatsappButton = document.getElementById('whatsapp-link');
-
+            
+            // Identificar qué campos faltan
+            let camposFaltantes = [];
+            
+            if (!nombre) camposFaltantes.push('Nombre completo');
+            if (!telefono) camposFaltantes.push('Número de Teléfono');
+            if (isNaN(personas) || personas < 10) camposFaltantes.push('Cantidad de personas (mínimo 10)');
+            if (!fechaHora) camposFaltantes.push('Fecha y hora del evento');
+            if ((envio !== 0 || mozo !== 0) && !direccion) camposFaltantes.push('Dirección del evento');
+            
+            const camposValidos = camposFaltantes.length === 0;
+            
+            // Actualizar el texto del botón con mensaje claro
+            if (!camposValidos) {
+                calcularButton.textContent = `⚠️ Faltan datos: ${camposFaltantes.join(', ')}`;
+                calcularButton.style.fontSize = camposFaltantes.length > 2 ? '0.95em' : '1.2em';
+            } else {
+                calcularButton.textContent = 'Calcular Presupuesto';
+                calcularButton.style.fontSize = '1.2em';
+            }
+            
             calcularButton.disabled = !camposValidos;
             calcularButton.classList.toggle('enabled', camposValidos);
             whatsappButton.style.display = camposValidos ? 'block' : 'none';
@@ -794,6 +840,7 @@
             const tablasChicas = parseInt(document.getElementById('tablasChicas').value) || 0;
             const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value) || 0;
             const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value) || 0;
+            const panSinTacc = parseInt(document.getElementById('panSinTacc').value) || 0;
             const mozoText = document.getElementById('mozo').options[document.getElementById('mozo').selectedIndex].text;
 
             // Validar salsas
@@ -833,6 +880,7 @@
             const costoTablasChicas = 50000;
             const costoTablasMedianas = 100000;
             const costoTablasGrandes = 150000;
+            const costoPanSinTacc = 15000;
             
             const totalPanes = panesPorPersona * personas;
             const totalCostoPersonas = costoPorPersona * personas;
@@ -843,6 +891,7 @@
             const totalTablasChicas = tablasChicas * costoTablasChicas;
             const totalTablasMedianas = tablasMedianas * costoTablasMedianas;
             const totalTablasGrandes = tablasGrandes * costoTablasGrandes;
+            const totalPanSinTacc = panSinTacc * costoPanSinTacc;
             
             let mozos = 0;
             if (mozo !== 0) {
@@ -867,7 +916,7 @@
 
             const totalPresupuesto = totalCostoPersonas + 
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
-                totalTablasChicas + totalTablasMedianas + totalTablasGrandes + envio + mozo;
+                totalTablasChicas + totalTablasMedianas + totalTablasGrandes + totalPanSinTacc + envio + mozo;
 
             // 🔴 GUARDAR los datos en la variable global pero NO enviar a Google Sheets aún
             datosPresupuestoActual = {
@@ -885,6 +934,7 @@
                 tablasChicas: tablasChicas > 0 ? tablasChicas : 0,
                 tablasMedianas: tablasMedianas > 0 ? tablasMedianas : 0,
                 tablasGrandes: tablasGrandes > 0 ? tablasGrandes : 0,
+                panSinTacc: panSinTacc > 0 ? panSinTacc : 0,
                 envio: envio !== 0 ? envio : 0,
                 mozo: mozo !== 0 ? mozo : 0,
                 fechaEvento: fechaHora,
@@ -918,6 +968,11 @@
                 if (tablasGrandes > 0) whatsappMessage += `- Grande: ${tablasGrandes} unid. (${totalTablasGrandes.toLocaleString('es-AR')})\n`;
             }
 
+            if (panSinTacc > 0) {
+                whatsappMessage += `\n*PAN SIN TACC:* ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades (${totalPanSinTacc.toLocaleString('es-AR')})\n`;
+                whatsappMessage += `⚠️ *IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN*\n`;
+            }
+
             whatsappMessage += `\n*Envío:* ${envio !== 0 ? `${envio.toLocaleString('es-AR')}` : 'Ninguno'}\n`;
             if (mozo !== 0) whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo.toLocaleString('es-AR')})\n`;
             whatsappMessage += `*Fecha y hora del evento:* ${fechaHora}\n`;
@@ -942,6 +997,8 @@
                 ${tablasChicas > 0 ? `<p><strong>Tablas Chicas:</strong> ${totalTablasChicas.toLocaleString('es-AR')}</p>` : ''}
                 ${tablasMedianas > 0 ? `<p><strong>Tablas Medianas:</strong> ${totalTablasMedianas.toLocaleString('es-AR')}</p>` : ''}
                 ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes.toLocaleString('es-AR')}</p>` : ''}
+                ${panSinTacc > 0 ? `<p><strong>Pan Sin TACC:</strong> ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades (${totalPanSinTacc.toLocaleString('es-AR')})</p>
+                <p style="background: rgba(255,193,7,0.3); padding: 10px; border-radius: 8px; margin-top: 5px; font-weight: bold; color: #2a1810; font-size: 0.95em;">⚠️ IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN</p>` : ''}
                 ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio.toLocaleString('es-AR')}</p>` : ''}
                 ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozo.toLocaleString('es-AR')}</p>` : ''}
                 <p><strong>Fecha y hora:</strong> ${fechaHora}</p>
@@ -1037,6 +1094,7 @@
     </script>
 </body>
 </html>
+
 
 
 
