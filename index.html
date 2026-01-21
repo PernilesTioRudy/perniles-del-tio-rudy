@@ -307,8 +307,8 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Modal de Vacaciones */
-        #modalVacaciones {
+        /* Modal de Bienvenida */
+        #modalBienvenida {
             position: fixed;
             top: 0;
             left: 0;
@@ -329,7 +329,7 @@
             text-align: center;
             max-width: 500px;
             width: 90%;
-            border: 5px solid #dc3545;
+            border: 5px solid #d4a574;
             animation: slideDown 0.5s ease-out;
         }
 
@@ -345,25 +345,24 @@
         }
 
         .modal-content h2 {
-            color: #dc3545;
+            color: #2a1810;
             font-size: 28px;
             margin-bottom: 20px;
-            text-transform: uppercase;
             font-weight: bold;
         }
 
         .modal-content p {
             font-size: 18px;
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             color: #333;
         }
 
-        .modal-content .fecha-importante {
+        .modal-content .destacado {
             background-color: #fff3cd;
             padding: 15px;
             border-radius: 8px;
-            border: 2px solid #ffc107;
+            border: 2px solid #d4a574;
             margin: 20px 0;
             font-weight: bold;
             color: #856404;
@@ -413,18 +412,19 @@
     </style>
 </head>
 <body>
-    <!-- Modal de Vacaciones -->
-    <div id="modalVacaciones">
+    <!-- Modal de Bienvenida -->
+    <div id="modalBienvenida">
         <div class="modal-content">
-            <h2>⚠️ AVISO IMPORTANTE ⚠️</h2>
-            <p><strong>ESTIMADOS CLIENTES:</strong></p>
-            <div class="fecha-importante">
-                DESDE EL 01/01/2026 AL 15/01/2026<br>
-                VAMOS A ESTAR CERRADOS POR VACACIONES
+            <h2>🍖 ¡Bienvenido! 🍖</h2>
+            <p><strong>Calculadora de Presupuestos</strong></p>
+            <p>Perniles del Tío Rudy</p>
+            <div class="destacado">
+                Más de 30 años brindando calidad y sabor<br>
+                en cada evento especial
             </div>
-            <p>CUALQUIER SOLICITUD DE PRESUPUESTO, ES A PARTIR DEL <strong>VIERNES 16-01-2026</strong></p>
-            <p style="font-size: 20px; margin-top: 20px;">¡GRACIAS!</p>
-            <button id="btnAceptar">ACEPTAR Y CONTINUAR</button>
+            <p>Completá los datos y obtené tu presupuesto personalizado al instante</p>
+            <p style="font-size: 16px; margin-top: 20px;">📍 San Martín 1716, Neuquén Capital</p>
+            <button id="btnAceptar">COMENZAR</button>
         </div>
     </div>
 
@@ -592,9 +592,9 @@
     </footer>
     
     <script>
-        // Funcionalidad del modal
+        // Funcionalidad del modal de bienvenida
         document.getElementById('btnAceptar').addEventListener('click', function() {
-            document.getElementById('modalVacaciones').classList.add('ocultar');
+            document.getElementById('modalBienvenida').classList.add('ocultar');
         });
 
         function actualizarOpciones() {
@@ -814,53 +814,103 @@
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
                 totalTablasChicas + totalTablasMedianas + totalTablasGrandes + totalPanSinTacc + envio + mozo;
 
-            // Mensaje WhatsApp
-            let whatsappMessage = `*PRESUPUESTO PERNILES DEL TÍO RUDY*\n\n`;
-            whatsappMessage += `*Nombre:* ${nombre}\n`;
-            whatsappMessage += `*Teléfono:* ${telefono}\n`;
-            whatsappMessage += `*Personas:* ${personas}\n`;
-            whatsappMessage += `*Tipo de pernil:* ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}\n`;
-            whatsappMessage += `*Salsas:* ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna'}\n`;
-            whatsappMessage += `*Panes árabes:* ${totalPanes}\n`;
-            whatsappMessage += `*Costo Pernil:* ${totalCostoPersonas.toLocaleString('es-AR')}\n`;
-
+            // Mensaje WhatsApp - Formato Profesional
+            const linea = '━━━━━━━━━━━━━━━━━━━━━━━';
+            
+            let whatsappMessage = `👨‍🍳 *SERVICIO DE PERNIL*\n`;
+            whatsappMessage += `*TÍO RUDY*\n\n`;
+            whatsappMessage += `San Martín 1716\n`;
+            whatsappMessage += `Cel. 2994520532\n`;
+            whatsappMessage += `${linea}\n\n`;
+            
+            // 👤 CLIENTE
+            whatsappMessage += `👤 *CLIENTE*\n`;
+            whatsappMessage += `Nombre: ${nombre}\n`;
+            whatsappMessage += `Teléfono: ${telefono}\n`;
+            whatsappMessage += `${linea}\n\n`;
+            
+            // 📋 DETALLE DEL PEDIDO
+            whatsappMessage += `📋 *DETALLE DEL PEDIDO*\n`;
+            whatsappMessage += `• Pernil: ${tipo.toUpperCase()} 🥩 (${personas} personas)\n`;
+            whatsappMessage += `• Panes: ${totalPanes} unidades (Tipo: ÁRABE) 🥖\n`;
+            
+            // Salsas seleccionadas
+            if (Object.keys(salsas).length > 0) {
+                whatsappMessage += `  Salsas seleccionadas:\n`;
+                Object.entries(salsas).forEach(([salsa, cantidad]) => {
+                    whatsappMessage += `  ✓ ${salsa} (${cantidad})\n`;
+                });
+            }
+            
+            // Empanadas
             if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
-                whatsappMessage += `\n*Empanadas:*\n`;
-                if (empanadasCarne > 0) whatsappMessage += `- Carne: ${empanadasCarne} unid. (${totalEmpanadasCarne.toLocaleString('es-AR')})\n`;
-                if (empanadasJamonQueso > 0) whatsappMessage += `- Jamón/Queso: ${empanadasJamonQueso} unid. (${totalEmpanadasJamonQueso.toLocaleString('es-AR')})\n`;
-                if (empanadasChoclo > 0) whatsappMessage += `- Choclo: ${empanadasChoclo} unid. (${totalEmpanadasChoclo.toLocaleString('es-AR')})\n`;
-                if (empanadasVerdura > 0) whatsappMessage += `- Verdura: ${empanadasVerdura} unid. (${totalEmpanadasVerdura.toLocaleString('es-AR')})\n`;
+                whatsappMessage += `• Empanadas:\n`;
+                if (empanadasCarne > 0) whatsappMessage += `  ✓ Carne: ${empanadasCarne} unid.\n`;
+                if (empanadasJamonQueso > 0) whatsappMessage += `  ✓ Jamón/Queso: ${empanadasJamonQueso} unid.\n`;
+                if (empanadasChoclo > 0) whatsappMessage += `  ✓ Choclo: ${empanadasChoclo} unid.\n`;
+                if (empanadasVerdura > 0) whatsappMessage += `  ✓ Verdura: ${empanadasVerdura} unid.\n`;
             }
-
+            
+            // Tablas de fiambre
             if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
-                whatsappMessage += `\n*Tablas de fiambre:*\n`;
-                if (tablasChicas > 0) whatsappMessage += `- Chica: ${tablasChicas} unid. (${totalTablasChicas.toLocaleString('es-AR')})\n`;
-                if (tablasMedianas > 0) whatsappMessage += `- Mediana: ${tablasMedianas} unid. (${totalTablasMedianas.toLocaleString('es-AR')})\n`;
-                if (tablasGrandes > 0) whatsappMessage += `- Grande: ${tablasGrandes} unid. (${totalTablasGrandes.toLocaleString('es-AR')})\n`;
+                whatsappMessage += `• Tablas de fiambre:\n`;
+                if (tablasChicas > 0) whatsappMessage += `  ✓ Chica: ${tablasChicas} unid.\n`;
+                if (tablasMedianas > 0) whatsappMessage += `  ✓ Mediana: ${tablasMedianas} unid.\n`;
+                if (tablasGrandes > 0) whatsappMessage += `  ✓ Grande: ${tablasGrandes} unid.\n`;
             }
-
+            
+            // Pan Sin TACC
             if (panSinTacc > 0) {
-                whatsappMessage += `\n*PAN SIN TACC:* ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades (${totalPanSinTacc.toLocaleString('es-AR')})\n`;
-                whatsappMessage += `⚠️ *IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN*\n`;
+                whatsappMessage += `• Pan Sin TACC: ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades\n`;
+                whatsappMessage += `  ⚠️ *Sujeto a disponibilidad*\n`;
             }
-
-            whatsappMessage += `\n`;
+            
+            whatsappMessage += `${linea}\n\n`;
+            
+            // 🚚 ENTREGA
+            // Formatear fecha y hora
+            const fechaObj = new Date(fechaHora);
+            const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const diaSemana = dias[fechaObj.getDay()];
+            const dia = fechaObj.getDate();
+            const mes = meses[fechaObj.getMonth()];
+            const anio = fechaObj.getFullYear().toString().slice(-2);
+            const hora = fechaObj.getHours().toString().padStart(2, '0');
+            const minutos = fechaObj.getMinutes().toString().padStart(2, '0');
+            
+            whatsappMessage += `🚚 *ENTREGA*\n`;
+            whatsappMessage += `Fecha: ${diaSemana} ${dia}/${fechaObj.getMonth() + 1}/${anio}\n`;
+            whatsappMessage += `Horario: ${hora}:${minutos} hs\n`;
+            
             if (envio === 0 && mozo === 0) {
-                whatsappMessage += `*Retiro:* En local (Se retira con una bandeja de horno)\n`;
+                whatsappMessage += `Modalidad: Retira por local\n`;
+                whatsappMessage += `(Se retira con bandeja de horno)\n`;
             } else if (envio !== 0) {
-                whatsappMessage += `*Envío:* ${envio.toLocaleString('es-AR')}\n`;
-                whatsappMessage += `*Dirección:* ${direccion}\n`;
+                whatsappMessage += `Modalidad: Envío a domicilio\n`;
+                whatsappMessage += `Dirección: ${direccion}\n`;
+            } else if (mozo !== 0) {
+                whatsappMessage += `Modalidad: ${mozoText}\n`;
+                whatsappMessage += `Dirección: ${direccion}\n`;
             }
             
-            if (mozo !== 0) {
-                whatsappMessage += `*Servicio de mozo:* ${mozoText} (${mozo.toLocaleString('es-AR')})\n`;
-                whatsappMessage += `*Dirección:* ${direccion}\n`;
+            whatsappMessage += `${linea}\n\n`;
+            
+            // 💰 RESUMEN DE CUENTA
+            whatsappMessage += `💰 *RESUMEN DE CUENTA*\n`;
+            whatsappMessage += `Total: $${totalPresupuesto.toLocaleString('es-AR')}\n`;
+            whatsappMessage += `Seña: $____________\n`;
+            whatsappMessage += `SALDO A PAGAR: $____________\n`;
+            whatsappMessage += `${linea}\n\n`;
+            
+            // Observaciones si existen
+            if (observaciones) {
+                whatsappMessage += `📝 *OBSERVACIONES:*\n${observaciones}\n\n`;
             }
             
-            whatsappMessage += `*Fecha y hora del evento:* ${fechaHora}\n`;
-            if (observaciones) whatsappMessage += `\n*Observaciones:*\n${observaciones}\n`;
-            whatsappMessage += `\n*TOTAL PRESUPUESTO:* ${totalPresupuesto.toLocaleString('es-AR')}\n\n`;
-            whatsappMessage += `_Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte - GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY_`;
+            // Mensaje de cierre
+            whatsappMessage += `_¡Gracias por elegirnos para tu evento!_ 👨‍🍳\n\n`;
+            whatsappMessage += `_Nota: El pernil no va fileteado, por ello ofrecemos servicio de mozo de corte_`;
                        
             // Actualizar resultados (sin mensaje de Google Sheets)
             document.getElementById('resultado').innerHTML = `
@@ -905,6 +955,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
