@@ -615,28 +615,28 @@
 
         <div class="form-section">
             <h3>Empanadas (Opcional)</h3>
-            <label for="empanadasCarne">Empanadas de carne (unidad - $2.000 c/u):</label>
+            <label for="empanadasCarne">Empanadas de carne (unidad - $2.500 c/u):</label>
             <input type="number" id="empanadasCarne" min="0" value="0" placeholder="0">
             
-            <label for="empanadasJamonQueso">Empanadas de jamón y queso (unidad - $2.000 c/u):</label>
+            <label for="empanadasJamonQueso">Empanadas de jamón y queso (unidad - $2.500 c/u):</label>
             <input type="number" id="empanadasJamonQueso" min="0" value="0" placeholder="0">
             
-            <label for="empanadasChoclo">Empanadas de choclo (unidad - $2.000 c/u):</label>
+            <label for="empanadasChoclo">Empanadas de choclo (unidad - $2.500 c/u):</label>
             <input type="number" id="empanadasChoclo" min="0" value="0" placeholder="0">
 
-            <label for="empanadasVerdura">Empanadas de verdura (unidad - $2.000 c/u):</label>
+            <label for="empanadasVerdura">Empanadas de verdura (unidad - $2.500 c/u):</label>
             <input type="number" id="empanadasVerdura" min="0" value="0" placeholder="0">
         </div>
 
         <div class="form-section">
             <h3>Tablas de Fiambre (Opcional)</h3>
-            <label for="tablasChicas">Tablas de fiambre Chica - 5 personas - 1 kg aprox. de fiambre ($50.000):</label>
+            <label for="tablasChicas">Tablas de fiambre Chica - 5 personas - 1 kg aprox. de fiambre ($60.000):</label>
             <input type="number" id="tablasChicas" min="0" value="0" placeholder="0">
             
-            <label for="tablasMedianas">Tablas de fiambre Mediana - 10 personas - 2 kg aprox. de fiambre ($100.000):</label>
+            <label for="tablasMedianas">Tablas de fiambre Mediana - 10 personas - 2 kg aprox. de fiambre ($120.000):</label>
             <input type="number" id="tablasMedianas" min="0" value="0" placeholder="0">
             
-            <label for="tablasGrandes">Tablas de fiambre Grande - 15 personas - 3 kg aprox. de fiambre ($150.000):</label>
+            <label for="tablasGrandes">Tablas de fiambre Grande - 15 personas - 3 kg aprox. de fiambre ($180.000):</label>
             <input type="number" id="tablasGrandes" min="0" value="0" placeholder="0">
         </div>
 
@@ -650,6 +650,18 @@
             <p style="color: #856404; margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 8px; font-weight: 600; font-size: 0.95em;">
                 ℹ️ Nota: La disponibilidad del Pan Sin TACC queda sujeta a confirmación
             </p>
+        </div>
+
+        <div class="form-section">
+            <h3>Shots Dulces (Opcional)</h3>
+            <label for="shotChocotorta">🍫 Chocotorta (unidad - $2.000 c/u):</label>
+            <input type="number" id="shotChocotorta" min="0" value="0" placeholder="0">
+
+            <label for="shotTiramisu">☕ Tiramisú (unidad - $2.000 c/u):</label>
+            <input type="number" id="shotTiramisu" min="0" value="0" placeholder="0">
+
+            <label for="shotFrutosRojos">🍓 Frutos Rojos (unidad - $2.000 c/u):</label>
+            <input type="number" id="shotFrutosRojos" min="0" value="0" placeholder="0">
         </div>
 
         <div class="form-section">
@@ -835,6 +847,9 @@
             const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value) || 0;
             const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value) || 0;
             const panSinTacc = parseInt(document.getElementById('panSinTacc').value) || 0;
+            const shotChocotorta = parseInt(document.getElementById('shotChocotorta').value) || 0;
+            const shotTiramisu = parseInt(document.getElementById('shotTiramisu').value) || 0;
+            const shotFrutosRojos = parseInt(document.getElementById('shotFrutosRojos').value) || 0;
 
             // Validar salsas
             const salsas = {};
@@ -869,11 +884,12 @@
                 costoPorPersona = personas < 20 ? 12000 : 11000;
             }
             
-            const costoEmpanada = 2000;
-            const costoTablasChicas = 50000;
-            const costoTablasMedianas = 100000;
-            const costoTablasGrandes = 150000;
+            const costoEmpanada = 2500;
+            const costoTablasChicas = 60000;
+            const costoTablasMedianas = 120000;
+            const costoTablasGrandes = 180000;
             const costoPanSinTacc = 15000;
+            const costoShot = 2000;
             
             const totalPanes = panesPorPersona * personas;
             const totalCostoPersonas = costoPorPersona * personas;
@@ -885,6 +901,9 @@
             const totalTablasMedianas = tablasMedianas * costoTablasMedianas;
             const totalTablasGrandes = tablasGrandes * costoTablasGrandes;
             const totalPanSinTacc = panSinTacc * costoPanSinTacc;
+            const totalShotChocotorta = shotChocotorta * costoShot;
+            const totalShotTiramisu = shotTiramisu * costoShot;
+            const totalShotFrutosRojos = shotFrutosRojos * costoShot;
             
             let mozos = 0;
             let mozo = 0;
@@ -918,7 +937,8 @@
 
             const totalPresupuesto = totalCostoPersonas + 
                 totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
-                totalTablasChicas + totalTablasMedianas + totalTablasGrandes + totalPanSinTacc + envio + mozo;
+                totalTablasChicas + totalTablasMedianas + totalTablasGrandes + totalPanSinTacc +
+                totalShotChocotorta + totalShotTiramisu + totalShotFrutosRojos + envio + mozo;
 
             // Mensaje WhatsApp - Formato Profesional
             const linea = '━━━━━━━━━━━━━━━━━━━━━━━';
@@ -969,6 +989,14 @@
             if (panSinTacc > 0) {
                 whatsappMessage += `• Pan Sin TACC: ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades\n`;
                 whatsappMessage += `  ⚠️ *Sujeto a disponibilidad*\n`;
+            }
+            
+            // Shots Dulces
+            if (shotChocotorta > 0 || shotTiramisu > 0 || shotFrutosRojos > 0) {
+                whatsappMessage += `• Shots Dulces 🍮:\n`;
+                if (shotChocotorta > 0) whatsappMessage += `  ✓ Chocotorta: ${shotChocotorta} unid.\n`;
+                if (shotTiramisu > 0) whatsappMessage += `  ✓ Tiramisú: ${shotTiramisu} unid.\n`;
+                if (shotFrutosRojos > 0) whatsappMessage += `  ✓ Frutos Rojos: ${shotFrutosRojos} unid.\n`;
             }
             
             whatsappMessage += `${linea}\n\n`;
@@ -1036,6 +1064,11 @@
                 ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes.toLocaleString('es-AR')}</p>` : ''}
                 ${panSinTacc > 0 ? `<p><strong>Pan Sin TACC:</strong> ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades (${totalPanSinTacc.toLocaleString('es-AR')})</p>
                 <p style="background: rgba(255,193,7,0.3); padding: 10px; border-radius: 8px; margin-top: 5px; font-weight: bold; color: #2a1810; font-size: 0.95em;">⚠️ IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN</p>` : ''}
+                ${(shotChocotorta > 0 || shotTiramisu > 0 || shotFrutosRojos > 0) ? `<p><strong>Shots Dulces 🍮:</strong>
+                ${shotChocotorta > 0 ? `Chocotorta x${shotChocotorta}` : ''}
+                ${shotTiramisu > 0 ? ` | Tiramisú x${shotTiramisu}` : ''}
+                ${shotFrutosRojos > 0 ? ` | Frutos Rojos x${shotFrutosRojos}` : ''}
+                ($${(totalShotChocotorta + totalShotTiramisu + totalShotFrutosRojos).toLocaleString('es-AR')})</p>` : ''}
                 ${envio === 0 && mozo === 0 ? `<p><strong>Retiro:</strong> En local (Se retira con una bandeja de horno)</p>` : ''}
                 ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio.toLocaleString('es-AR')}</p>` : ''}
                 ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozoText} (${mozo.toLocaleString('es-AR')})</p>` : ''}
