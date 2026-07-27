@@ -739,23 +739,6 @@
             maxSalsasSpan.textContent = totalSalsas;
             seleccionSalsasDiv.style.display = 'block';
 
-            // Validación corregida de salsas
-            document.querySelectorAll('.salsa-qty').forEach(input => {
-                input.addEventListener('input', function() {
-                    const totalSalsas = parseInt(document.getElementById('salsas').value);
-                    const currentSum = Array.from(document.querySelectorAll('.salsa-qty'))
-                                          .reduce((sum, el) => sum + parseInt(el.value || 0), 0);
-                    
-                    if (currentSum > totalSalsas) {
-                        document.getElementById('errorSalsas').style.display = 'block';
-                        const remaining = totalSalsas - (currentSum - parseInt(this.value));
-                        this.value = Math.max(0, Math.min(remaining, parseInt(this.value)));
-                    } else {
-                        document.getElementById('errorSalsas').style.display = 'none';
-                    }
-                });
-            });
-
             validarDatos();
         }
 
@@ -1091,9 +1074,23 @@
         document.getElementById('direccion').addEventListener('input', validarDatos);
         document.getElementById('fechaHora').addEventListener('input', validarDatos);
         document.getElementById('observaciones').addEventListener('input', validarDatos);
+
+        // Validación de salsas (se adjunta una sola vez para no apilar listeners)
+        document.querySelectorAll('.salsa-qty').forEach(input => {
+            input.addEventListener('input', function() {
+                const totalSalsas = parseInt(document.getElementById('salsas').value) || 0;
+                const currentSum = Array.from(document.querySelectorAll('.salsa-qty'))
+                                      .reduce((sum, el) => sum + (parseInt(el.value) || 0), 0);
+                // Solo avisamos si se pasa del máximo; no reseteamos el valor,
+                // así se puede subir una salsa y bajar otra en cualquier orden.
+                document.getElementById('errorSalsas').style.display =
+                    currentSum > totalSalsas ? 'block' : 'none';
+            });
+        });
     </script>
 </body>
 </html>
+
 
 
 
