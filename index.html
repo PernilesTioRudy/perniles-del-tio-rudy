@@ -1,1109 +1,1409 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Presupuestos de Perniles - Perniles del Tío Rudy</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perniles del Tío Rudy – Presupuesto</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJBjpobjNin18Sp3-TQE9x5zI8PMtXYQ&libraries=places&language=es&region=AR" async defer></script>
+<style>
+  :root {
+    --gold:    #D4A044;
+    --gold2:   #F0C060;
+    --brown:   #5C3A1E;
+    --dark:    #2A1810;
+    --cream:   #FDF6EC;
+    --red:     #C0392B;
+    --green:   #27AE60;
+    --wa:      #25D366;
+    --radius:  18px;
+    --shadow:  0 8px 32px rgba(42,24,16,.18);
+  }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #d4a574 0%, #8b5a3c 100%);
-            min-height: 100vh;
-            padding: 20px 0;
-        }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        header {
-            background: linear-gradient(135deg, #2a1810 0%, #5c3a1e 100%);
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
+  body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(160deg, #2A1810 0%, #5C3A1E 60%, #8B5A2B 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 40px;
+  }
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+  /* ── HEADER ── */
+  .app-header {
+    width: 100%;
+    background: linear-gradient(135deg, #1a0e08 0%, #3d2210 100%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .app-header img {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .app-header-text h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold2);
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+  .app-header-text p {
+    color: rgba(255,255,255,.65);
+    font-size: .78rem;
+  }
 
-        .logo-container {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            border: 4px solid #d4a574;
-            background: white;
-        }
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    width: 100%; max-width: 480px;
+    padding: 14px 20px 0;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    color: rgba(255,255,255,.7);
+    font-size: .78rem;
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    border-radius: 99px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
 
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+  /* ── CARD ── */
+  .card {
+    width: 100%; max-width: 480px;
+    background: var(--cream);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 14px 16px 0;
+    overflow: hidden;
+    animation: slideUp .35s ease both;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-        header h1 {
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 10px;
-            color: white;
-        }
+  .card-head {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 100%);
+    padding: 22px 24px 18px;
+  }
+  .step-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 700;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .card-head h2 {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  .card-head p {
+    color: rgba(255,255,255,.65);
+    font-size: .88rem;
+    margin-top: 5px;
+    line-height: 1.45;
+  }
 
-        header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
+  .card-body { padding: 24px; }
 
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
+  /* ── INPUTS ── */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-weight: 700;
+    font-size: .92rem;
+    color: var(--dark);
+    margin-bottom: 7px;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="datetime-local"],
+  .field textarea {
+    width: 100%;
+    padding: 15px 16px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-family: 'Lato', sans-serif;
+    color: var(--dark);
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212,160,68,.15);
+  }
+  .field textarea { resize: vertical; min-height: 110px; }
 
-        h1 {
-            text-align: center;
-            color: #2a1810;
-            margin-bottom: 30px;
-            font-size: 2em;
-        }
+  /* ── ERROR ── */
+  .field-error {
+    color: var(--red);
+    font-size: .82rem;
+    margin-top: 5px;
+    display: none;
+  }
+  .field-error.show { display: block; }
 
-        .form-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            border-left: 5px solid #d4a574;
-        }
+  /* ── CHOICE CARDS (single/multi) ── */
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 2.5px solid #ddd;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .15s;
+    background: #fff;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice-card:active { transform: scale(.98); }
+  .choice-card.selected {
+    border-color: var(--gold);
+    background: #FFF8EC;
+  }
+  .choice-card.selected .choice-check {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .choice-card.selected .choice-check::after { opacity: 1; }
 
-        .form-section h3 {
-            color: #2a1810;
-            margin-bottom: 20px;
-            font-size: 1.3em;
-            display: flex;
-            align-items: center;
-        }
+  .choice-check {
+    width: 24px; height: 24px; flex-shrink: 0;
+    border: 2.5px solid #bbb;
+    border-radius: 50%;
+    margin-top: 1px;
+    position: relative;
+    transition: background .2s, border-color .2s;
+  }
+  .choice-check.square { border-radius: 6px; }
+  .choice-check::after {
+    content: '';
+    position: absolute;
+    left: 5px; top: 2px;
+    width: 10px; height: 7px;
+    border-left: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg);
+    opacity: 0;
+    transition: opacity .15s;
+  }
 
-        .form-section h3::before {
-            content: "📋";
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
+  .choice-info { flex: 1; }
+  .choice-info strong {
+    display: block;
+    font-size: 1.05rem;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+  .choice-info span {
+    display: block;
+    font-size: .83rem;
+    color: #777;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .choice-info .badge-tag {
+    display: inline-block;
+    background: #E8F5E9;
+    color: var(--green);
+    font-size: .75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-top: 5px;
+  }
+  .choice-emoji { font-size: 1.8rem; flex-shrink: 0; }
 
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 0.95em;
-        }
+  /* ── SALSA COUNTER ROWS ── */
+  .salsa-rows { display: flex; flex-direction: column; gap: 10px; }
+  .salsa-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: border-color .2s;
+  }
+  .salsa-row.active { border-color: var(--gold); background: #FFF8EC; }
+  .salsa-name { font-weight: 700; font-size: .95rem; color: var(--dark); }
+  .counter {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .counter-btn {
+    width: 36px; height: 36px;
+    border: none; border-radius: 50%;
+    background: var(--brown);
+    color: #fff;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, transform .1s;
+    flex-shrink: 0;
+  }
+  .counter-btn:active { transform: scale(.9); }
+  .counter-btn.plus { background: var(--gold); color: var(--dark); }
+  .counter-val {
+    font-size: 1.1rem; font-weight: 700;
+    min-width: 24px; text-align: center;
+    color: var(--dark);
+  }
+  .salsas-quota {
+    background: linear-gradient(135deg, var(--dark), var(--brown));
+    color: #fff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .salsas-quota span { font-size: .9rem; opacity: .85; }
+  .salsas-quota strong { font-size: 1.3rem; }
 
-        input[type="number"], 
-        select, 
-        input[type="text"], 
-        input[type="datetime-local"], 
-        textarea {
-            width: 100%;
-            padding: 12px 15px;
-            margin-top: 5px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            background: white;
-        }
+  /* ── OPCIONAL DETAIL SECTION ── */
+  .opcional-section {
+    margin-top: 18px;
+    border-top: 2px dashed #e0d0b8;
+    padding-top: 18px;
+    display: none;
+    animation: fadeIn .3s ease both;
+  }
+  .opcional-section.show { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .opcional-section h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--brown);
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #d4a574;
-            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
-        }
+  /* Empanadas number rows */
+  .num-rows { display: flex; flex-direction: column; gap: 10px; }
+  .num-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+  .num-row-left { display: flex; flex-direction: column; }
+  .num-row-left strong { font-size: .95rem; color: var(--dark); font-weight: 700; }
+  .num-row-left span { font-size: .78rem; color: #999; margin-top: 1px; }
 
-        input.invalid, textarea.invalid {
-            border-color: #e74c3c;
-            background: #fff5f5;
-        }
+  /* ── DIRECCIÓN ── */
+  #dir-section {
+    margin-top: 16px;
+    display: none;
+    animation: fadeIn .3s ease both;
+  }
+  #dir-section.show { display: block; }
 
-        button {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #d4a574 0%, #8b5a3c 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            margin-top: 30px;
-            cursor: not-allowed;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            opacity: 0.6;
-        }
+  /* ── INFO BOX ── */
+  .info-box {
+    background: #FFF8EC;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 13px 16px;
+    margin-bottom: 18px;
+    font-size: .88rem;
+    color: var(--brown);
+    line-height: 1.5;
+  }
 
-        button.enabled {
-            cursor: pointer;
-            opacity: 1;
-        }
+  /* ── BUTTONS ── */
+  .btn {
+    display: block; width: 100%;
+    padding: 18px;
+    border: none; border-radius: 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, opacity .2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--brown) 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(92,58,30,.35);
+  }
+  .btn-primary:disabled {
+    opacity: .45; cursor: not-allowed; transform: none; box-shadow: none;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--brown);
+    border: 2.5px solid var(--brown);
+    margin-top: 10px;
+  }
+  .btn-wa {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: #fff;
+    font-size: 1.15rem;
+    box-shadow: 0 6px 20px rgba(37,211,102,.3);
+  }
+  .btn-wrap { margin-top: 24px; display: flex; flex-direction: column; gap: 0; }
 
-        button.enabled:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(212, 165, 116, 0.4);
-        }
+  /* ── RESUMEN ── */
+  .resumen-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(42,24,16,.1);
+    margin-bottom: 18px;
+  }
+  .resumen-head {
+    background: linear-gradient(135deg, var(--dark), var(--brown));
+    padding: 16px 20px;
+    color: #fff;
+  }
+  .resumen-head h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+  }
+  .resumen-body { padding: 16px 20px; }
+  .resumen-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0e8dc;
+    font-size: .92rem;
+    gap: 10px;
+  }
+  .resumen-row:last-child { border-bottom: none; }
+  .resumen-row .rk { color: #777; flex-shrink: 0; }
+  .resumen-row .rv { font-weight: 700; color: var(--dark); text-align: right; }
+  .total-row {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .total-row span { font-size: .95rem; font-weight: 700; color: var(--dark); }
+  .total-row strong { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--dark); }
 
-        .result {
-            margin-top: 30px;
-            padding: 30px;
-            background: white;
-            border-radius: 15px;
-            border: 3px solid #d4a574;
-            color: #2a1810;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
+  .seña-note {
+    background: #FFF8EC;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: .85rem;
+    color: var(--brown);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .seña-note strong { display: block; margin-bottom: 4px; font-size: .92rem; }
 
-        .result p {
-            margin: 12px 0;
-            font-size: 1.05em;
-            line-height: 1.6;
-            color: #333;
-        }
+  /* Pantalla oculta / visible */
+  .screen { display: none; }
+  .screen.active { display: block; }
 
-        .result strong {
-            font-weight: 700;
-            color: #2a1810;
-        }
+  /* ── MODAL DOMINGO ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.8);
+    display: none; align-items: center; justify-content: center;
+    z-index: 999; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: #fff; border-radius: 18px;
+    padding: 32px 28px; max-width: 360px; width: 100%;
+    text-align: center; border: 4px solid #FFC107;
+    animation: slideUp .3s ease both;
+  }
+  .modal-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; color:#856404; margin-bottom:12px; }
+  .modal-box p { font-size:.93rem; color:#555; line-height:1.5; margin-bottom:14px; }
+  .modal-box .alt { background:#E8F5E9; border:2px solid #81C784; border-radius:10px; padding:12px; font-size:.88rem; color:#2E7D32; font-weight:700; margin-bottom:18px; }
 
-        .whatsapp-button {
-            margin-top: 20px;
-            display: block;
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: not-allowed;
-            transition: all 0.3s ease;
-            opacity: 0.6;
-        }
+  /* ── WELCOME MODAL ── */
+  #welcome-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; padding: 20px;
+  }
+  #welcome-modal.hidden { display: none; }
+  .welcome-box {
+    background: #fff; border-radius: 20px;
+    padding: 36px 28px; max-width: 360px; width: 100%;
+    text-align: center; border: 4px solid var(--gold);
+    animation: slideUp .4s ease both;
+  }
+  .welcome-box .wlogo {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 4px solid var(--gold); object-fit: cover;
+    margin: 0 auto 16px;
+    display: block;
+  }
+  .welcome-box h2 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--dark); margin-bottom:8px; }
+  .welcome-box p { font-size:.93rem; color:#555; line-height:1.5; margin-bottom:14px; }
+  .welcome-box .tagline {
+    background: linear-gradient(135deg, var(--dark), var(--brown));
+    color: var(--gold2);
+    font-weight: 700; font-size: .88rem;
+    padding: 10px 16px; border-radius: 10px;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: .04em;
+  }
 
-        .whatsapp-button::before {
-            content: "📱 ";
-            font-size: 1.2em;
-        }
-
-        .whatsapp-button.enabled {
-            cursor: pointer;
-            opacity: 1;
-        }
-
-        .whatsapp-button.enabled:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
-        }
-
-        footer {
-            background: linear-gradient(135deg, #2a1810 0%, #5c3a1e 100%);
-            color: white;
-            text-align: center;
-            padding: 25px;
-            margin-top: 40px;
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        footer p {
-            font-size: 1em;
-        }
-
-        #seleccionSalsas {
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border: 2px solid #d4a574;
-            border-radius: 12px;
-        }
-
-        #seleccionSalsas > label {
-            color: #d4a574;
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-        }
-
-        .salsa-item {
-            margin: 15px 0;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .salsa-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
-        }
-
-        .salsa-item label {
-            margin: 0;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .salsa-qty {
-            width: 80px;
-            padding: 8px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-        }
-
-        #errorSalsas {
-            color: #e74c3c;
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: #fee;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .nota-importante {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 12px;
-            color: #856404;
-            font-weight: 600;
-            font-size: 1.05em;
-        }
-
-        .gracias {
-            text-align: center;
-            margin-top: 20px;
-            padding: 25px;
-            background: linear-gradient(135deg, #d4a574 0%, #8b5a3c 100%);
-            color: white;
-            border-radius: 12px;
-            font-size: 1.3em;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Modal de Bienvenida */
-        #modalBienvenida {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            border: 5px solid #d4a574;
-            animation: slideDown 0.5s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-content h2 {
-            color: #2a1810;
-            font-size: 28px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .modal-content p {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .modal-content .destacado {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #d4a574;
-            margin: 20px 0;
-            font-weight: bold;
-            color: #856404;
-        }
-
-        #btnAceptar {
-            background-color: #28a745;
-            color: white;
-            padding: 15px 40px;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        #btnAceptar:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-
-        .ocultar {
-            display: none !important;
-        }
-
-        /* Modal de Domingo */
-        #modalDomingo {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        #modalDomingo.mostrar {
-            display: flex;
-        }
-
-        .modal-domingo-content {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            border: 5px solid #ffc107;
-            animation: slideDown 0.5s ease-out;
-        }
-
-        .modal-domingo-content h2 {
-            color: #856404;
-            font-size: 26px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .modal-domingo-content p {
-            font-size: 17px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .modal-domingo-content .alternativa {
-            background-color: #d4f4dd;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #28a745;
-            margin: 20px 0;
-            font-weight: bold;
-            color: #155724;
-        }
-
-        .btn-domingo {
-            background-color: #d4a574;
-            color: white;
-            padding: 15px 40px;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-domingo:hover {
-            background-color: #8b5a3c;
-            transform: scale(1.05);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-                margin: 20px 10px;
-            }
-
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            .logo-container {
-                width: 90px;
-                height: 90px;
-            }
-        }
-    </style>
+  @media (min-width: 500px) {
+    .card { margin: 18px auto 0; }
+    .progress-wrap { margin: 0 auto; }
+  }
+</style>
 </head>
 <body>
-    <!-- Modal de Bienvenida -->
-    <div id="modalBienvenida">
-        <div class="modal-content">
-            <h2>🍖 ¡Bienvenido! 🍖</h2>
-            <p><strong>Calculadora de Presupuestos</strong></p>
-            <p>Perniles del Tío Rudy</p>
-            <div class="destacado">
-                Más de 30 años brindando calidad y sabor<br>
-                en cada evento especial
-            </div>
-            <p>Completá los datos y obtené tu presupuesto personalizado al instante</p>
-            <p style="font-size: 16px; margin-top: 20px;">📍 San Martín 1716, Neuquén Capital</p>
-            <button id="btnAceptar">COMENZAR</button>
+
+<!-- WELCOME MODAL -->
+<div id="welcome-modal">
+  <div class="welcome-box">
+    <img class="wlogo" src="logo.png" alt="Logo">
+    <h2>🍖 ¡Bienvenido!</h2>
+    <p>Te vamos a guiar paso a paso para armar tu presupuesto personalizado.</p>
+    <div class="tagline">Más de 30 años · Calidad · Honestidad · Buen Gusto</div>
+    <p style="font-size:.82rem;color:#888;margin-bottom:20px;">📍 San Martín 1716, Neuquén Capital</p>
+    <button class="btn btn-primary" onclick="closeWelcome()">¡EMPEZAR! 🚀</button>
+  </div>
+</div>
+
+<!-- DOMINGO MODAL -->
+<div class="modal-overlay" id="modal-domingo">
+  <div class="modal-box">
+    <h3>⚠️ Los domingos no trabajamos</h3>
+    <p>No podemos entregar pedidos los días <strong>domingo</strong>.</p>
+    <div class="alt">✅ Alternativa: retiralo el sábado a la noche y te explicamos cómo calentarlo para el domingo.</div>
+    <button class="btn btn-primary" onclick="closeDomingo()">ENTENDIDO</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <img src="logo.png" alt="Logo Tío Rudy">
+  <div class="app-header-text">
+    <h1>Perniles del Tío Rudy</h1>
+    <p>La mejor calidad para tu evento</p>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="prog-label">Paso 1 de 7</span>
+    <span id="prog-pct">14%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:14%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 1 – Datos básicos
+══════════════════════════════════════════════ -->
+<div class="screen active" id="s1">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 1 de 7</div>
+    <h2>Contanos sobre tu evento</h2>
+    <p>Estos datos son necesarios para preparar tu presupuesto.</p>
+  </div>
+  <div class="card-body">
+    <div class="field">
+      <label>👤 Tu nombre completo</label>
+      <input type="text" id="inp-nombre" placeholder="Ej: Juan García" oninput="validateS1()">
+      <div class="field-error" id="err-nombre">Por favor ingresá tu nombre.</div>
+    </div>
+    <div class="field">
+      <label>📱 Número de teléfono</label>
+      <input type="text" id="inp-tel" placeholder="Ej: 2994520532" oninput="validateS1()">
+      <div class="field-error" id="err-tel">Por favor ingresá tu teléfono.</div>
+    </div>
+    <div class="field">
+      <label>👥 Cantidad de personas</label>
+      <input type="number" id="inp-personas" min="10" placeholder="Mínimo 10 personas" oninput="validateS1()">
+      <div class="field-error" id="err-personas">Mínimo 10 personas.</div>
+    </div>
+    <div class="field">
+      <label>📅 Fecha y hora del evento</label>
+      <input type="datetime-local" id="inp-fecha" onchange="checkDomingo(); validateS1()">
+      <div class="field-error" id="err-fecha">Seleccioná la fecha del evento.</div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s1" onclick="goTo(2)" disabled>SIGUIENTE →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 2 – Salsas
+══════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 2 de 7</div>
+    <h2>Elegí tus salsas</h2>
+    <p>Todas son sin gluten (sin TACC). Podés distribuir la cantidad como quieras.</p>
+  </div>
+  <div class="card-body">
+    <div class="salsas-quota">
+      <span>Salsas incluidas</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <strong id="salsas-usadas">0</strong>
+        <span style="opacity:.5;">/</span>
+        <strong id="salsas-total">0</strong>
+      </div>
+    </div>
+    <div class="salsa-rows" id="salsa-rows">
+      <!-- generado por JS -->
+    </div>
+    <div class="field-error show" id="err-salsas" style="display:none!important"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="goTo(3)">SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(1)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 3 – Tipo de pernil
+══════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 3 de 7</div>
+    <h2>¿Qué tipo de pernil querés?</h2>
+    <p>Seleccioná una sola opción.</p>
+  </div>
+  <div class="card-body">
+    <div class="choices" id="tipo-choices">
+      <div class="choice-card" data-val="vacuno" onclick="selectTipo(this)">
+        <span class="choice-emoji">🐄</span>
+        <div class="choice-info">
+          <strong>Vacuno</strong>
+          <span>Clásico pernil de vaca, tierno y jugoso.</span>
         </div>
+        <div class="choice-check"></div>
+      </div>
+      <div class="choice-card" data-val="cerdo" onclick="selectTipo(this)">
+        <span class="choice-emoji">🐷</span>
+        <div class="choice-info">
+          <strong>Cerdo</strong>
+          <span>Sabor tradicional, suave y con mucho gusto.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+      <div class="choice-card d-mixto" data-val="mixto" onclick="selectTipo(this)" style="display:none;">
+
+        <span class="choice-emoji">🥩</span>
+        <div class="choice-info">
+          <strong>Mixto</strong>
+          <span>Combinación de vacuno y cerdo. Disponible desde 20 personas.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s3" onclick="goTo(4)" disabled>SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(2)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 4 – Entrega / Mozo
+══════════════════════════════════════════════ -->
+<div class="screen" id="s4">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 4 de 7</div>
+    <h2>¿Cómo querés recibir el pedido?</h2>
+    <p>El pernil no va fileteado — por eso te damos la opción del mozo de corte.</p>
+  </div>
+  <div class="card-body">
+    <div class="choices">
+
+      <div class="choice-card" data-val="retiro" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🏪</span>
+        <div class="choice-info">
+          <strong>Lo retiro en el local</strong>
+          <span>San Martín 1716, Neuquén Capital. El cliente retira con su propia bandeja de horno.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="envio-capital" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🚗</span>
+        <div class="choice-info">
+          <strong>Envío a domicilio – Capital</strong>
+          <span>Neuquén Capital hasta 3 km. $10.000</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="envio-alred" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🗺️</span>
+        <div class="choice-info">
+          <strong>Envío a domicilio – Alrededores</strong>
+          <span>Zona exterior a Neuquén Capital. $25.000</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="mozo-capital" onclick="selectEntrega(this)">
+        <span class="choice-emoji">👨‍🍳</span>
+        <div class="choice-info">
+          <strong>Mozo de corte – Capital</strong>
+          <span>Neuquén Capital.</span>
+          <span class="badge-tag">✅ El envío es bonificado</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="mozo-alred" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🏡</span>
+        <div class="choice-info">
+          <strong>Mozo de corte – Alrededores</strong>
+          <span>Hasta 20 km de Neuquén Capital.</span>
+          <span class="badge-tag">✅ El envío es bonificado</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
     </div>
 
-    <!-- Modal de Domingo -->
-    <div id="modalDomingo">
-        <div class="modal-domingo-content">
-            <h2>⚠️ Los Domingos No Trabajamos</h2>
-            <p>No podemos entregar pedidos los días <strong>domingo</strong>.</p>
-            <div class="alternativa">
-                ✅ ALTERNATIVA:<br>
-                Retiralo el sábado a la noche y te explicamos<br>
-                cómo calentarlo correctamente para el domingo
-            </div>
-            <p><strong>Por favor, seleccioná otra fecha para continuar con el presupuesto.</strong></p>
-            <button class="btn-domingo" onclick="cerrarModalDomingo()">ENTENDIDO</button>
+    <!-- Dirección (si no es retiro) -->
+    <div id="dir-section">
+      <div class="field" style="margin-top:16px">
+        <label>📍 Dirección del evento</label>
+        <div style="position:relative;">
+          <input type="text" id="inp-direccion" 
+            placeholder="Escribí la calle y número..." 
+            oninput="onDirInput()"
+            autocomplete="off">
+          <div id="dir-searching" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#aaa;font-size:.82rem;">🔍</div>
         </div>
-    </div>
+        <div class="field-error" id="err-dir">Ingresá la dirección del evento.</div>
 
-    <header>
-        <div class="header-content">
-            <div class="logo-container">
-                <img src="logo.png" alt="Logo Perniles del Tío Rudy">
-            </div>
+        <!-- Mapa preview -->
+        <div id="map-preview" style="display:none;margin-top:12px;border-radius:12px;overflow:hidden;border:2px solid var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.12);">
+          <div id="map-container" style="width:100%;height:200px;"></div>
+          <div style="background:#fff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
             <div>
-                <h1>🍖 Perniles del Tío Rudy 🍖</h1>
-                <p>La mejor calidad para tu evento especial</p>
+              <div id="map-address-txt" style="font-weight:700;font-size:.88rem;color:var(--dark);line-height:1.3;"></div>
+              <div id="map-coords-txt" style="font-size:.75rem;color:#aaa;margin-top:2px;"></div>
             </div>
+            <a id="map-open-btn" href="#" target="_blank"
+              style="background:linear-gradient(135deg,#4285F4,#1a73e8);color:#fff;text-decoration:none;
+                     padding:9px 14px;border-radius:10px;font-size:.82rem;font-weight:700;
+                     white-space:nowrap;flex-shrink:0;box-shadow:0 3px 10px rgba(66,133,244,.35);">
+              🗺️ Ver en Maps
+            </a>
+          </div>
         </div>
-    </header>
+      </div>
+    </div>
 
-    <main class="container">
-        <h1>Calculadora de Presupuestos</h1>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s4" onclick="goTo(5)" disabled>SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(3)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
 
-        <div class="form-section">
-            <h3>Campos Obligatorios</h3>
-            <label for="nombre">Nombre completo:</label>
-            <input type="text" id="nombre" class="required" placeholder="Ingrese su nombre">
-            
-            <label for="telefono">Número de Teléfono:</label>
-            <input type="text" id="telefono" class="required" placeholder="Ej: 2994520532">
-            
-            <label for="fechaHora">Fecha y hora del evento:</label>
-            <input type="datetime-local" id="fechaHora" class="required-event">
-            
-            <label for="personas">Cantidad de personas:</label>
-            <input type="number" id="personas" min="10" oninput="actualizarOpciones()" class="required" placeholder="Mínimo 10 personas">
-            
-            <label for="tipo">Tipo de pernil:</label>
-            <select id="tipo">
-                <option value="vacuno">Vacuno</option>
-                <option value="cerdo">Cerdo</option>
-                <option value="mixto">Mixto</option>
-            </select>
+<!-- ═══════════════════════════════════════════
+     PANTALLA 5 – Opcionales
+══════════════════════════════════════════════ -->
+<div class="screen" id="s5">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 5 de 7</div>
+    <h2>¿Querés agregar algo más?</h2>
+    <p>Podés seleccionar uno o varios opcionales.</p>
+  </div>
+  <div class="card-body">
+    <div class="choices">
+
+      <div class="choice-card multi" data-val="pan-sin-tacc" onclick="toggleOpcional(this)">
+        <span class="choice-emoji">🍞</span>
+        <div class="choice-info">
+          <strong>Pan Sin TACC</strong>
+          <span>$15.000 por docena (12 unidades). Sujeto a disponibilidad.</span>
         </div>
+        <div class="choice-check square"></div>
+      </div>
 
-        <div class="form-section">
-            <h3>Salsas Incluidas</h3>
-            <label for="salsas">Cantidad de salsas incluidas:</label>
-            <input type="number" id="salsas" min="0" value="0" readonly>
-
-            <div id="seleccionSalsas" style="display: none;">
-                <label>Seleccione las salsas (máximo: <span id="maxSalsas">0</span>):</label>
-                
-                <div class="salsa-item">
-                    <label>Cuatro Quesos:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Cuatro Quesos">
-                </div>
-                <div class="salsa-item">
-                    <label>Provenzal:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Provenzal">
-                </div>
-                <div class="salsa-item">
-                    <label>Tártara:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Tartara">
-                </div>
-                <div class="salsa-item">
-                    <label>Aceitunas:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Aceitunas">
-                </div>
-                <div class="salsa-item">
-                    <label>Criolla:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Criolla">
-                </div>
-                <div class="salsa-item">
-                    <label>Berenjenas:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Berenjenas">
-                </div>
-                <div class="salsa-item">
-                    <label>Prov. con Verdeo:</label>
-                    <input type="number" class="salsa-qty" min="0" value="0" data-salsa="Prov. con Verdeo">
-                </div>
-                <p id="errorSalsas">¡No puede exceder la cantidad total de salsas!</p>
-            </div>
+      <div class="choice-card multi" data-val="empanadas" onclick="toggleOpcional(this)">
+        <span class="choice-emoji">🥟</span>
+        <div class="choice-info">
+          <strong>Empanadas</strong>
+          <span id="lbl-emp-card">$2.500 c/u · Carne, Jamón & Queso, Choclo, Verdura.</span>
         </div>
+        <div class="choice-check square"></div>
+      </div>
 
-        <div class="form-section">
-            <h3>Servicios Adicionales</h3>
-            <label for="envio">Opción de envío:</label>
-            <select id="envio" onchange="mostrarDatosEvento()">
-                <option value="0">Retiro en local (Se retira con una bandeja de horno)</option>
-                <option value="10000">Envío a domicilio Neuquén Capital hasta 3 km ($10.000)</option>
-                <option value="25000">Envío a domicilio Alrededores ($25.000)</option>
-            </select>
-            
-            <label for="mozo">Servicio de mozo de corte:</label>
-            <select id="mozo" onchange="mostrarDatosEvento()">
-                <option value="0">Ninguno</option>
-                <option value="neuquen">Mozo de corte en Neuquén Capital</option>
-                <option value="alrededores">Mozo de corte en Alrededores (hasta 20 kms)</option>
-            </select>
-
-            <div id="datosEvento" style="display: none;">
-                <label for="direccion">Dirección del evento:</label>
-                <input type="text" id="direccion" class="required-event" placeholder="Calle, número, localidad">
-            </div>
+      <div class="choice-card multi" data-val="tablas" onclick="toggleOpcional(this)">
+        <span class="choice-emoji">🧀</span>
+        <div class="choice-info">
+          <strong>Tablas de Fiambre Premium</strong>
+          <span id="lbl-tab-card">Chica $60.000 · Mediana $120.000 · Grande $180.000</span>
         </div>
+        <div class="choice-check square"></div>
+      </div>
 
-        <div class="form-section">
-            <h3>Empanadas (Opcional)</h3>
-            <label for="empanadasCarne">Empanadas de carne (unidad - $2.500 c/u):</label>
-            <input type="number" id="empanadasCarne" min="0" value="0" placeholder="0">
-            
-            <label for="empanadasJamonQueso">Empanadas de jamón y queso (unidad - $2.500 c/u):</label>
-            <input type="number" id="empanadasJamonQueso" min="0" value="0" placeholder="0">
-            
-            <label for="empanadasChoclo">Empanadas de choclo (unidad - $2.500 c/u):</label>
-            <input type="number" id="empanadasChoclo" min="0" value="0" placeholder="0">
+    </div>
 
-            <label for="empanadasVerdura">Empanadas de verdura (unidad - $2.500 c/u):</label>
-            <input type="number" id="empanadasVerdura" min="0" value="0" placeholder="0">
+    <!-- Pan Sin TACC detail -->
+    <div class="opcional-section" id="sec-pan-sin-tacc">
+      <h4>🍞 Pan Sin TACC</h4>
+      <div class="num-rows">
+        <div class="num-row">
+          <div class="num-row-left">
+            <strong>Docenas de Pan Sin TACC</strong>
+            <span>$15.000 por docena · 12 unidades c/u</span>
+          </div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('pan-sin-tacc',-1)">−</button>
+            <span class="counter-val" id="num-pan-sin-tacc">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('pan-sin-tacc',1)">+</button>
+          </div>
         </div>
+      </div>
+      <div class="info-box" style="margin-top:12px">⚠️ La disponibilidad queda sujeta a confirmación.</div>
+    </div>
 
-        <div class="form-section">
-            <h3>Tablas de Fiambre (Opcional)</h3>
-            <label for="tablasChicas">Tablas de fiambre Chica - 5 personas - 1 kg aprox. de fiambre ($60.000):</label>
-            <input type="number" id="tablasChicas" min="0" value="0" placeholder="0">
-            
-            <label for="tablasMedianas">Tablas de fiambre Mediana - 10 personas - 2 kg aprox. de fiambre ($120.000):</label>
-            <input type="number" id="tablasMedianas" min="0" value="0" placeholder="0">
-            
-            <label for="tablasGrandes">Tablas de fiambre Grande - 15 personas - 3 kg aprox. de fiambre ($180.000):</label>
-            <input type="number" id="tablasGrandes" min="0" value="0" placeholder="0">
+    <!-- Empanadas detail -->
+    <div class="opcional-section" id="sec-empanadas">
+      <h4>🥟 Empanadas</h4>
+      <div class="num-rows">
+        <div class="num-row">
+          <div class="num-row-left"><strong>Carne</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-carne',-1)">−</button>
+            <span class="counter-val" id="num-emp-carne">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-carne',1)">+</button>
+          </div>
         </div>
-
-        <div class="form-section">
-            <h3>Pan Sin TACC (Opcional)</h3>
-            <label for="panSinTacc">Cantidad de docenas de Pan Sin TACC ($15.000 por docena):</label>
-            <input type="number" id="panSinTacc" min="0" value="0" placeholder="0" oninput="validarPanSinTacc()">
-            <p id="errorPanSinTacc" style="color: #e74c3c; display: none; margin-top: 10px; padding: 10px; background: #fee; border-radius: 8px; font-weight: bold;">
-                ⚠️ El pedido mínimo es de 1 docena (12 unidades)
-            </p>
-            <p style="color: #856404; margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 8px; font-weight: 600; font-size: 0.95em;">
-                ℹ️ Nota: La disponibilidad del Pan Sin TACC queda sujeta a confirmación
-            </p>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Jamón & Queso</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-jq',-1)">−</button>
+            <span class="counter-val" id="num-emp-jq">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-jq',1)">+</button>
+          </div>
         </div>
-
-        <div class="form-section">
-            <h3>Shots Dulces (Opcional)</h3>
-            <label for="shotChocotorta">🍫 Chocotorta (unidad - $2.000 c/u):</label>
-            <input type="number" id="shotChocotorta" min="0" value="0" placeholder="0">
-
-            <label for="shotTiramisu">☕ Tiramisú (unidad - $2.000 c/u):</label>
-            <input type="number" id="shotTiramisu" min="0" value="0" placeholder="0">
-
-            <label for="shotFrutosRojos">🍓 Frutos Rojos (unidad - $2.000 c/u):</label>
-            <input type="number" id="shotFrutosRojos" min="0" value="0" placeholder="0">
+        <div class="num-row">
+          <div class="num-row-left"><strong>Choclo</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-choclo',-1)">−</button>
+            <span class="counter-val" id="num-emp-choclo">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-choclo',1)">+</button>
+          </div>
         </div>
-
-        <div class="form-section">
-            <h3>Observaciones</h3>
-            <label for="observaciones">Comentarios adicionales:</label>
-            <textarea id="observaciones" rows="4" placeholder="Ingrese aquí cualquier observación o comentario adicional..."></textarea>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Verdura</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-verdura',-1)">−</button>
+            <span class="counter-val" id="num-emp-verdura">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-verdura',1)">+</button>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <button id="calcularButton" onclick="calcularPresupuesto()" disabled>Calcular Presupuesto</button>
-        
-        <div class="result" id="resultado"></div>
-
-        <a id="whatsapp-link" class="whatsapp-button" href="#" target="_blank" style="display: none;">Enviar presupuesto por WhatsApp</a>
-
-        <div class="nota-importante">
-            ⚠️ Nota Importante: El pernil no va fileteado, es por ello que se ofrece la opción de mozo de corte
+    <!-- Tablas detail -->
+    <div class="opcional-section" id="sec-tablas">
+      <h4>🧀 Tablas de Fiambre Premium</h4>
+      <div class="num-rows">
+        <div class="num-row">
+          <div class="num-row-left"><strong>Tabla Chica</strong><span id="lbl-tab-chica">5 personas · ~1 kg · $60.000</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('tabla-chica',-1)">−</button>
+            <span class="counter-val" id="num-tabla-chica">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('tabla-chica',1)">+</button>
+          </div>
         </div>
-
-        <div class="gracias">
-            ❤️ GRACIAS POR ELEGIR A PERNILES DEL TÍO RUDY ❤️
+        <div class="num-row">
+          <div class="num-row-left"><strong>Tabla Mediana</strong><span id="lbl-tab-mediana">10 personas · ~2 kg · $120.000</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('tabla-mediana',-1)">−</button>
+            <span class="counter-val" id="num-tabla-mediana">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('tabla-mediana',1)">+</button>
+          </div>
         </div>
-    </main>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Tabla Grande</strong><span id="lbl-tab-grande">15 personas · ~3 kg · $180.000</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('tabla-grande',-1)">−</button>
+            <span class="counter-val" id="num-tabla-grande">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('tabla-grande',1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <footer>
-        <p>&copy; 2024 Perniles del Tío Rudy. Todos los derechos reservados.</p>
-    </footer>
-    
-    <script>
-        // Funcionalidad del modal de bienvenida
-        document.getElementById('btnAceptar').addEventListener('click', function() {
-            document.getElementById('modalBienvenida').classList.add('ocultar');
-        });
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="goTo(6)">SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(4)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
 
-        // Función para cerrar modal de domingo
-        function cerrarModalDomingo() {
-            document.getElementById('modalDomingo').classList.remove('mostrar');
+<!-- ═══════════════════════════════════════════
+     PANTALLA 6 – Observaciones
+══════════════════════════════════════════════ -->
+<div class="screen" id="s6">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 6 de 7</div>
+    <h2>¿Alguna observación?</h2>
+    <p>¿Hay algo más que quieras contarnos sobre tu evento?</p>
+  </div>
+  <div class="card-body">
+    <div class="choices">
+      <div class="choice-card" data-val="no" onclick="selectObs(this)">
+        <span class="choice-emoji">✅</span>
+        <div class="choice-info">
+          <strong>No, todo está bien</strong>
+          <span>Pasamos directamente al presupuesto.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+      <div class="choice-card" data-val="si" onclick="selectObs(this)">
+        <span class="choice-emoji">📝</span>
+        <div class="choice-info">
+          <strong>Sí, quiero agregar algo</strong>
+          <span>Podés escribir comentarios, pedidos especiales, etc.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+    </div>
+
+    <div class="opcional-section" id="sec-obs">
+      <div class="field" style="margin-top:0">
+        <label>✏️ Tu observación</label>
+        <textarea id="inp-obs" placeholder="Escribí aquí tu comentario..."></textarea>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s6" onclick="calcularYMostrar()" disabled>VER MI PRESUPUESTO 🎉</button>
+      <button class="btn btn-secondary" onclick="goTo(5)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 7 – Resumen / Presupuesto
+══════════════════════════════════════════════ -->
+<div class="screen" id="s7">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 7 de 7</div>
+    <h2>Tu presupuesto está listo 🎉</h2>
+    <p>Revisá el detalle y enviánoslo por WhatsApp para confirmarlo.</p>
+  </div>
+  <div class="card-body">
+    <div id="resumen-contenido"></div>
+    <div class="seña-note">
+      <strong>📌 Para reservar la fecha</strong>
+      Enviá el presupuesto por WhatsApp — ¡ese es el último paso para que el Tío Rudy vea tu pedido!
+    </div>
+    <div class="btn-wrap">
+      <a id="wa-btn" class="btn btn-wa" href="#" target="_blank">📱 ENVIAR POR WHATSAPP</a>
+      <button class="btn btn-secondary" onclick="goTo(6)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+// ── State ──────────────────────────────────
+const SALSAS = ['Cuatro Quesos','Provenzal','Tártara','Aceitunas','Criolla','Berenjenas','Prov. con Verdeo'];
+const state = {
+  nombre:'', tel:'', personas:0, fecha:'',
+  salsas:{}, tipo:'',
+  entrega:'', direccion:'', dirLat:null, dirLng:null,
+  opcionales: new Set(),
+  nums: {
+    'pan-sin-tacc':0,
+    'emp-carne':0,'emp-jq':0,'emp-choclo':0,'emp-verdura':0,
+    'tabla-chica':0,'tabla-mediana':0,'tabla-grande':0
+  },
+  obsOpcion:'', obs:''
+};
+
+// ── Welcome ────────────────────────────────
+function closeWelcome(){
+  document.getElementById('welcome-modal').classList.add('hidden');
+}
+
+// ── Progress ───────────────────────────────
+const totalSteps = 7;
+function updateProgress(step){
+  const pct = Math.round((step/totalSteps)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `Paso ${step} de ${totalSteps}`;
+  document.getElementById('prog-pct').textContent = pct+'%';
+}
+
+// ── Navigation ─────────────────────────────
+function goTo(step){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+step).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateProgress(step);
+  if(step===2) buildSalsas();
+  if(step===3) buildTipo();
+  if(step===5) actualizarPreciosOpcionales();
+}
+
+// ── Actualizar etiquetas de precios según fecha ──
+function actualizarPreciosOpcionales(){
+  const fechaEvento = new Date(state.fecha);
+  const esDic = fechaEvento >= new Date('2025-12-01T00:00:00');
+  const pEmp = esDic ? '$3.000' : '$2.500';
+  const pTabC = esDic ? '$65.000'  : '$60.000';
+  const pTabM = esDic ? '$130.000' : '$120.000';
+  const pTabG = esDic ? '$195.000' : '$180.000';
+
+  document.getElementById('lbl-emp-card').textContent = `${pEmp} c/u · Carne, Jamón & Queso, Choclo, Verdura.`;
+  document.querySelectorAll('.lbl-emp-u').forEach(el=>{ el.textContent = `${pEmp} c/u`; });
+  document.getElementById('lbl-tab-card').textContent = `Chica ${pTabC} · Mediana ${pTabM} · Grande ${pTabG}`;
+  document.getElementById('lbl-tab-chica').textContent   = `5 personas · ~1 kg · ${pTabC}`;
+  document.getElementById('lbl-tab-mediana').textContent = `10 personas · ~2 kg · ${pTabM}`;
+  document.getElementById('lbl-tab-grande').textContent  = `15 personas · ~3 kg · ${pTabG}`;
+}
+
+// ── S1 Validation ──────────────────────────
+function validateS1(){
+  state.nombre = document.getElementById('inp-nombre').value.trim();
+  state.tel    = document.getElementById('inp-tel').value.trim();
+  state.personas = parseInt(document.getElementById('inp-personas').value)||0;
+  state.fecha  = document.getElementById('inp-fecha').value;
+  const ok = state.nombre && state.tel && state.personas>=10 && state.fecha;
+  document.getElementById('btn-s1').disabled = !ok;
+}
+
+function checkDomingo(){
+  const v = document.getElementById('inp-fecha').value;
+  if(!v) return;
+  const d = new Date(v);
+  if(d.getDay()===0){
+    document.getElementById('modal-domingo').classList.add('show');
+    document.getElementById('inp-fecha').value='';
+    state.fecha='';
+    validateS1();
+  }
+}
+function closeDomingo(){ document.getElementById('modal-domingo').classList.remove('show'); }
+
+// ── S2 Salsas ──────────────────────────────
+function buildSalsas(){
+  const total = Math.ceil((1/5)*state.personas)+1;
+  document.getElementById('salsas-total').textContent = total;
+  const cont = document.getElementById('salsa-rows');
+  // init state
+  if(Object.keys(state.salsas).length===0) SALSAS.forEach(s=>state.salsas[s]=0);
+  cont.innerHTML = SALSAS.map(s=>`
+    <div class="salsa-row ${state.salsas[s]>0?'active':''}" id="sr-${esc(s)}">
+      <span class="salsa-name">${s}</span>
+      <div class="counter">
+        <button class="counter-btn" onclick="salsaChange('${s}',-1)">−</button>
+        <span class="counter-val" id="sv-${esc(s)}">${state.salsas[s]}</span>
+        <button class="counter-btn plus" onclick="salsaChange('${s}',1)">+</button>
+      </div>
+    </div>`).join('');
+  updateSalsasDisplay();
+}
+function esc(s){ return s.replace(/\s+/g,'_').replace(/[^a-z0-9_]/gi,''); }
+function salsaChange(salsa, delta){
+  const total = Math.ceil((1/5)*state.personas)+1;
+  const used  = Object.values(state.salsas).reduce((a,b)=>a+b,0);
+  let cur = state.salsas[salsa]||0;
+  if(delta>0 && used>=total) return;
+  cur = Math.max(0, cur+delta);
+  state.salsas[salsa] = cur;
+  const el = document.getElementById('sv-'+esc(salsa));
+  if(el) el.textContent = cur;
+  document.getElementById('sr-'+esc(salsa)).classList.toggle('active', cur>0);
+  updateSalsasDisplay();
+}
+function updateSalsasDisplay(){
+  const used = Object.values(state.salsas).reduce((a,b)=>a+b,0);
+  document.getElementById('salsas-usadas').textContent = used;
+}
+
+// ── S3 Tipo ────────────────────────────────
+function buildTipo(){
+  const mixto = document.querySelector('.d-mixto');
+  if(mixto) mixto.style.display = state.personas >= 20 ? 'flex' : 'none';
+  // Si tenía mixto seleccionado y ahora no aplica, limpiar selección
+  if(state.personas < 20 && state.tipo === 'mixto'){
+    state.tipo = '';
+    document.querySelectorAll('#tipo-choices .choice-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('btn-s3').disabled = true;
+  }
+}
+function selectTipo(el){
+  document.querySelectorAll('#tipo-choices .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.tipo = el.dataset.val;
+  document.getElementById('btn-s3').disabled = false;
+}
+
+// ── S4 Entrega ─────────────────────────────
+let autocomplete  = null;
+let mapInstance   = null;
+let markerInstance = null;
+let autocompleteReady = false;
+
+function initAutocomplete(){
+  const input = document.getElementById('inp-direccion');
+  if(!input || autocomplete || !window.google || !window.google.maps || !window.google.maps.places) return;
+  try {
+    autocomplete = new google.maps.places.Autocomplete(input, {
+      componentRestrictions: { country: 'ar' },
+      fields: ['formatted_address','geometry','name'],
+      bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(-39.2, -68.8),
+        new google.maps.LatLng(-38.7, -68.0)
+      ),
+      strictBounds: false
+    });
+    autocomplete.addListener('place_changed', onPlaceSelected);
+    autocompleteReady = true;
+  } catch(e){ console.warn('Autocomplete error:', e); }
+}
+
+function tryInitAutocomplete(){
+  if(autocompleteReady) return;
+  if(window.google && window.google.maps && window.google.maps.places){
+    initAutocomplete();
+  } else {
+    // Reintentar hasta que Google Maps esté disponible
+    setTimeout(tryInitAutocomplete, 300);
+  }
+}
+
+function onPlaceSelected(){
+  if(!autocomplete) return;
+  const place = autocomplete.getPlace();
+  if(!place || !place.geometry){ clearMap(); return; }
+  const lat  = place.geometry.location.lat();
+  const lng  = place.geometry.location.lng();
+  const addr = place.formatted_address || place.name || '';
+  state.direccion = addr;
+  state.dirLat = lat;
+  state.dirLng = lng;
+  document.getElementById('inp-direccion').value = addr;
+  showMap(lat, lng, addr);
+  validateS4();
+}
+
+function onDirInput(){
+  const val = document.getElementById('inp-direccion').value.trim();
+  if(!val){ clearMap(); state.direccion=''; state.dirLat=null; state.dirLng=null; }
+  else { state.direccion = val; }
+  validateS4();
+}
+
+function showMap(lat, lng, addr){
+  if(!window.google || !window.google.maps) return;
+  const preview = document.getElementById('map-preview');
+  preview.style.display = 'block';
+  document.getElementById('map-address-txt').textContent = addr;
+  document.getElementById('map-coords-txt').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  document.getElementById('map-open-btn').href =
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+
+  setTimeout(()=>{
+    if(!mapInstance){
+      mapInstance = new google.maps.Map(document.getElementById('map-container'),{
+        center:{lat,lng}, zoom:15,
+        disableDefaultUI: true,
+        zoomControl: true,
+        styles:[{featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]}]
+      });
+      markerInstance = new google.maps.Marker({
+        position:{lat,lng}, map:mapInstance,
+        icon:{
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: '#D4A044', fillOpacity: 1,
+          strokeColor: '#2A1810', strokeWeight: 2
         }
+      });
+    } else {
+      mapInstance.setCenter({lat,lng});
+      markerInstance.setPosition({lat,lng});
+    }
+  }, 50);
+}
 
-        // Validar si la fecha es domingo
-        document.getElementById('fechaHora').addEventListener('change', function() {
-            const fechaSeleccionada = new Date(this.value);
-            const diaSemana = fechaSeleccionada.getDay();
-            
-            // Si es domingo (0 = domingo)
-            if (diaSemana === 0) {
-                document.getElementById('modalDomingo').classList.add('mostrar');
-                // Limpiar la fecha seleccionada
-                this.value = '';
-            }
-            
-            validarDatos();
-        });
+function clearMap(){
+  document.getElementById('map-preview').style.display='none';
+}
 
-        function actualizarOpciones() {
-            const personas = parseInt(document.getElementById('personas').value);
-            const tipoSelect = document.getElementById('tipo');
-            const salsasInput = document.getElementById('salsas');
-            const seleccionSalsasDiv = document.getElementById('seleccionSalsas');
-            const maxSalsasSpan = document.getElementById('maxSalsas');
+function selectEntrega(el){
+  document.querySelectorAll('#s4 .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.entrega = el.dataset.val;
+  const needDir = state.entrega !== 'retiro';
+  const dirSec  = document.getElementById('dir-section');
+  dirSec.classList.toggle('show', needDir);
+  if(!needDir){
+    state.direccion=''; state.dirLat=null; state.dirLng=null;
+    document.getElementById('inp-direccion').value='';
+    clearMap();
+  } else {
+    // Iniciar autocomplete en cuanto el campo sea visible
+    setTimeout(tryInitAutocomplete, 100);
+  }
+  validateS4();
+}
 
-            // Actualizar tipo de pernil
-            tipoSelect.innerHTML = '';
-            if (personas < 20) {
-                tipoSelect.innerHTML += '<option value="vacuno">Vacuno</option>';
-                tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
-            } else {
-                tipoSelect.innerHTML += '<option value="vacuno">Vacuno</option>';
-                tipoSelect.innerHTML += '<option value="cerdo">Cerdo</option>';
-                tipoSelect.innerHTML += '<option value="mixto">Mixto</option>';
-            }
+function validateS4(){
+  state.direccion = document.getElementById('inp-direccion').value.trim();
+  const needDir = state.entrega && state.entrega !== 'retiro';
+  const ok = state.entrega && (!needDir || state.direccion);
+  document.getElementById('btn-s4').disabled = !ok;
+}
 
-            // Calcular cantidad de salsas
-            const totalSalsas = Math.ceil((1/5) * personas) + 1;
-            salsasInput.value = totalSalsas;
-            maxSalsasSpan.textContent = totalSalsas;
-            seleccionSalsasDiv.style.display = 'block';
+// ── S5 Opcionales ──────────────────────────
+function toggleOpcional(el){
+  const val = el.dataset.val;
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')) state.opcionales.add(val);
+  else state.opcionales.delete(val);
+  ['pan-sin-tacc','empanadas','tablas'].forEach(k=>{
+    document.getElementById('sec-'+k).classList.toggle('show', state.opcionales.has(k));
+  });
+}
+function cambiarNum(key, delta){
+  state.nums[key] = Math.max(0,(state.nums[key]||0)+delta);
+  document.getElementById('num-'+key).textContent = state.nums[key];
+}
 
-            validarDatos();
-        }
+// ── S6 Observaciones ──────────────────────
+function selectObs(el){
+  document.querySelectorAll('#s6 .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.obsOpcion = el.dataset.val;
+  document.getElementById('sec-obs').classList.toggle('show', state.obsOpcion==='si');
+  document.getElementById('btn-s6').disabled = false;
+}
 
-        function validarPanSinTacc() {
-            const panSinTacc = parseInt(document.getElementById('panSinTacc').value) || 0;
-            const errorPanSinTacc = document.getElementById('errorPanSinTacc');
-            
-            // Si hay valor pero es menor a 1 docena, mostrar error
-            if (panSinTacc > 0 && panSinTacc < 1) {
-                errorPanSinTacc.style.display = 'block';
-                document.getElementById('panSinTacc').value = 0;
-            } else {
-                errorPanSinTacc.style.display = 'none';
-            }
-            
-            validarDatos();
-        }
+// ── CÁLCULO ────────────────────────────────
+function calcularYMostrar(){
+  state.obs = document.getElementById('inp-obs').value.trim();
 
-        function mostrarDatosEvento() {
-            const envio = parseInt(document.getElementById('envio').value);
-            const mozo = document.getElementById('mozo').value;
-            const datosEventoDiv = document.getElementById('datosEvento');
-            
-            // Mostrar campo de dirección si hay envío o mozo
-            if (envio !== 0 || mozo !== '0') {
-                datosEventoDiv.style.display = 'block';
-            } else {
-                datosEventoDiv.style.display = 'none';
-                document.getElementById('direccion').value = ''; // Limpiar dirección si no se necesita
-            }
-            
-            validarDatos();
-        }
+  // Precio pernil
+  const fechaEvento = new Date(state.fecha);
+  const fechaLimite = new Date('2025-12-01T00:00:00');
+  const esDic = fechaEvento>=fechaLimite;
+  const costoPorPersona = esDic
+    ? (state.personas<20?15000:14000)
+    : (state.personas<20?12000:11000);
 
-        function validarDatos() {
-            const nombre = document.getElementById('nombre').value.trim();
-            const telefono = document.getElementById('telefono').value.trim();
-            const personas = parseInt(document.getElementById('personas').value);
-            const fechaHora = document.getElementById('fechaHora').value;
-            const envio = parseInt(document.getElementById('envio').value);
-            const mozo = document.getElementById('mozo').value;
-            const direccion = document.getElementById('direccion').value.trim();
-            
-            const calcularButton = document.getElementById('calcularButton');
-            const whatsappButton = document.getElementById('whatsapp-link');
-            
-            // Identificar qué campos faltan
-            let camposFaltantes = [];
-            
-            if (!nombre) camposFaltantes.push('Nombre completo');
-            if (!telefono) camposFaltantes.push('Número de Teléfono');
-            if (isNaN(personas) || personas < 10) camposFaltantes.push('Cantidad de personas (mínimo 10)');
-            if (!fechaHora) camposFaltantes.push('Fecha y hora del evento');
-            if ((envio !== 0 || mozo !== '0') && !direccion) camposFaltantes.push('Dirección del evento');
-            
-            const camposValidos = camposFaltantes.length === 0;
-            
-            // Actualizar el texto del botón con mensaje claro
-            if (!camposValidos) {
-                calcularButton.textContent = `⚠️ Faltan datos: ${camposFaltantes.join(', ')}`;
-                calcularButton.style.fontSize = camposFaltantes.length > 2 ? '0.95em' : '1.2em';
-            } else {
-                calcularButton.textContent = 'Calcular Presupuesto';
-                calcularButton.style.fontSize = '1.2em';
-            }
-            
-            calcularButton.disabled = !camposValidos;
-            calcularButton.classList.toggle('enabled', camposValidos);
-            whatsappButton.style.display = camposValidos ? 'block' : 'none';
-            whatsappButton.classList.toggle('enabled', camposValidos);
-        }
+  const totalPernil   = costoPorPersona * state.personas;
+  const totalPanes    = 4 * state.personas;
 
-        function calcularPresupuesto() {
-            const nombre = document.getElementById('nombre').value.trim();
-            const telefono = document.getElementById('telefono').value.trim();
-            const personas = parseInt(document.getElementById('personas').value);
-            let envio = parseInt(document.getElementById('envio').value);
-            const mozoSelect = document.getElementById('mozo').value;
-            const tipo = document.getElementById('tipo').value;
-            const salsasInput = parseInt(document.getElementById('salsas').value);
-            const direccion = document.getElementById('direccion').value.trim();
-            const fechaHora = document.getElementById('fechaHora').value;
-            const observaciones = document.getElementById('observaciones').value.trim();
-            const empanadasCarne = parseInt(document.getElementById('empanadasCarne').value) || 0;
-            const empanadasJamonQueso = parseInt(document.getElementById('empanadasJamonQueso').value) || 0;
-            const empanadasChoclo = parseInt(document.getElementById('empanadasChoclo').value) || 0;
-            const empanadasVerdura = parseInt(document.getElementById('empanadasVerdura').value) || 0;
-            const tablasChicas = parseInt(document.getElementById('tablasChicas').value) || 0;
-            const tablasMedianas = parseInt(document.getElementById('tablasMedianas').value) || 0;
-            const tablasGrandes = parseInt(document.getElementById('tablasGrandes').value) || 0;
-            const panSinTacc = parseInt(document.getElementById('panSinTacc').value) || 0;
-            const shotChocotorta = parseInt(document.getElementById('shotChocotorta').value) || 0;
-            const shotTiramisu = parseInt(document.getElementById('shotTiramisu').value) || 0;
-            const shotFrutosRojos = parseInt(document.getElementById('shotFrutosRojos').value) || 0;
+  // Entrega / mozo
+  let costoEnvio=0, costoMozo=0, envioTxt='', mozoTxt='';
+  const p=state.personas;
+  if(state.entrega==='envio-capital')  { costoEnvio=10000; envioTxt='Envío a domicilio – Capital'; }
+  if(state.entrega==='envio-alred')    { costoEnvio=25000; envioTxt='Envío a domicilio – Alrededores'; }
+  if(state.entrega==='mozo-capital'){
+    mozoTxt='Mozo de corte en Neuquén Capital';
+    const mozos=Math.ceil(p/50);
+    costoMozo = mozos * (p<=39?40000:50000);
+  }
+  if(state.entrega==='mozo-alred'){
+    mozoTxt='Mozo de corte en Alrededores';
+    const mozos=Math.ceil(p/50);
+    costoMozo = mozos * (p<=39?60000:70000);
+  }
 
-            // Validar salsas
-            const salsas = {};
-            let sumaSalsas = 0;
-            document.querySelectorAll('.salsa-qty').forEach(input => {
-                const salsaName = input.getAttribute('data-salsa');
-                const qty = parseInt(input.value || 0);
-                if (qty > 0) {
-                    salsas[salsaName] = qty;
-                    sumaSalsas += qty;
-                }
-            });
+  // Opcionales
+  const n=state.nums;
+  const precioEmp    = esDic?3000:2500;
+  const precioTablaC = esDic?65000:60000;
+  const precioTablaM = esDic?130000:120000;
+  const precioTablaG = esDic?195000:180000;
+  const totalPanSinTacc = n['pan-sin-tacc']*15000;
+  const totalEmpCarne   = n['emp-carne']*precioEmp;
+  const totalEmpJQ      = n['emp-jq']*precioEmp;
+  const totalEmpChoclo  = n['emp-choclo']*precioEmp;
+  const totalEmpVerd    = n['emp-verdura']*precioEmp;
+  const totalTablaC     = n['tabla-chica']*precioTablaC;
+  const totalTablaM     = n['tabla-mediana']*precioTablaM;
+  const totalTablaG     = n['tabla-grande']*precioTablaG;
 
-            if (sumaSalsas > salsasInput) {
-                alert("¡La suma de salsas supera el máximo permitido!");
-                return;
-            }
-            
-            // Cálculos
-            const panesPorPersona = 4;
-            
-            // Determinar el precio del pernil según la fecha del evento
-            let costoPorPersona;
-            const fechaEvento = new Date(fechaHora);
-            const fechaLimite = new Date('2025-12-01T00:00:00');
-            
-            if (fechaEvento >= fechaLimite) {
-                // Precios a partir del 01/12/2025
-                costoPorPersona = personas < 20 ? 14000 : 13000;
-            } else {
-                // Precios antes del 01/12/2025
-                costoPorPersona = personas < 20 ? 12000 : 11000;
-            }
-            
-            const costoEmpanada = 2500;
-            const costoTablasChicas = 60000;
-            const costoTablasMedianas = 120000;
-            const costoTablasGrandes = 180000;
-            const costoPanSinTacc = 15000;
-            const costoShot = 2000;
-            
-            const totalPanes = panesPorPersona * personas;
-            const totalCostoPersonas = costoPorPersona * personas;
-            const totalEmpanadasCarne = empanadasCarne * costoEmpanada;
-            const totalEmpanadasJamonQueso = empanadasJamonQueso * costoEmpanada;
-            const totalEmpanadasChoclo = empanadasChoclo * costoEmpanada;
-            const totalEmpanadasVerdura = empanadasVerdura * costoEmpanada;
-            const totalTablasChicas = tablasChicas * costoTablasChicas;
-            const totalTablasMedianas = tablasMedianas * costoTablasMedianas;
-            const totalTablasGrandes = tablasGrandes * costoTablasGrandes;
-            const totalPanSinTacc = panSinTacc * costoPanSinTacc;
-            const totalShotChocotorta = shotChocotorta * costoShot;
-            const totalShotTiramisu = shotTiramisu * costoShot;
-            const totalShotFrutosRojos = shotFrutosRojos * costoShot;
-            
-            let mozos = 0;
-            let mozo = 0;
-            let mozoText = 'Ninguno';
-            
-            if (mozoSelect !== '0') {
-                mozos = Math.ceil(personas / 50);
-                
-                // Calcular precio por mozo según cantidad de personas y ubicación
-                if (personas >= 10 && personas <= 39) {
-                    if (mozoSelect === 'neuquen') {
-                        mozo = 40000;
-                        mozoText = 'Mozo de corte en Neuquén Capital';
-                    } else if (mozoSelect === 'alrededores') {
-                        mozo = 60000;
-                        mozoText = 'Mozo de corte en Alrededores (hasta 20 kms)';
-                    }
-                } else if (personas >= 40) {
-                    if (mozoSelect === 'neuquen') {
-                        mozo = 50000;
-                        mozoText = 'Mozo de corte en Neuquén Capital';
-                    } else if (mozoSelect === 'alrededores') {
-                        mozo = 70000;
-                        mozoText = 'Mozo de corte en Alrededores (hasta 20 kms)';
-                    }
-                }
-                
-                mozo *= mozos;
-                envio = 0; // Si hay mozo, no hay envío
-            }
+  const TOTAL = totalPernil+costoEnvio+costoMozo+
+    totalPanSinTacc+totalEmpCarne+totalEmpJQ+totalEmpChoclo+totalEmpVerd+
+    totalTablaC+totalTablaM+totalTablaG;
 
-            const totalPresupuesto = totalCostoPersonas + 
-                totalEmpanadasCarne + totalEmpanadasJamonQueso + totalEmpanadasChoclo + totalEmpanadasVerdura +
-                totalTablasChicas + totalTablasMedianas + totalTablasGrandes + totalPanSinTacc +
-                totalShotChocotorta + totalShotTiramisu + totalShotFrutosRojos + envio + mozo;
+  // Formatear fecha
+  const fObj = new Date(state.fecha);
+  const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fechaTxt = `${dias[fObj.getDay()]} ${fObj.getDate()} de ${meses[fObj.getMonth()]} de ${fObj.getFullYear()}`;
+  const horaTxt  = `${String(fObj.getHours()).padStart(2,'0')}:${String(fObj.getMinutes()).padStart(2,'0')} hs`;
 
-            // Mensaje WhatsApp - Formato Profesional
-            const linea = '━━━━━━━━━━━━━━━━━━━━━━━';
-            
-            let whatsappMessage = `👨‍🍳 *SERVICIO DE PERNIL*\n`;
-            whatsappMessage += `*TÍO RUDY*\n\n`;
-            whatsappMessage += `San Martín 1716\n`;
-            whatsappMessage += `Cel. 2994520532\n`;
-            whatsappMessage += `${linea}\n\n`;
-            
-            // 👤 CLIENTE
-            whatsappMessage += `👤 *CLIENTE*\n`;
-            whatsappMessage += `Nombre: ${nombre}\n`;
-            whatsappMessage += `Teléfono: ${telefono}\n`;
-            whatsappMessage += `${linea}\n\n`;
-            
-            // 📋 DETALLE DEL PEDIDO
-            whatsappMessage += `📋 *DETALLE DEL PEDIDO*\n`;
-            whatsappMessage += `• Pernil: ${tipo.toUpperCase()} 🥩 (${personas} personas)\n`;
-            whatsappMessage += `• Panes: ${totalPanes} unidades (Tipo: ÁRABE) 🥖\n`;
-            
-            // Salsas seleccionadas
-            if (Object.keys(salsas).length > 0) {
-                whatsappMessage += `  Salsas seleccionadas:\n`;
-                Object.entries(salsas).forEach(([salsa, cantidad]) => {
-                    whatsappMessage += `  ✓ ${salsa} (${cantidad})\n`;
-                });
-            }
-            
-            // Empanadas
-            if (empanadasCarne > 0 || empanadasJamonQueso > 0 || empanadasChoclo > 0 || empanadasVerdura > 0) {
-                whatsappMessage += `• Empanadas:\n`;
-                if (empanadasCarne > 0) whatsappMessage += `  ✓ Carne: ${empanadasCarne} unid.\n`;
-                if (empanadasJamonQueso > 0) whatsappMessage += `  ✓ Jamón/Queso: ${empanadasJamonQueso} unid.\n`;
-                if (empanadasChoclo > 0) whatsappMessage += `  ✓ Choclo: ${empanadasChoclo} unid.\n`;
-                if (empanadasVerdura > 0) whatsappMessage += `  ✓ Verdura: ${empanadasVerdura} unid.\n`;
-            }
-            
-            // Tablas de fiambre
-            if (tablasChicas > 0 || tablasMedianas > 0 || tablasGrandes > 0) {
-                whatsappMessage += `• Tablas de fiambre:\n`;
-                if (tablasChicas > 0) whatsappMessage += `  ✓ Chica: ${tablasChicas} unid.\n`;
-                if (tablasMedianas > 0) whatsappMessage += `  ✓ Mediana: ${tablasMedianas} unid.\n`;
-                if (tablasGrandes > 0) whatsappMessage += `  ✓ Grande: ${tablasGrandes} unid.\n`;
-            }
-            
-            // Pan Sin TACC
-            if (panSinTacc > 0) {
-                whatsappMessage += `• Pan Sin TACC: ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades\n`;
-                whatsappMessage += `  ⚠️ *Sujeto a disponibilidad*\n`;
-            }
-            
-            // Shots Dulces
-            if (shotChocotorta > 0 || shotTiramisu > 0 || shotFrutosRojos > 0) {
-                whatsappMessage += `• Shots Dulces 🍮:\n`;
-                if (shotChocotorta > 0) whatsappMessage += `  ✓ Chocotorta: ${shotChocotorta} unid.\n`;
-                if (shotTiramisu > 0) whatsappMessage += `  ✓ Tiramisú: ${shotTiramisu} unid.\n`;
-                if (shotFrutosRojos > 0) whatsappMessage += `  ✓ Frutos Rojos: ${shotFrutosRojos} unid.\n`;
-            }
-            
-            whatsappMessage += `${linea}\n\n`;
-            
-            // 🚚 ENTREGA
-            // Formatear fecha y hora
-            const fechaObj = new Date(fechaHora);
-            const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-            const diaSemana = dias[fechaObj.getDay()];
-            const dia = fechaObj.getDate();
-            const mes = meses[fechaObj.getMonth()];
-            const anio = fechaObj.getFullYear().toString().slice(-2);
-            const hora = fechaObj.getHours().toString().padStart(2, '0');
-            const minutos = fechaObj.getMinutes().toString().padStart(2, '0');
-            
-            whatsappMessage += `🚚 *ENTREGA*\n`;
-            whatsappMessage += `Fecha: ${diaSemana} ${dia}/${fechaObj.getMonth() + 1}/${anio}\n`;
-            whatsappMessage += `Horario: ${hora}:${minutos} hs\n`;
-            
-            if (envio === 0 && mozo === 0) {
-                whatsappMessage += `Modalidad: Retira por local\n`;
-                whatsappMessage += `(Se retira con bandeja de horno)\n`;
-            } else if (envio !== 0) {
-                whatsappMessage += `Modalidad: Envío a domicilio\n`;
-                whatsappMessage += `Dirección: ${direccion}\n`;
-            } else if (mozo !== 0) {
-                whatsappMessage += `Modalidad: ${mozoText}\n`;
-                whatsappMessage += `Dirección: ${direccion}\n`;
-            }
-            
-            whatsappMessage += `${linea}\n\n`;
-            
-            // 💰 RESUMEN DE CUENTA
-            whatsappMessage += `💰 *RESUMEN DE CUENTA*\n`;
-            whatsappMessage += `Total: $${totalPresupuesto.toLocaleString('es-AR')}\n`;
-            whatsappMessage += `Seña: $____________\n`;
-            whatsappMessage += `SALDO A PAGAR: $____________\n`;
-            whatsappMessage += `${linea}\n\n`;
-            
-            // Observaciones si existen
-            if (observaciones) {
-                whatsappMessage += `📝 *OBSERVACIONES:*\n${observaciones}\n\n`;
-            }
-            
-            // Mensaje de cierre
-            whatsappMessage += `_¡Gracias por elegirnos para tu evento!_ 👨‍🍳\n\n`;
-            whatsappMessage += `_Nota: El pernil no va fileteado, por ello ofrecemos servicio de mozo de corte_`;
-                       
-            // Actualizar resultados (sin mensaje de Google Sheets)
-            document.getElementById('resultado').innerHTML = `
-                <p><strong>Nombre:</strong> ${nombre}</p>
-                <p><strong>Teléfono:</strong> ${telefono}</p>
-                <p><strong>Personas:</strong> ${personas}</p>
-                <p><strong>Tipo de pernil:</strong> ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
-                <p><strong>Salsas:</strong> ${Object.entries(salsas).map(([k, v]) => `${k} (${v})`).join(', ') || 'Ninguna'}</p>
-                <p><strong>Panes árabes:</strong> ${totalPanes}</p>
-                <p><strong>Costo Pernil:</strong> ${totalCostoPersonas.toLocaleString('es-AR')}</p>
-                ${empanadasCarne > 0 ? `<p><strong>Empanadas de carne:</strong> ${totalEmpanadasCarne.toLocaleString('es-AR')}</p>` : ''}
-                ${empanadasJamonQueso > 0 ? `<p><strong>Empanadas de jamón y queso:</strong> ${totalEmpanadasJamonQueso.toLocaleString('es-AR')}</p>` : ''}
-                ${empanadasChoclo > 0 ? `<p><strong>Empanadas de choclo:</strong> ${totalEmpanadasChoclo.toLocaleString('es-AR')}</p>` : ''}
-                ${empanadasVerdura > 0 ? `<p><strong>Empanadas de verdura:</strong> ${totalEmpanadasVerdura.toLocaleString('es-AR')}</p>` : ''}
-                ${tablasChicas > 0 ? `<p><strong>Tablas Chicas:</strong> ${totalTablasChicas.toLocaleString('es-AR')}</p>` : ''}
-                ${tablasMedianas > 0 ? `<p><strong>Tablas Medianas:</strong> ${totalTablasMedianas.toLocaleString('es-AR')}</p>` : ''}
-                ${tablasGrandes > 0 ? `<p><strong>Tablas Grandes:</strong> ${totalTablasGrandes.toLocaleString('es-AR')}</p>` : ''}
-                ${panSinTacc > 0 ? `<p><strong>Pan Sin TACC:</strong> ${panSinTacc} docena(s) - ${(panSinTacc * 12)} unidades (${totalPanSinTacc.toLocaleString('es-AR')})</p>
-                <p style="background: rgba(255,193,7,0.3); padding: 10px; border-radius: 8px; margin-top: 5px; font-weight: bold; color: #2a1810; font-size: 0.95em;">⚠️ IMPORTANTE: LA DISPONIBILIDAD DEL PAN SIN TACC QUEDA SUJETA A CONFIRMACIÓN</p>` : ''}
-                ${(shotChocotorta > 0 || shotTiramisu > 0 || shotFrutosRojos > 0) ? `<p><strong>Shots Dulces 🍮:</strong>
-                ${shotChocotorta > 0 ? `Chocotorta x${shotChocotorta}` : ''}
-                ${shotTiramisu > 0 ? ` | Tiramisú x${shotTiramisu}` : ''}
-                ${shotFrutosRojos > 0 ? ` | Frutos Rojos x${shotFrutosRojos}` : ''}
-                ($${(totalShotChocotorta + totalShotTiramisu + totalShotFrutosRojos).toLocaleString('es-AR')})</p>` : ''}
-                ${envio === 0 && mozo === 0 ? `<p><strong>Retiro:</strong> En local (Se retira con una bandeja de horno)</p>` : ''}
-                ${envio !== 0 ? `<p><strong>Envío:</strong> ${envio.toLocaleString('es-AR')}</p>` : ''}
-                ${mozo !== 0 ? `<p><strong>Servicio de mozo:</strong> ${mozoText} (${mozo.toLocaleString('es-AR')})</p>` : ''}
-                <p><strong>Fecha y hora:</strong> ${fechaHora}</p>
-                ${(envio !== 0 || mozo !== 0) ? `<p><strong>Dirección:</strong> ${direccion}</p>` : ''}
-                ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
-                <p style="font-size: 1.4em; margin-top: 20px; padding: 15px; background: #f8f9fa; border: 2px solid #d4a574; border-radius: 10px; color: #2a1810;"><strong>TOTAL:</strong> $${totalPresupuesto.toLocaleString('es-AR')}</p>
-            `;
+  // Salsas
+  const salsasElegidas = Object.entries(state.salsas).filter(([,v])=>v>0);
+  const salsasTxt = salsasElegidas.length
+    ? salsasElegidas.map(([k,v])=>`${k} (x${v})`).join(', ')
+    : 'Sin especificar';
 
-            // Configurar el enlace de WhatsApp para que abra directamente
-            const whatsappLink = document.getElementById('whatsapp-link');
-            const whatsappUrl = `https://wa.me/2994520532?text=${encodeURIComponent(whatsappMessage)}`;
-            whatsappLink.href = whatsappUrl;
-        }
+  // ── Build resumen HTML ──────────────────
+  const $ = (v) => '$'+v.toLocaleString('es-AR');
 
-        // Event listeners
-        document.getElementById('nombre').addEventListener('input', validarDatos);
-        document.getElementById('telefono').addEventListener('input', validarDatos);
-        document.getElementById('personas').addEventListener('input', validarDatos);
-        document.getElementById('direccion').addEventListener('input', validarDatos);
-        document.getElementById('fechaHora').addEventListener('input', validarDatos);
-        document.getElementById('observaciones').addEventListener('input', validarDatos);
+  let html = `
+  <div class="resumen-card">
+    <div class="resumen-head"><h3>👤 Cliente</h3></div>
+    <div class="resumen-body">
+      <div class="resumen-row"><span class="rk">Nombre</span><span class="rv">${state.nombre}</span></div>
+      <div class="resumen-row"><span class="rk">Teléfono</span><span class="rv">${state.tel}</span></div>
+    </div>
+  </div>
+  <div class="resumen-card">
+    <div class="resumen-head"><h3>🍖 Pedido</h3></div>
+    <div class="resumen-body">
+      <div class="resumen-row"><span class="rk">Pernil</span><span class="rv">${cap(state.tipo)} · ${state.personas} personas</span></div>
+      <div class="resumen-row"><span class="rk">Panes árabes</span><span class="rv">${totalPanes} unidades</span></div>
+      <div class="resumen-row"><span class="rk">Salsas (sin TACC)</span><span class="rv">${salsasTxt}</span></div>
+      <div class="resumen-row"><span class="rk">Costo pernil</span><span class="rv">${$(totalPernil)}</span></div>`;
 
-        // Validación de salsas (se adjunta una sola vez para no apilar listeners)
-        document.querySelectorAll('.salsa-qty').forEach(input => {
-            input.addEventListener('input', function() {
-                const totalSalsas = parseInt(document.getElementById('salsas').value) || 0;
-                const currentSum = Array.from(document.querySelectorAll('.salsa-qty'))
-                                      .reduce((sum, el) => sum + (parseInt(el.value) || 0), 0);
-                // Solo avisamos si se pasa del máximo; no reseteamos el valor,
-                // así se puede subir una salsa y bajar otra en cualquier orden.
-                document.getElementById('errorSalsas').style.display =
-                    currentSum > totalSalsas ? 'block' : 'none';
-            });
-        });
-    </script>
+  if(totalEmpCarne+totalEmpJQ+totalEmpChoclo+totalEmpVerd>0){
+    html+=`<div class="resumen-row"><span class="rk">Empanadas</span><span class="rv">`;
+    const ep=[];
+    if(n['emp-carne']>0)   ep.push(`Carne x${n['emp-carne']}`);
+    if(n['emp-jq']>0)      ep.push(`J&Q x${n['emp-jq']}`);
+    if(n['emp-choclo']>0)  ep.push(`Choclo x${n['emp-choclo']}`);
+    if(n['emp-verdura']>0) ep.push(`Verdura x${n['emp-verdura']}`);
+    html+=ep.join(', ')+`</span></div>`;
+  }
+  if(totalTablaC+totalTablaM+totalTablaG>0){
+    html+=`<div class="resumen-row"><span class="rk">Tablas fiambre</span><span class="rv">`;
+    const tb=[];
+    if(n['tabla-chica']>0)   tb.push(`Chica x${n['tabla-chica']}`);
+    if(n['tabla-mediana']>0) tb.push(`Mediana x${n['tabla-mediana']}`);
+    if(n['tabla-grande']>0)  tb.push(`Grande x${n['tabla-grande']}`);
+    html+=tb.join(', ')+`</span></div>`;
+  }
+  if(n['pan-sin-tacc']>0)
+    html+=`<div class="resumen-row"><span class="rk">Pan Sin TACC ⚠️</span><span class="rv">${n['pan-sin-tacc']} docena(s) – ${$(totalPanSinTacc)}</span></div>`;
+
+  html+=`</div></div>
+  <div class="resumen-card">
+    <div class="resumen-head"><h3>🚚 Entrega</h3></div>
+    <div class="resumen-body">
+      <div class="resumen-row"><span class="rk">Fecha</span><span class="rv">${fechaTxt}</span></div>
+      <div class="resumen-row"><span class="rk">Horario</span><span class="rv">${horaTxt}</span></div>`;
+
+  if(state.entrega==='retiro')
+    html+=`<div class="resumen-row"><span class="rk">Modalidad</span><span class="rv">Retiro en local</span></div>`;
+  if(costoEnvio>0)
+    html+=`<div class="resumen-row"><span class="rk">Envío</span><span class="rv">${envioTxt} · ${$(costoEnvio)}</span></div>
+           <div class="resumen-row"><span class="rk">Dirección</span><span class="rv">${state.direccion}${state.dirLat?` <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}" target="_blank" style="color:var(--gold);font-size:.8rem;display:inline-block;margin-top:2px;">🗺️ Ver en Maps</a>`:''}</span></div>`;
+  if(costoMozo>0)
+    html+=`<div class="resumen-row"><span class="rk">Mozo de corte</span><span class="rv">${mozoTxt} · ${$(costoMozo)}</span></div>
+           <div class="resumen-row"><span class="rk">Dirección</span><span class="rv">${state.direccion}${state.dirLat?` <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}" target="_blank" style="color:var(--gold);font-size:.8rem;display:inline-block;margin-top:2px;">🗺️ Ver en Maps</a>`:''}</span></div>`;
+
+  html+=`</div></div>`;
+  if(state.obs)
+    html+=`<div class="resumen-card">
+      <div class="resumen-head"><h3>📝 Observaciones</h3></div>
+      <div class="resumen-body"><div class="resumen-row"><span class="rv">${state.obs}</span></div></div>
+    </div>`;
+
+  html+=`<div class="total-row"><span>TOTAL ESTIMADO</span><strong>${$(TOTAL)}</strong></div>`;
+
+  document.getElementById('resumen-contenido').innerHTML = html;
+
+  // ── WhatsApp message ───────────────────
+  const linea='━━━━━━━━━━━━━━━━━━━━━━━';
+  let wa=`👨‍🍳 *SERVICIO DE PERNIL*\n*TÍO RUDY*\n\nSan Martín 1716\nCel. 2994520532\n${linea}\n\n`;
+  wa+=`👤 *CLIENTE*\nNombre: ${state.nombre}\nTeléfono: ${state.tel}\n${linea}\n\n`;
+  wa+=`📋 *DETALLE DEL PEDIDO*\n`;
+  wa+=`• Pernil: ${cap(state.tipo).toUpperCase()} 🥩 (${state.personas} personas)\n`;
+  wa+=`• Panes: ${totalPanes} unidades (Tipo: ÁRABE) 🥖\n`;
+  if(salsasElegidas.length){
+    wa+=`  Salsas seleccionadas:\n`;
+    salsasElegidas.forEach(([k,v])=>{ wa+=`  ✓ ${k} (${v})\n`; });
+  }
+  const empArr=[['Carne',n['emp-carne']],['Jamón/Queso',n['emp-jq']],['Choclo',n['emp-choclo']],['Verdura',n['emp-verdura']]].filter(([,v])=>v>0);
+  if(empArr.length){ wa+=`• Empanadas:\n`; empArr.forEach(([k,v])=>{ wa+=`  ✓ ${k}: ${v} unid.\n`; }); }
+  const tabArr=[['Chica',n['tabla-chica']],['Mediana',n['tabla-mediana']],['Grande',n['tabla-grande']]].filter(([,v])=>v>0);
+  if(tabArr.length){ wa+=`• Tablas de fiambre:\n`; tabArr.forEach(([k,v])=>{ wa+=`  ✓ ${k}: ${v} unid.\n`; }); }
+  if(n['pan-sin-tacc']>0){ wa+=`• Pan Sin TACC: ${n['pan-sin-tacc']} docena(s) - ${n['pan-sin-tacc']*12} unidades\n  ⚠️ *Sujeto a disponibilidad*\n`; }
+  wa+=`${linea}\n\n`;
+  wa+=`🚚 *ENTREGA*\nFecha: ${fechaTxt}\nHorario: ${horaTxt}\n`;
+  if(state.entrega==='retiro') wa+=`Modalidad: Retira por local\n(El cliente retira con su propia bandeja de horno)\n`;
+  if(costoEnvio>0){
+    wa+=`Modalidad: ${envioTxt}\nDirección: ${state.direccion}\n`;
+    if(state.dirLat) wa+=`📍 Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}\n`;
+  }
+  if(costoMozo>0){
+    wa+=`Modalidad: ${mozoTxt}\nDirección: ${state.direccion}\n`;
+    if(state.dirLat) wa+=`📍 Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}\n`;
+  }
+  wa+=`${linea}\n\n`;
+  wa+=`💰 *RESUMEN DE CUENTA*\nTotal: $${TOTAL.toLocaleString('es-AR')}\nSeña: $____________\nSALDO A PAGAR: $____________\n${linea}\n\n`;
+  if(state.obs) wa+=`📝 *OBSERVACIONES:*\n${state.obs}\n\n`;
+  wa+=`_¡Gracias por elegirnos para tu evento!_ 👨‍🍳\n\n_Nota: El pernil no va fileteado, por ello ofrecemos servicio de mozo de corte_`;
+
+  document.getElementById('wa-btn').href=`https://wa.me/2994520532?text=${encodeURIComponent(wa)}`;
+
+  goTo(7);
+}
+
+function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : ''; }
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
