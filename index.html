@@ -1004,7 +1004,7 @@ function goTo(step){
 // ── Actualizar etiquetas de precios según fecha ──
 function actualizarPreciosOpcionales(){
   const fechaEvento = new Date(state.fecha);
-  const esDic = fechaEvento >= new Date('2025-12-01T00:00:00');
+  const esDic = fechaEvento >= new Date('2026-09-01T00:00:00');
   const pEmp = esDic ? '$3.000' : '$2.500';
   const pTabC = esDic ? '$65.000'  : '$60.000';
   const pTabM = esDic ? '$130.000' : '$120.000';
@@ -1243,11 +1243,11 @@ function calcularYMostrar(){
 
   // Precio pernil
   const fechaEvento = new Date(state.fecha);
-  const fechaLimite = new Date('2025-12-01T00:00:00');
+  const fechaLimite = new Date('2026-09-01T00:00:00');
   const esDic = fechaEvento>=fechaLimite;
   const costoPorPersona = esDic
     ? (state.personas<20?15000:14000)
-    : (state.personas<20?12000:11000);
+    : (state.personas<20?14000:13000);
 
   const totalPernil   = costoPorPersona * state.personas;
   const totalPanes    = 4 * state.personas;
