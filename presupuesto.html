@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perniles del Tío Rudy – Presupuesto</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJBjpobjNin18Sp3-TQE9x5zI8PMtXYQ&libraries=places&language=es&region=AR" async defer></script>
+<style>
+  :root {
+    --gold:    #D4A044;
+    --gold2:   #F0C060;
+    --brown:   #5C3A1E;
+    --dark:    #2A1810;
+    --cream:   #FDF6EC;
+    --red:     #C0392B;
+    --green:   #27AE60;
+    --wa:      #25D366;
+    --radius:  18px;
+    --shadow:  0 8px 32px rgba(42,24,16,.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(160deg, #2A1810 0%, #5C3A1E 60%, #8B5A2B 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 40px;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    width: 100%;
+    background: linear-gradient(135deg, #1a0e08 0%, #3d2210 100%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .app-header img {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .app-header-text h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold2);
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+  .app-header-text p {
+    color: rgba(255,255,255,.65);
+    font-size: .78rem;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    width: 100%; max-width: 480px;
+    padding: 14px 20px 0;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    color: rgba(255,255,255,.7);
+    font-size: .78rem;
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    border-radius: 99px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── CARD ── */
+  .card {
+    width: 100%; max-width: 480px;
+    background: var(--cream);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 14px 16px 0;
+    overflow: hidden;
+    animation: slideUp .35s ease both;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-head {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 100%);
+    padding: 22px 24px 18px;
+  }
+  .step-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 700;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .card-head h2 {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  .card-head p {
+    color: rgba(255,255,255,.65);
+    font-size: .88rem;
+    margin-top: 5px;
+    line-height: 1.45;
+  }
+
+  .card-body { padding: 24px; }
+
+  /* ── INPUTS ── */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-weight: 700;
+    font-size: .92rem;
+    color: var(--dark);
+    margin-bottom: 7px;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="datetime-local"],
+  .field textarea {
+    width: 100%;
+    padding: 15px 16px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-family: 'Lato', sans-serif;
+    color: var(--dark);
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212,160,68,.15);
+  }
+  .field textarea { resize: vertical; min-height: 110px; }
+
+  /* ── ERROR ── */
+  .field-error {
+    color: var(--red);
+    font-size: .82rem;
+    margin-top: 5px;
+    display: none;
+  }
+  .field-error.show { display: block; }
+
+  /* ── CHOICE CARDS (single/multi) ── */
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 2.5px solid #ddd;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .15s;
+    background: #fff;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice-card:active { transform: scale(.98); }
+  .choice-card.selected {
+    border-color: var(--gold);
+    background: #FFF8EC;
+  }
+  .choice-card.selected .choice-check {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .choice-card.selected .choice-check::after { opacity: 1; }
+
+  .choice-check {
+    width: 24px; height: 24px; flex-shrink: 0;
+    border: 2.5px solid #bbb;
+    border-radius: 50%;
+    margin-top: 1px;
+    position: relative;
+    transition: background .2s, border-color .2s;
+  }
+  .choice-check.square { border-radius: 6px; }
+  .choice-check::after {
+    content: '';
+    position: absolute;
+    left: 5px; top: 2px;
+    width: 10px; height: 7px;
+    border-left: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg);
+    opacity: 0;
+    transition: opacity .15s;
+  }
+
+  .choice-info { flex: 1; }
+  .choice-info strong {
+    display: block;
+    font-size: 1.05rem;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+  .choice-info span {
+    display: block;
+    font-size: .83rem;
+    color: #777;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .choice-info .badge-tag {
+    display: inline-block;
+    background: #E8F5E9;
+    color: var(--green);
+    font-size: .75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-top: 5px;
+  }
+  .choice-emoji { font-size: 1.8rem; flex-shrink: 0; }
+
+  /* ── SALSA COUNTER ROWS ── */
+  .salsa-rows { display: flex; flex-direction: column; gap: 10px; }
+  .salsa-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: border-color .2s;
+  }
+  .salsa-row.active { border-color: var(--gold); background: #FFF8EC; }
+  .salsa-name { font-weight: 700; font-size: .95rem; color: var(--dark); }
+  .counter {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .counter-btn {
+    width: 36px; height: 36px;
+    border: none; border-radius: 50%;
+    background: var(--brown);
+    color: #fff;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, transform .1s;
+    flex-shrink: 0;
+  }
+  .counter-btn:active { transform: scale(.9); }
+  .counter-btn.plus { background: var(--gold); color: var(--dark); }
+  .counter-val {
+    font-size: 1.1rem; font-weight: 700;
+    min-width: 24px; text-align: center;
+    color: var(--dark);
+  }
+  .salsas-quota {
+    background: linear-gradient(135deg, var(--dark), var(--brown));
+    color: #fff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .salsas-quota span { font-size: .9rem; opacity: .85; }
+  .salsas-quota strong { font-size: 1.3rem; }
+
+  /* ── OPCIONAL DETAIL SECTION ── */
+  .opcional-section {
+    margin-top: 18px;
+    border-top: 2px dashed #e0d0b8;
+    padding-top: 18px;
+    display: none;
+    animation: fadeIn .3s ease both;
+  }
+  .opcional-section.show { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .opcional-section h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--brown);
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
+
+  /* Empanadas number rows */
+  .num-rows { display: flex; flex-direction: column; gap: 10px; }
+  .num-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+  .num-row-left { display: flex; flex-direction: column; }
+  .num-row-left strong { font-size: .95rem; color: var(--dark); font-weight: 700; }
+  .num-row-left span { font-size: .78rem; color: #999; margin-top: 1px; }
+
+  /* ── DIRECCIÓN ── */
+  #dir-section {
+    margin-top: 16px;
+    display: none;
+    animation: fadeIn .3s ease both;
+  }
+  #dir-section.show { display: block; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: #FFF8EC;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 13px 16px;
+    margin-bottom: 18px;
+    font-size: .88rem;
+    color: var(--brown);
+    line-height: 1.5;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: block; width: 100%;
+    padding: 18px;
+    border: none; border-radius: 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, opacity .2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--brown) 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(92,58,30,.35);
+  }
+  .btn-primary:disabled {
+    opacity: .45; cursor: not-allowed; transform: none; box-shadow: none;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--brown);
+    border: 2.5px solid var(--brown);
+    margin-top: 10px;
+  }
+  .btn-wa {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: #fff;
+    font-size: 1.15rem;
+    box-shadow: 0 6px 20px rgba(37,211,102,.3);
+  }
+  .btn-wrap { margin-top: 24px; display: flex; flex-direction: column; gap: 0; }
+
+  /* ── RESUMEN ── */
+  .resumen-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(42,24,16,.1);
+    margin-bottom: 18px;
+  }
+  .resumen-head {
+    background: linear-gradient(135deg, var(--dark), var(--brown));
+    padding: 16px 20px;
+    color: #fff;
+  }
+  .resumen-head h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+  }
+  .resumen-body { padding: 16px 20px; }
+  .resumen-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0e8dc;
+    font-size: .92rem;
+    gap: 10px;
+  }
+  .resumen-row:last-child { border-bottom: none; }
+  .resumen-row .rk { color: #777; flex-shrink: 0; }
+  .resumen-row .rv { font-weight: 700; color: var(--dark); text-align: right; }
+  .total-row {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .total-row span { font-size: .95rem; font-weight: 700; color: var(--dark); }
+  .total-row strong { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--dark); }
+
+  .seña-note {
+    background: #FFF8EC;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: .85rem;
+    color: var(--brown);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .seña-note strong { display: block; margin-bottom: 4px; font-size: .92rem; }
+
+  /* Pantalla oculta / visible */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── MODAL DOMINGO ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.8);
+    display: none; align-items: center; justify-content: center;
+    z-index: 999; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: #fff; border-radius: 18px;
+    padding: 32px 28px; max-width: 360px; width: 100%;
+    text-align: center; border: 4px solid #FFC107;
+    animation: slideUp .3s ease both;
+  }
+  .modal-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; color:#856404; margin-bottom:12px; }
+  .modal-box p { font-size:.93rem; color:#555; line-height:1.5; margin-bottom:14px; }
+  .modal-box .alt { background:#E8F5E9; border:2px solid #81C784; border-radius:10px; padding:12px; font-size:.88rem; color:#2E7D32; font-weight:700; margin-bottom:18px; }
+
+  /* ── WELCOME MODAL ── */
+  #welcome-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; padding: 20px;
+  }
+  #welcome-modal.hidden { display: none; }
+  .welcome-box {
+    background: #fff; border-radius: 20px;
+    padding: 36px 28px; max-width: 360px; width: 100%;
+    text-align: center; border: 4px solid var(--gold);
+    animation: slideUp .4s ease both;
+  }
+  .welcome-box .wlogo {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 4px solid var(--gold); object-fit: cover;
+    margin: 0 auto 16px;
+    display: block;
+  }
+  .welcome-box h2 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--dark); margin-bottom:8px; }
+  .welcome-box p { font-size:.93rem; color:#555; line-height:1.5; margin-bottom:14px; }
+  .welcome-box .tagline {
+    background: linear-gradient(135deg, var(--dark), var(--brown));
+    color: var(--gold2);
+    font-weight: 700; font-size: .88rem;
+    padding: 10px 16px; border-radius: 10px;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: .04em;
+  }
+
+  @media (min-width: 500px) {
+    .card { margin: 18px auto 0; }
+    .progress-wrap { margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- WELCOME MODAL -->
+<div id="welcome-modal">
+  <div class="welcome-box">
+    <img class="wlogo" src="logo.png" alt="Logo">
+    <h2>🍖 ¡Bienvenido!</h2>
+    <p>Te vamos a guiar paso a paso para armar tu presupuesto personalizado.</p>
+    <div class="tagline">Más de 30 años · Calidad · Honestidad · Buen Gusto</div>
+    <p style="font-size:.82rem;color:#888;margin-bottom:20px;">📍 San Martín 1716, Neuquén Capital</p>
+    <button class="btn btn-primary" onclick="closeWelcome()">¡EMPEZAR! 🚀</button>
+  </div>
+</div>
+
+<!-- DOMINGO MODAL -->
+<div class="modal-overlay" id="modal-domingo">
+  <div class="modal-box">
+    <h3>⚠️ Los domingos no trabajamos</h3>
+    <p>No podemos entregar pedidos los días <strong>domingo</strong>.</p>
+    <div class="alt">✅ Alternativa: retiralo el sábado a la noche y te explicamos cómo calentarlo para el domingo.</div>
+    <button class="btn btn-primary" onclick="closeDomingo()">ENTENDIDO</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <a href="index.html" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit">
+    <img src="logo.png" alt="Logo Tío Rudy">
+    <div class="app-header-text">
+      <h1>Perniles del Tío Rudy</h1>
+      <p>La mejor calidad para tu evento</p>
+    </div>
+  </a>
+  <a href="index.html" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--gold2);text-decoration:none;font-size:.85rem;font-weight:700">&#8592; Inicio</a>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="prog-label">Paso 1 de 7</span>
+    <span id="prog-pct">14%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:14%"></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 1 – Datos básicos
+══════════════════════════════════════════════ -->
+<div class="screen active" id="s1">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 1 de 7</div>
+    <h2>Contanos sobre tu evento</h2>
+    <p>Estos datos son necesarios para preparar tu presupuesto.</p>
+  </div>
+  <div class="card-body">
+    <div class="field">
+      <label>👤 Tu nombre completo</label>
+      <input type="text" id="inp-nombre" placeholder="Ej: Juan García" oninput="validateS1()">
+      <div class="field-error" id="err-nombre">Por favor ingresá tu nombre.</div>
+    </div>
+    <div class="field">
+      <label>📱 Número de teléfono</label>
+      <input type="text" id="inp-tel" placeholder="Ej: 2994520532" oninput="validateS1()">
+      <div class="field-error" id="err-tel">Por favor ingresá tu teléfono.</div>
+    </div>
+    <div class="field">
+      <label>👥 Cantidad de personas</label>
+      <input type="number" id="inp-personas" min="10" placeholder="Mínimo 10 personas" oninput="validateS1()">
+      <div class="field-error" id="err-personas">Mínimo 10 personas.</div>
+    </div>
+    <div class="field">
+      <label>📅 Fecha y hora del evento</label>
+      <input type="datetime-local" id="inp-fecha" onchange="checkDomingo(); validateS1()">
+      <div class="field-error" id="err-fecha">Seleccioná la fecha del evento.</div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s1" onclick="goTo(2)" disabled>SIGUIENTE →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 2 – Salsas
+══════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 2 de 7</div>
+    <h2>Elegí tus salsas</h2>
+    <p>Todas son sin gluten (sin TACC). Podés distribuir la cantidad como quieras.</p>
+  </div>
+  <div class="card-body">
+    <div class="salsas-quota">
+      <span>Salsas incluidas</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <strong id="salsas-usadas">0</strong>
+        <span style="opacity:.5;">/</span>
+        <strong id="salsas-total">0</strong>
+      </div>
+    </div>
+    <div class="salsa-rows" id="salsa-rows">
+      <!-- generado por JS -->
+    </div>
+    <div class="field-error show" id="err-salsas" style="display:none!important"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="goTo(3)">SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(1)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 3 – Tipo de pernil
+══════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 3 de 7</div>
+    <h2>¿Qué tipo de pernil querés?</h2>
+    <p>Seleccioná una sola opción.</p>
+  </div>
+  <div class="card-body">
+    <div class="choices" id="tipo-choices">
+      <div class="choice-card" data-val="vacuno" onclick="selectTipo(this)">
+        <span class="choice-emoji">🐄</span>
+        <div class="choice-info">
+          <strong>Vacuno</strong>
+          <span>Clásico pernil de vaca, tierno y jugoso.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+      <div class="choice-card" data-val="cerdo" onclick="selectTipo(this)">
+        <span class="choice-emoji">🐷</span>
+        <div class="choice-info">
+          <strong>Cerdo</strong>
+          <span>Sabor tradicional, suave y con mucho gusto.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+      <div class="choice-card d-mixto" data-val="mixto" onclick="selectTipo(this)" style="display:none;">
+
+        <span class="choice-emoji">🥩</span>
+        <div class="choice-info">
+          <strong>Mixto</strong>
+          <span>Combinación de vacuno y cerdo. Disponible desde 20 personas.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s3" onclick="goTo(4)" disabled>SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(2)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 4 – Entrega / Mozo
+══════════════════════════════════════════════ -->
+<div class="screen" id="s4">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 4 de 7</div>
+    <h2>¿Cómo querés recibir el pedido?</h2>
+    <p>El pernil no va fileteado — por eso te damos la opción del mozo de corte.</p>
+  </div>
+  <div class="card-body">
+    <div class="choices">
+
+      <div class="choice-card" data-val="retiro" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🏪</span>
+        <div class="choice-info">
+          <strong>Lo retiro en el local</strong>
+          <span>San Martín 1716, Neuquén Capital. El cliente retira con su propia bandeja de horno.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="envio-capital" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🚗</span>
+        <div class="choice-info">
+          <strong>Envío a domicilio – Capital</strong>
+          <span>Neuquén Capital hasta 3 km. $10.000</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="envio-alred" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🗺️</span>
+        <div class="choice-info">
+          <strong>Envío a domicilio – Alrededores</strong>
+          <span>Zona exterior a Neuquén Capital. $25.000</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="mozo-capital" onclick="selectEntrega(this)">
+        <span class="choice-emoji">👨‍🍳</span>
+        <div class="choice-info">
+          <strong>Mozo de corte – Capital</strong>
+          <span>Neuquén Capital.</span>
+          <span class="badge-tag">✅ El envío es bonificado</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+      <div class="choice-card" data-val="mozo-alred" onclick="selectEntrega(this)">
+        <span class="choice-emoji">🏡</span>
+        <div class="choice-info">
+          <strong>Mozo de corte – Alrededores</strong>
+          <span>Hasta 20 km de Neuquén Capital.</span>
+          <span class="badge-tag">✅ El envío es bonificado</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+
+    </div>
+
+    <!-- Dirección (si no es retiro) -->
+    <div id="dir-section">
+      <div class="field" style="margin-top:16px">
+        <label>📍 Dirección del evento</label>
+        <div style="position:relative;">
+          <input type="text" id="inp-direccion" 
+            placeholder="Escribí la calle y número..." 
+            oninput="onDirInput()"
+            autocomplete="off">
+          <div id="dir-searching" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#aaa;font-size:.82rem;">🔍</div>
+        </div>
+        <div class="field-error" id="err-dir">Ingresá la dirección del evento.</div>
+
+        <!-- Mapa preview -->
+        <div id="map-preview" style="display:none;margin-top:12px;border-radius:12px;overflow:hidden;border:2px solid var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.12);">
+          <div id="map-container" style="width:100%;height:200px;"></div>
+          <div style="background:#fff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <div>
+              <div id="map-address-txt" style="font-weight:700;font-size:.88rem;color:var(--dark);line-height:1.3;"></div>
+              <div id="map-coords-txt" style="font-size:.75rem;color:#aaa;margin-top:2px;"></div>
+            </div>
+            <a id="map-open-btn" href="#" target="_blank"
+              style="background:linear-gradient(135deg,#4285F4,#1a73e8);color:#fff;text-decoration:none;
+                     padding:9px 14px;border-radius:10px;font-size:.82rem;font-weight:700;
+                     white-space:nowrap;flex-shrink:0;box-shadow:0 3px 10px rgba(66,133,244,.35);">
+              🗺️ Ver en Maps
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s4" onclick="goTo(5)" disabled>SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(3)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 5 – Opcionales
+══════════════════════════════════════════════ -->
+<div class="screen" id="s5">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 5 de 7</div>
+    <h2>¿Querés agregar algo más?</h2>
+    <p>Podés seleccionar uno o varios opcionales.</p>
+  </div>
+  <div class="card-body">
+    <div class="choices">
+
+      <div class="choice-card multi" data-val="pan-sin-tacc" onclick="toggleOpcional(this)">
+        <span class="choice-emoji">🍞</span>
+        <div class="choice-info">
+          <strong>Pan Sin TACC</strong>
+          <span>$15.000 por docena (12 unidades). Sujeto a disponibilidad.</span>
+        </div>
+        <div class="choice-check square"></div>
+      </div>
+
+      <div class="choice-card multi" data-val="empanadas" onclick="toggleOpcional(this)">
+        <span class="choice-emoji">🥟</span>
+        <div class="choice-info">
+          <strong>Empanadas</strong>
+          <span id="lbl-emp-card">$2.500 c/u · Carne, Jamón & Queso, Choclo, Verdura.</span>
+        </div>
+        <div class="choice-check square"></div>
+      </div>
+
+      <div class="choice-card multi" data-val="tablas" onclick="toggleOpcional(this)">
+        <span class="choice-emoji">🧀</span>
+        <div class="choice-info">
+          <strong>Tablas de Fiambre Premium</strong>
+          <span id="lbl-tab-card">Chica $60.000 · Mediana $120.000 · Grande $180.000</span>
+        </div>
+        <div class="choice-check square"></div>
+      </div>
+
+    </div>
+
+    <!-- Pan Sin TACC detail -->
+    <div class="opcional-section" id="sec-pan-sin-tacc">
+      <h4>🍞 Pan Sin TACC</h4>
+      <div class="num-rows">
+        <div class="num-row">
+          <div class="num-row-left">
+            <strong>Docenas de Pan Sin TACC</strong>
+            <span>$15.000 por docena · 12 unidades c/u</span>
+          </div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('pan-sin-tacc',-1)">−</button>
+            <span class="counter-val" id="num-pan-sin-tacc">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('pan-sin-tacc',1)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px">⚠️ La disponibilidad queda sujeta a confirmación.</div>
+    </div>
+
+    <!-- Empanadas detail -->
+    <div class="opcional-section" id="sec-empanadas">
+      <h4>🥟 Empanadas</h4>
+      <div class="num-rows">
+        <div class="num-row">
+          <div class="num-row-left"><strong>Carne</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-carne',-1)">−</button>
+            <span class="counter-val" id="num-emp-carne">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-carne',1)">+</button>
+          </div>
+        </div>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Jamón & Queso</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-jq',-1)">−</button>
+            <span class="counter-val" id="num-emp-jq">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-jq',1)">+</button>
+          </div>
+        </div>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Choclo</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-choclo',-1)">−</button>
+            <span class="counter-val" id="num-emp-choclo">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-choclo',1)">+</button>
+          </div>
+        </div>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Verdura</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('emp-verdura',-1)">−</button>
+            <span class="counter-val" id="num-emp-verdura">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('emp-verdura',1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tablas detail -->
+    <div class="opcional-section" id="sec-tablas">
+      <h4>🧀 Tablas de Fiambre Premium</h4>
+      <div class="num-rows">
+        <div class="num-row">
+          <div class="num-row-left"><strong>Tabla Chica</strong><span id="lbl-tab-chica">5 personas · ~1 kg · $60.000</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('tabla-chica',-1)">−</button>
+            <span class="counter-val" id="num-tabla-chica">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('tabla-chica',1)">+</button>
+          </div>
+        </div>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Tabla Mediana</strong><span id="lbl-tab-mediana">10 personas · ~2 kg · $120.000</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('tabla-mediana',-1)">−</button>
+            <span class="counter-val" id="num-tabla-mediana">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('tabla-mediana',1)">+</button>
+          </div>
+        </div>
+        <div class="num-row">
+          <div class="num-row-left"><strong>Tabla Grande</strong><span id="lbl-tab-grande">15 personas · ~3 kg · $180.000</span></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="cambiarNum('tabla-grande',-1)">−</button>
+            <span class="counter-val" id="num-tabla-grande">0</span>
+            <button class="counter-btn plus" onclick="cambiarNum('tabla-grande',1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="goTo(6)">SIGUIENTE →</button>
+      <button class="btn btn-secondary" onclick="goTo(4)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 6 – Observaciones
+══════════════════════════════════════════════ -->
+<div class="screen" id="s6">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 6 de 7</div>
+    <h2>¿Alguna observación?</h2>
+    <p>¿Hay algo más que quieras contarnos sobre tu evento?</p>
+  </div>
+  <div class="card-body">
+    <div class="choices">
+      <div class="choice-card" data-val="no" onclick="selectObs(this)">
+        <span class="choice-emoji">✅</span>
+        <div class="choice-info">
+          <strong>No, todo está bien</strong>
+          <span>Pasamos directamente al presupuesto.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+      <div class="choice-card" data-val="si" onclick="selectObs(this)">
+        <span class="choice-emoji">📝</span>
+        <div class="choice-info">
+          <strong>Sí, quiero agregar algo</strong>
+          <span>Podés escribir comentarios, pedidos especiales, etc.</span>
+        </div>
+        <div class="choice-check"></div>
+      </div>
+    </div>
+
+    <div class="opcional-section" id="sec-obs">
+      <div class="field" style="margin-top:0">
+        <label>✏️ Tu observación</label>
+        <textarea id="inp-obs" placeholder="Escribí aquí tu comentario..."></textarea>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="btn-s6" onclick="calcularYMostrar()" disabled>VER MI PRESUPUESTO 🎉</button>
+      <button class="btn btn-secondary" onclick="goTo(5)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA 7 – Resumen / Presupuesto
+══════════════════════════════════════════════ -->
+<div class="screen" id="s7">
+<div class="card">
+  <div class="card-head">
+    <div class="step-badge">Paso 7 de 7</div>
+    <h2>Tu presupuesto está listo 🎉</h2>
+    <p>Revisá el detalle y enviánoslo por WhatsApp para confirmarlo.</p>
+  </div>
+  <div class="card-body">
+    <div id="resumen-contenido"></div>
+    <div class="seña-note">
+      <strong>📌 Para reservar la fecha</strong>
+      Enviá el presupuesto por WhatsApp — ¡ese es el último paso para que el Tío Rudy vea tu pedido!
+    </div>
+    <div class="btn-wrap">
+      <a id="wa-btn" class="btn btn-wa" href="#" target="_blank">📱 ENVIAR POR WHATSAPP</a>
+      <button class="btn btn-secondary" onclick="goTo(6)">← Volver</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+// ── State ──────────────────────────────────
+const SALSAS = ['Cuatro Quesos','Provenzal','Tártara','Aceitunas','Criolla','Berenjenas','Prov. con Verdeo'];
+const state = {
+  nombre:'', tel:'', personas:0, fecha:'',
+  salsas:{}, tipo:'',
+  entrega:'', direccion:'', dirLat:null, dirLng:null,
+  opcionales: new Set(),
+  nums: {
+    'pan-sin-tacc':0,
+    'emp-carne':0,'emp-jq':0,'emp-choclo':0,'emp-verdura':0,
+    'tabla-chica':0,'tabla-mediana':0,'tabla-grande':0
+  },
+  obsOpcion:'', obs:''
+};
+
+// ── Welcome ────────────────────────────────
+function closeWelcome(){
+  document.getElementById('welcome-modal').classList.add('hidden');
+}
+
+// ── Progress ───────────────────────────────
+const totalSteps = 7;
+function updateProgress(step){
+  const pct = Math.round((step/totalSteps)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `Paso ${step} de ${totalSteps}`;
+  document.getElementById('prog-pct').textContent = pct+'%';
+}
+
+// ── Navigation ─────────────────────────────
+function goTo(step){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+step).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateProgress(step);
+  if(step===2) buildSalsas();
+  if(step===3) buildTipo();
+  if(step===5) actualizarPreciosOpcionales();
+}
+
+// ── Actualizar etiquetas de precios según fecha ──
+function actualizarPreciosOpcionales(){
+  const fechaEvento = new Date(state.fecha);
+  const esDic = fechaEvento >= new Date('2026-09-01T00:00:00');
+  const pEmp = esDic ? '$3.000' : '$2.500';
+  const pTabC = esDic ? '$65.000'  : '$60.000';
+  const pTabM = esDic ? '$130.000' : '$120.000';
+  const pTabG = esDic ? '$195.000' : '$180.000';
+
+  document.getElementById('lbl-emp-card').textContent = `${pEmp} c/u · Carne, Jamón & Queso, Choclo, Verdura.`;
+  document.querySelectorAll('.lbl-emp-u').forEach(el=>{ el.textContent = `${pEmp} c/u`; });
+  document.getElementById('lbl-tab-card').textContent = `Chica ${pTabC} · Mediana ${pTabM} · Grande ${pTabG}`;
+  document.getElementById('lbl-tab-chica').textContent   = `5 personas · ~1 kg · ${pTabC}`;
+  document.getElementById('lbl-tab-mediana').textContent = `10 personas · ~2 kg · ${pTabM}`;
+  document.getElementById('lbl-tab-grande').textContent  = `15 personas · ~3 kg · ${pTabG}`;
+}
+
+// ── S1 Validation ──────────────────────────
+function validateS1(){
+  state.nombre = document.getElementById('inp-nombre').value.trim();
+  state.tel    = document.getElementById('inp-tel').value.trim();
+  state.personas = parseInt(document.getElementById('inp-personas').value)||0;
+  state.fecha  = document.getElementById('inp-fecha').value;
+  const ok = state.nombre && state.tel && state.personas>=10 && state.fecha;
+  document.getElementById('btn-s1').disabled = !ok;
+}
+
+function checkDomingo(){
+  const v = document.getElementById('inp-fecha').value;
+  if(!v) return;
+  const d = new Date(v);
+  if(d.getDay()===0){
+    document.getElementById('modal-domingo').classList.add('show');
+    document.getElementById('inp-fecha').value='';
+    state.fecha='';
+    validateS1();
+  }
+}
+function closeDomingo(){ document.getElementById('modal-domingo').classList.remove('show'); }
+
+// ── S2 Salsas ──────────────────────────────
+function buildSalsas(){
+  const total = Math.ceil((1/5)*state.personas)+1;
+  document.getElementById('salsas-total').textContent = total;
+  const cont = document.getElementById('salsa-rows');
+  // init state
+  if(Object.keys(state.salsas).length===0) SALSAS.forEach(s=>state.salsas[s]=0);
+  cont.innerHTML = SALSAS.map(s=>`
+    <div class="salsa-row ${state.salsas[s]>0?'active':''}" id="sr-${esc(s)}">
+      <span class="salsa-name">${s}</span>
+      <div class="counter">
+        <button class="counter-btn" onclick="salsaChange('${s}',-1)">−</button>
+        <span class="counter-val" id="sv-${esc(s)}">${state.salsas[s]}</span>
+        <button class="counter-btn plus" onclick="salsaChange('${s}',1)">+</button>
+      </div>
+    </div>`).join('');
+  updateSalsasDisplay();
+}
+function esc(s){ return s.replace(/\s+/g,'_').replace(/[^a-z0-9_]/gi,''); }
+function salsaChange(salsa, delta){
+  const total = Math.ceil((1/5)*state.personas)+1;
+  const used  = Object.values(state.salsas).reduce((a,b)=>a+b,0);
+  let cur = state.salsas[salsa]||0;
+  if(delta>0 && used>=total) return;
+  cur = Math.max(0, cur+delta);
+  state.salsas[salsa] = cur;
+  const el = document.getElementById('sv-'+esc(salsa));
+  if(el) el.textContent = cur;
+  document.getElementById('sr-'+esc(salsa)).classList.toggle('active', cur>0);
+  updateSalsasDisplay();
+}
+function updateSalsasDisplay(){
+  const used = Object.values(state.salsas).reduce((a,b)=>a+b,0);
+  document.getElementById('salsas-usadas').textContent = used;
+}
+
+// ── S3 Tipo ────────────────────────────────
+function buildTipo(){
+  const mixto = document.querySelector('.d-mixto');
+  if(mixto) mixto.style.display = state.personas >= 20 ? 'flex' : 'none';
+  // Si tenía mixto seleccionado y ahora no aplica, limpiar selección
+  if(state.personas < 20 && state.tipo === 'mixto'){
+    state.tipo = '';
+    document.querySelectorAll('#tipo-choices .choice-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('btn-s3').disabled = true;
+  }
+}
+function selectTipo(el){
+  document.querySelectorAll('#tipo-choices .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.tipo = el.dataset.val;
+  document.getElementById('btn-s3').disabled = false;
+}
+
+// ── S4 Entrega ─────────────────────────────
+let autocomplete  = null;
+let mapInstance   = null;
+let markerInstance = null;
+let autocompleteReady = false;
+
+function initAutocomplete(){
+  const input = document.getElementById('inp-direccion');
+  if(!input || autocomplete || !window.google || !window.google.maps || !window.google.maps.places) return;
+  try {
+    autocomplete = new google.maps.places.Autocomplete(input, {
+      componentRestrictions: { country: 'ar' },
+      fields: ['formatted_address','geometry','name'],
+      bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(-39.2, -68.8),
+        new google.maps.LatLng(-38.7, -68.0)
+      ),
+      strictBounds: false
+    });
+    autocomplete.addListener('place_changed', onPlaceSelected);
+    autocompleteReady = true;
+  } catch(e){ console.warn('Autocomplete error:', e); }
+}
+
+function tryInitAutocomplete(){
+  if(autocompleteReady) return;
+  if(window.google && window.google.maps && window.google.maps.places){
+    initAutocomplete();
+  } else {
+    // Reintentar hasta que Google Maps esté disponible
+    setTimeout(tryInitAutocomplete, 300);
+  }
+}
+
+function onPlaceSelected(){
+  if(!autocomplete) return;
+  const place = autocomplete.getPlace();
+  if(!place || !place.geometry){ clearMap(); return; }
+  const lat  = place.geometry.location.lat();
+  const lng  = place.geometry.location.lng();
+  const addr = place.formatted_address || place.name || '';
+  state.direccion = addr;
+  state.dirLat = lat;
+  state.dirLng = lng;
+  document.getElementById('inp-direccion').value = addr;
+  showMap(lat, lng, addr);
+  validateS4();
+}
+
+function onDirInput(){
+  const val = document.getElementById('inp-direccion').value.trim();
+  if(!val){ clearMap(); state.direccion=''; state.dirLat=null; state.dirLng=null; }
+  else { state.direccion = val; }
+  validateS4();
+}
+
+function showMap(lat, lng, addr){
+  if(!window.google || !window.google.maps) return;
+  const preview = document.getElementById('map-preview');
+  preview.style.display = 'block';
+  document.getElementById('map-address-txt').textContent = addr;
+  document.getElementById('map-coords-txt').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  document.getElementById('map-open-btn').href =
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+
+  setTimeout(()=>{
+    if(!mapInstance){
+      mapInstance = new google.maps.Map(document.getElementById('map-container'),{
+        center:{lat,lng}, zoom:15,
+        disableDefaultUI: true,
+        zoomControl: true,
+        styles:[{featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]}]
+      });
+      markerInstance = new google.maps.Marker({
+        position:{lat,lng}, map:mapInstance,
+        icon:{
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: '#D4A044', fillOpacity: 1,
+          strokeColor: '#2A1810', strokeWeight: 2
+        }
+      });
+    } else {
+      mapInstance.setCenter({lat,lng});
+      markerInstance.setPosition({lat,lng});
+    }
+  }, 50);
+}
+
+function clearMap(){
+  document.getElementById('map-preview').style.display='none';
+}
+
+function selectEntrega(el){
+  document.querySelectorAll('#s4 .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.entrega = el.dataset.val;
+  const needDir = state.entrega !== 'retiro';
+  const dirSec  = document.getElementById('dir-section');
+  dirSec.classList.toggle('show', needDir);
+  if(!needDir){
+    state.direccion=''; state.dirLat=null; state.dirLng=null;
+    document.getElementById('inp-direccion').value='';
+    clearMap();
+  } else {
+    // Iniciar autocomplete en cuanto el campo sea visible
+    setTimeout(tryInitAutocomplete, 100);
+  }
+  validateS4();
+}
+
+function validateS4(){
+  state.direccion = document.getElementById('inp-direccion').value.trim();
+  const needDir = state.entrega && state.entrega !== 'retiro';
+  const ok = state.entrega && (!needDir || state.direccion);
+  document.getElementById('btn-s4').disabled = !ok;
+}
+
+// ── S5 Opcionales ──────────────────────────
+function toggleOpcional(el){
+  const val = el.dataset.val;
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')) state.opcionales.add(val);
+  else state.opcionales.delete(val);
+  ['pan-sin-tacc','empanadas','tablas'].forEach(k=>{
+    document.getElementById('sec-'+k).classList.toggle('show', state.opcionales.has(k));
+  });
+}
+function cambiarNum(key, delta){
+  state.nums[key] = Math.max(0,(state.nums[key]||0)+delta);
+  document.getElementById('num-'+key).textContent = state.nums[key];
+}
+
+// ── S6 Observaciones ──────────────────────
+function selectObs(el){
+  document.querySelectorAll('#s6 .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.obsOpcion = el.dataset.val;
+  document.getElementById('sec-obs').classList.toggle('show', state.obsOpcion==='si');
+  document.getElementById('btn-s6').disabled = false;
+}
+
+// ── CÁLCULO ────────────────────────────────
+function calcularYMostrar(){
+  state.obs = document.getElementById('inp-obs').value.trim();
+
+  // Precio pernil
+  const fechaEvento = new Date(state.fecha);
+  const fechaLimite = new Date('2026-09-01T00:00:00');
+  const esDic = fechaEvento>=fechaLimite;
+  const costoPorPersona = esDic
+    ? (state.personas<20?15000:14000)
+    : (state.personas<20?14000:13000);
+
+  const totalPernil   = costoPorPersona * state.personas;
+  const totalPanes    = 4 * state.personas;
+
+  // Entrega / mozo
+  let costoEnvio=0, costoMozo=0, envioTxt='', mozoTxt='';
+  const p=state.personas;
+  if(state.entrega==='envio-capital')  { costoEnvio=10000; envioTxt='Envío a domicilio – Capital'; }
+  if(state.entrega==='envio-alred')    { costoEnvio=25000; envioTxt='Envío a domicilio – Alrededores'; }
+  if(state.entrega==='mozo-capital'){
+    mozoTxt='Mozo de corte en Neuquén Capital';
+    const mozos=Math.ceil(p/50);
+    costoMozo = mozos * (p<=39?40000:50000);
+  }
+  if(state.entrega==='mozo-alred'){
+    mozoTxt='Mozo de corte en Alrededores';
+    const mozos=Math.ceil(p/50);
+    costoMozo = mozos * (p<=39?60000:70000);
+  }
+
+  // Opcionales
+  const n=state.nums;
+  const precioEmp    = esDic?3000:2500;
+  const precioTablaC = esDic?65000:60000;
+  const precioTablaM = esDic?130000:120000;
+  const precioTablaG = esDic?195000:180000;
+  const totalPanSinTacc = n['pan-sin-tacc']*15000;
+  const totalEmpCarne   = n['emp-carne']*precioEmp;
+  const totalEmpJQ      = n['emp-jq']*precioEmp;
+  const totalEmpChoclo  = n['emp-choclo']*precioEmp;
+  const totalEmpVerd    = n['emp-verdura']*precioEmp;
+  const totalTablaC     = n['tabla-chica']*precioTablaC;
+  const totalTablaM     = n['tabla-mediana']*precioTablaM;
+  const totalTablaG     = n['tabla-grande']*precioTablaG;
+
+  const TOTAL = totalPernil+costoEnvio+costoMozo+
+    totalPanSinTacc+totalEmpCarne+totalEmpJQ+totalEmpChoclo+totalEmpVerd+
+    totalTablaC+totalTablaM+totalTablaG;
+
+  // Formatear fecha
+  const fObj = new Date(state.fecha);
+  const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fechaTxt = `${dias[fObj.getDay()]} ${fObj.getDate()} de ${meses[fObj.getMonth()]} de ${fObj.getFullYear()}`;
+  const horaTxt  = `${String(fObj.getHours()).padStart(2,'0')}:${String(fObj.getMinutes()).padStart(2,'0')} hs`;
+
+  // Salsas
+  const salsasElegidas = Object.entries(state.salsas).filter(([,v])=>v>0);
+  const salsasTxt = salsasElegidas.length
+    ? salsasElegidas.map(([k,v])=>`${k} (x${v})`).join(', ')
+    : 'Sin especificar';
+
+  // ── Build resumen HTML ──────────────────
+  const $ = (v) => '$'+v.toLocaleString('es-AR');
+
+  let html = `
+  <div class="resumen-card">
+    <div class="resumen-head"><h3>👤 Cliente</h3></div>
+    <div class="resumen-body">
+      <div class="resumen-row"><span class="rk">Nombre</span><span class="rv">${state.nombre}</span></div>
+      <div class="resumen-row"><span class="rk">Teléfono</span><span class="rv">${state.tel}</span></div>
+    </div>
+  </div>
+  <div class="resumen-card">
+    <div class="resumen-head"><h3>🍖 Pedido</h3></div>
+    <div class="resumen-body">
+      <div class="resumen-row"><span class="rk">Pernil</span><span class="rv">${cap(state.tipo)} · ${state.personas} personas</span></div>
+      <div class="resumen-row"><span class="rk">Panes árabes</span><span class="rv">${totalPanes} unidades</span></div>
+      <div class="resumen-row"><span class="rk">Salsas (sin TACC)</span><span class="rv">${salsasTxt}</span></div>
+      <div class="resumen-row"><span class="rk">Costo pernil</span><span class="rv">${$(totalPernil)}</span></div>`;
+
+  if(totalEmpCarne+totalEmpJQ+totalEmpChoclo+totalEmpVerd>0){
+    html+=`<div class="resumen-row"><span class="rk">Empanadas</span><span class="rv">`;
+    const ep=[];
+    if(n['emp-carne']>0)   ep.push(`Carne x${n['emp-carne']}`);
+    if(n['emp-jq']>0)      ep.push(`J&Q x${n['emp-jq']}`);
+    if(n['emp-choclo']>0)  ep.push(`Choclo x${n['emp-choclo']}`);
+    if(n['emp-verdura']>0) ep.push(`Verdura x${n['emp-verdura']}`);
+    html+=ep.join(', ')+`</span></div>`;
+  }
+  if(totalTablaC+totalTablaM+totalTablaG>0){
+    html+=`<div class="resumen-row"><span class="rk">Tablas fiambre</span><span class="rv">`;
+    const tb=[];
+    if(n['tabla-chica']>0)   tb.push(`Chica x${n['tabla-chica']}`);
+    if(n['tabla-mediana']>0) tb.push(`Mediana x${n['tabla-mediana']}`);
+    if(n['tabla-grande']>0)  tb.push(`Grande x${n['tabla-grande']}`);
+    html+=tb.join(', ')+`</span></div>`;
+  }
+  if(n['pan-sin-tacc']>0)
+    html+=`<div class="resumen-row"><span class="rk">Pan Sin TACC ⚠️</span><span class="rv">${n['pan-sin-tacc']} docena(s) – ${$(totalPanSinTacc)}</span></div>`;
+
+  html+=`</div></div>
+  <div class="resumen-card">
+    <div class="resumen-head"><h3>🚚 Entrega</h3></div>
+    <div class="resumen-body">
+      <div class="resumen-row"><span class="rk">Fecha</span><span class="rv">${fechaTxt}</span></div>
+      <div class="resumen-row"><span class="rk">Horario</span><span class="rv">${horaTxt}</span></div>`;
+
+  if(state.entrega==='retiro')
+    html+=`<div class="resumen-row"><span class="rk">Modalidad</span><span class="rv">Retiro en local</span></div>`;
+  if(costoEnvio>0)
+    html+=`<div class="resumen-row"><span class="rk">Envío</span><span class="rv">${envioTxt} · ${$(costoEnvio)}</span></div>
+           <div class="resumen-row"><span class="rk">Dirección</span><span class="rv">${state.direccion}${state.dirLat?` <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}" target="_blank" style="color:var(--gold);font-size:.8rem;display:inline-block;margin-top:2px;">🗺️ Ver en Maps</a>`:''}</span></div>`;
+  if(costoMozo>0)
+    html+=`<div class="resumen-row"><span class="rk">Mozo de corte</span><span class="rv">${mozoTxt} · ${$(costoMozo)}</span></div>
+           <div class="resumen-row"><span class="rk">Dirección</span><span class="rv">${state.direccion}${state.dirLat?` <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}" target="_blank" style="color:var(--gold);font-size:.8rem;display:inline-block;margin-top:2px;">🗺️ Ver en Maps</a>`:''}</span></div>`;
+
+  html+=`</div></div>`;
+  if(state.obs)
+    html+=`<div class="resumen-card">
+      <div class="resumen-head"><h3>📝 Observaciones</h3></div>
+      <div class="resumen-body"><div class="resumen-row"><span class="rv">${state.obs}</span></div></div>
+    </div>`;
+
+  html+=`<div class="total-row"><span>TOTAL ESTIMADO</span><strong>${$(TOTAL)}</strong></div>`;
+
+  document.getElementById('resumen-contenido').innerHTML = html;
+
+  // ── WhatsApp message ───────────────────
+  const linea='━━━━━━━━━━━━━━━━━━━━━━━';
+  let wa=`👨‍🍳 *SERVICIO DE PERNIL*\n*TÍO RUDY*\n\nSan Martín 1716\nCel. 2994520532\n${linea}\n\n`;
+  wa+=`👤 *CLIENTE*\nNombre: ${state.nombre}\nTeléfono: ${state.tel}\n${linea}\n\n`;
+  wa+=`📋 *DETALLE DEL PEDIDO*\n`;
+  wa+=`• Pernil: ${cap(state.tipo).toUpperCase()} 🥩 (${state.personas} personas)\n`;
+  wa+=`• Panes: ${totalPanes} unidades (Tipo: ÁRABE) 🥖\n`;
+  if(salsasElegidas.length){
+    wa+=`  Salsas seleccionadas:\n`;
+    salsasElegidas.forEach(([k,v])=>{ wa+=`  ✓ ${k} (${v})\n`; });
+  }
+  const empArr=[['Carne',n['emp-carne']],['Jamón/Queso',n['emp-jq']],['Choclo',n['emp-choclo']],['Verdura',n['emp-verdura']]].filter(([,v])=>v>0);
+  if(empArr.length){ wa+=`• Empanadas:\n`; empArr.forEach(([k,v])=>{ wa+=`  ✓ ${k}: ${v} unid.\n`; }); }
+  const tabArr=[['Chica',n['tabla-chica']],['Mediana',n['tabla-mediana']],['Grande',n['tabla-grande']]].filter(([,v])=>v>0);
+  if(tabArr.length){ wa+=`• Tablas de fiambre:\n`; tabArr.forEach(([k,v])=>{ wa+=`  ✓ ${k}: ${v} unid.\n`; }); }
+  if(n['pan-sin-tacc']>0){ wa+=`• Pan Sin TACC: ${n['pan-sin-tacc']} docena(s) - ${n['pan-sin-tacc']*12} unidades\n  ⚠️ *Sujeto a disponibilidad*\n`; }
+  wa+=`${linea}\n\n`;
+  wa+=`🚚 *ENTREGA*\nFecha: ${fechaTxt}\nHorario: ${horaTxt}\n`;
+  if(state.entrega==='retiro') wa+=`Modalidad: Retira por local\n(El cliente retira con su propia bandeja de horno)\n`;
+  if(costoEnvio>0){
+    wa+=`Modalidad: ${envioTxt}\nDirección: ${state.direccion}\n`;
+    if(state.dirLat) wa+=`📍 Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}\n`;
+  }
+  if(costoMozo>0){
+    wa+=`Modalidad: ${mozoTxt}\nDirección: ${state.direccion}\n`;
+    if(state.dirLat) wa+=`📍 Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}\n`;
+  }
+  wa+=`${linea}\n\n`;
+  wa+=`💰 *RESUMEN DE CUENTA*\nTotal: $${TOTAL.toLocaleString('es-AR')}\nSeña: $____________\nSALDO A PAGAR: $____________\n${linea}\n\n`;
+  if(state.obs) wa+=`📝 *OBSERVACIONES:*\n${state.obs}\n\n`;
+  wa+=`_¡Gracias por elegirnos para tu evento!_ 👨‍🍳\n\n_Nota: El pernil no va fileteado, por ello ofrecemos servicio de mozo de corte_`;
+
+  document.getElementById('wa-btn').href=`https://wa.me/2994520532?text=${encodeURIComponent(wa)}`;
+
+  goTo(7);
+}
+
+function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : ''; }
+</script>
+</body>
+</html>

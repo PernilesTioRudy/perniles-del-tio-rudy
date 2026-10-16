@@ -3,1407 +3,611 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Perniles del Tío Rudy – Presupuesto</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJJBjpobjNin18Sp3-TQE9x5zI8PMtXYQ&libraries=places&language=es&region=AR" async defer></script>
+<title>Perniles del Tío Rudy — Pernil al fuego para tus eventos en Neuquén</title>
+<meta name="description" content="Elaboración artesanal de perniles de vaca y cerdo para eventos en Neuquén. Hace más de 30 años. Pan árabe, siete salsas sin TACC y servicio de corte.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold:    #D4A044;
-    --gold2:   #F0C060;
-    --brown:   #5C3A1E;
-    --dark:    #2A1810;
-    --cream:   #FDF6EC;
-    --red:     #C0392B;
-    --green:   #27AE60;
-    --wa:      #25D366;
-    --radius:  18px;
-    --shadow:  0 8px 32px rgba(42,24,16,.18);
+  :root{
+    --bg:#120b07;
+    --bg-2:#1a110b;
+    --surface:#211610;
+    --surface-2:#2b1d14;
+    --line:rgba(240,180,90,.14);
+    --line-strong:rgba(240,180,90,.28);
+    --text:#f2e4d2;
+    --muted:#c3ad94;
+    --faint:#95816c;
+    --ember-1:#7c1e0c;
+    --ember-2:#c0471a;
+    --ember-3:#ef9b2a;
+    --spark:#f8cf63;
+    --gold:#e8a94a;
+    --wa:#25d366;
+    --fire:linear-gradient(135deg,#7c1e0c 0%,#c0471a 42%,#ef9b2a 78%,#f8cf63 100%);
+    --maxw:1180px;
+    --serif:"Fraunces",Georgia,serif;
+    --sans:"Hanken Grotesk",system-ui,sans-serif;
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  body {
-    font-family: 'Lato', sans-serif;
-    background: linear-gradient(160deg, #2A1810 0%, #5C3A1E 60%, #8B5A2B 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 0 40px;
-  }
+  html{scroll-behavior:smooth}
 
-  /* ── HEADER ── */
-  .app-header {
-    width: 100%;
-    background: linear-gradient(135deg, #1a0e08 0%, #3d2210 100%);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.4);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .app-header img {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    border: 3px solid var(--gold);
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-  .app-header-text h1 {
-    font-family: 'Playfair Display', serif;
-    color: var(--gold2);
-    font-size: 1.15rem;
-    line-height: 1.2;
-  }
-  .app-header-text p {
-    color: rgba(255,255,255,.65);
-    font-size: .78rem;
+  body{
+    font-family:var(--sans);
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
 
-  /* ── PROGRESS BAR ── */
-  .progress-wrap {
-    width: 100%; max-width: 480px;
-    padding: 14px 20px 0;
-  }
-  .progress-label {
-    display: flex; justify-content: space-between;
-    color: rgba(255,255,255,.7);
-    font-size: .78rem;
-    margin-bottom: 6px;
-  }
-  .progress-bar {
-    height: 6px;
-    background: rgba(255,255,255,.15);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold2));
-    border-radius: 99px;
-    transition: width .4s cubic-bezier(.4,0,.2,1);
+  /* film grain + warm vignette over the whole dim room */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(130% 90% at 50% -10%,transparent 55%,rgba(0,0,0,.55) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    opacity:.06;
+    mix-blend-mode:soft-light;
   }
 
-  /* ── CARD ── */
-  .card {
-    width: 100%; max-width: 480px;
-    background: var(--cream);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin: 14px 16px 0;
-    overflow: hidden;
-    animation: slideUp .35s ease both;
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  section{position:relative;z-index:2}
+
+  h1,h2,h3{font-family:var(--serif);font-weight:900;line-height:1.05;letter-spacing:-.01em}
+
+  /* ─────────── header ─────────── */
+  header{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(10px);
+    background:linear-gradient(180deg,rgba(18,11,7,.92),rgba(18,11,7,.6));
+    border-bottom:1px solid var(--line);
   }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;flex-direction:column;line-height:1;gap:3px}
+  .brand .b-sup{font-family:var(--serif);font-style:italic;font-weight:600;font-size:1.02rem;color:var(--gold)}
+  .brand .b-main{font-family:var(--serif);font-weight:900;font-size:1.18rem;letter-spacing:.14em;text-transform:uppercase}
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{font-size:.9rem;color:var(--muted);font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;
+    padding:9px 16px;border-radius:999px;color:#1a0d04;background:var(--fire);
+    box-shadow:0 6px 20px rgba(192,71,26,.35)}
+  @media(max-width:820px){.nav-links a:not(.nav-cta){display:none}}
+
+  /* ─────────── hero ─────────── */
+  .hero{position:relative;overflow:hidden;padding:clamp(48px,8vw,96px) 0 clamp(40px,6vw,72px)}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,56px);align-items:center}
+
+  .hero-logo{margin-bottom:28px}
+  .hero-logo .l1{font-family:var(--serif);font-style:italic;font-weight:600;
+    font-size:clamp(1.7rem,4vw,2.3rem);color:var(--gold);line-height:1;margin-bottom:.12em}
+  .hero-logo .l2{font-family:var(--serif);font-weight:900;
+    font-size:clamp(2.3rem,6vw,3.4rem);letter-spacing:.1em;text-transform:uppercase;line-height:1.02}
+  .hero-logo .l3{display:flex;align-items:center;gap:12px;margin-top:12px;
+    font-size:.74rem;letter-spacing:.34em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .hero-logo .l3::before,.hero-logo .l3::after{content:"";height:1px;flex:0 0 26px;background:var(--line-strong)}
+  .hero-logo .l3::after{flex:1}
+
+  .hero h1{font-size:clamp(2.1rem,5.3vw,3.5rem);margin-bottom:20px;max-width:16ch}
+  .hero h1 .glow{background:var(--fire);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lead{font-size:clamp(1rem,1.4vw,1.14rem);color:var(--muted);max-width:46ch;margin-bottom:32px}
+
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:30px}
+  .btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:600;
+    font-size:1rem;padding:15px 26px;border-radius:14px;cursor:pointer;border:1px solid transparent;
+    transition:transform .18s ease,box-shadow .18s ease}
+  .btn-fire{color:#1a0d04;background:var(--fire);box-shadow:0 10px 30px rgba(192,71,26,.4)}
+  .btn-fire:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(192,71,26,.5)}
+  .btn-ghost{color:var(--text);border-color:var(--line-strong);background:rgba(255,255,255,.02)}
+  .btn-ghost:hover{border-color:var(--gold);transform:translateY(-2px)}
+
+  .hero-meta{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:.88rem;color:var(--faint)}
+  .hero-meta span{display:inline-flex;align-items:center;gap:7px}
+  .hero-meta svg{width:15px;height:15px;stroke:var(--gold)}
+
+  /* hero image emerging from darkness */
+  .hero-photo{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden;
+    border:1px solid var(--line);box-shadow:0 40px 90px -30px rgba(0,0,0,.9)}
+  .hero-photo img{width:100%;height:100%;object-fit:cover;transform:scale(1.02)}
+  .hero-photo::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 90% at 70% 40%,transparent 30%,rgba(18,11,7,.5) 100%),
+      linear-gradient(200deg,transparent 55%,rgba(18,11,7,.7))}
+  .hero-badge{position:absolute;left:18px;bottom:18px;z-index:3;
+    display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:14px;
+    background:rgba(18,11,7,.72);backdrop-filter:blur(6px);border:1px solid var(--line-strong)}
+  .hero-badge .num{font-family:var(--serif);font-weight:900;font-size:2rem;line-height:1;
+    background:var(--fire);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-badge .txt{font-size:.78rem;color:var(--muted);line-height:1.25;max-width:14ch}
+
+  /* ember glow behind hero */
+  .ember{position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;
+    background:radial-gradient(circle,rgba(239,155,42,.5),rgba(192,71,26,.18) 55%,transparent 72%)}
+  .ember.e1{width:620px;height:620px;top:-180px;right:-120px;animation:flicker 7s ease-in-out infinite}
+  .ember.e2{width:420px;height:420px;bottom:-160px;left:-120px;opacity:.5;
+    background:radial-gradient(circle,rgba(192,71,26,.45),transparent 70%);animation:flicker 9s ease-in-out infinite reverse}
+
+  @keyframes flicker{
+    0%,100%{opacity:.85;transform:scale(1)}
+    40%{opacity:.62;transform:scale(1.04)}
+    70%{opacity:.95;transform:scale(.98)}
   }
 
-  .card-head {
-    background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 100%);
-    padding: 22px 24px 18px;
-  }
-  .step-badge {
-    display: inline-block;
-    background: var(--gold);
-    color: var(--dark);
-    font-weight: 700;
-    font-size: .72rem;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 99px;
-    margin-bottom: 8px;
-  }
-  .card-head h2 {
-    font-family: 'Playfair Display', serif;
-    color: #fff;
-    font-size: 1.5rem;
-    line-height: 1.25;
-  }
-  .card-head p {
-    color: rgba(255,255,255,.65);
-    font-size: .88rem;
-    margin-top: 5px;
-    line-height: 1.45;
+  @media(max-width:860px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-photo{order:-1;aspect-ratio:16/10}
   }
 
-  .card-body { padding: 24px; }
+  /* ─────────── section scaffold ─────────── */
+  .band{padding:clamp(56px,8vw,104px) 0}
+  .band.alt{background:
+    radial-gradient(90% 60% at 50% 0,rgba(192,71,26,.06),transparent 60%),var(--bg-2)}
+  .eyebrow{font-family:var(--serif);font-style:italic;font-weight:500;font-size:1.05rem;color:var(--gold);margin-bottom:12px}
+  .band h2{font-size:clamp(1.8rem,3.6vw,2.7rem);max-width:20ch;margin-bottom:18px}
+  .band .intro{color:var(--muted);max-width:56ch;font-size:1.06rem}
 
-  /* ── INPUTS ── */
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block;
-    font-weight: 700;
-    font-size: .92rem;
-    color: var(--dark);
-    margin-bottom: 7px;
-  }
-  .field input[type="text"],
-  .field input[type="number"],
-  .field input[type="datetime-local"],
-  .field textarea {
-    width: 100%;
-    padding: 15px 16px;
-    border: 2px solid #ddd;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-family: 'Lato', sans-serif;
-    color: var(--dark);
-    background: #fff;
-    transition: border-color .2s, box-shadow .2s;
-    -webkit-appearance: none;
-  }
-  .field input:focus,
-  .field textarea:focus {
-    outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 0 4px rgba(212,160,68,.15);
-  }
-  .field textarea { resize: vertical; min-height: 110px; }
+  /* quiénes somos / values */
+  .somos{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,64px);align-items:center}
+  .somos-text p+p{margin-top:16px}
+  .values{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .pill{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:999px;
+    border:1px solid var(--line-strong);background:rgba(255,255,255,.02);font-weight:600;font-size:.9rem}
+  .pill i{width:7px;height:7px;border-radius:50%;background:var(--fire);display:inline-block}
+  .somos-photo{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);
+    aspect-ratio:5/6;box-shadow:0 30px 70px -30px rgba(0,0,0,.85)}
+  .somos-photo img{width:100%;height:100%;object-fit:cover}
+  .somos-photo::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(18,11,7,.6))}
+  @media(max-width:820px){.somos{grid-template-columns:1fr}}
 
-  /* ── ERROR ── */
-  .field-error {
-    color: var(--red);
-    font-size: .82rem;
-    margin-top: 5px;
-    display: none;
-  }
-  .field-error.show { display: block; }
+  /* el pernil — the star service */
+  .pernil{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(28px,5vw,60px);align-items:center}
+  .incl{list-style:none;margin-top:26px;display:grid;gap:14px}
+  .incl li{display:flex;gap:14px;align-items:flex-start}
+  .incl .ic{flex:0 0 34px;height:34px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(239,155,42,.1);border:1px solid var(--line-strong)}
+  .incl .ic svg{width:17px;height:17px;stroke:var(--gold);fill:none}
+  .incl b{font-weight:700;color:var(--text)}
+  .incl span{color:var(--muted);font-size:.96rem}
 
-  /* ── CHOICE CARDS (single/multi) ── */
-  .choices { display: flex; flex-direction: column; gap: 12px; }
-  .choice-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 16px 18px;
-    border: 2.5px solid #ddd;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: border-color .2s, background .2s, transform .15s;
-    background: #fff;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .choice-card:active { transform: scale(.98); }
-  .choice-card.selected {
-    border-color: var(--gold);
-    background: #FFF8EC;
-  }
-  .choice-card.selected .choice-check {
-    background: var(--gold);
-    border-color: var(--gold);
-  }
-  .choice-card.selected .choice-check::after { opacity: 1; }
+  .salsas{margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+  .salsas h3{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .salsas .notac{font-size:.86rem;color:var(--gold);font-weight:600;margin-bottom:16px;display:inline-flex;align-items:center;gap:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+    font-size:.86rem;color:var(--muted)}
 
-  .choice-check {
-    width: 24px; height: 24px; flex-shrink: 0;
-    border: 2.5px solid #bbb;
-    border-radius: 50%;
-    margin-top: 1px;
-    position: relative;
-    transition: background .2s, border-color .2s;
-  }
-  .choice-check.square { border-radius: 6px; }
-  .choice-check::after {
-    content: '';
-    position: absolute;
-    left: 5px; top: 2px;
-    width: 10px; height: 7px;
-    border-left: 2.5px solid #fff;
-    border-bottom: 2.5px solid #fff;
-    transform: rotate(-45deg);
-    opacity: 0;
-    transition: opacity .15s;
-  }
+  .pernil-photos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .pernil-photos figure{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);
+    box-shadow:0 26px 60px -30px rgba(0,0,0,.85)}
+  .pernil-photos img{width:100%;height:100%;object-fit:cover;aspect-ratio:3/4}
+  .pernil-photos figure:first-child{grid-row:span 2}
+  .pernil-photos figure:first-child img{aspect-ratio:3/5}
+  .pernil-photos figcaption{position:absolute;left:12px;bottom:10px;font-family:var(--serif);
+    font-style:italic;font-size:1.02rem;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+  .pernil-photos figure::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(0deg,rgba(18,11,7,.7),transparent 45%)}
+  @media(max-width:820px){.pernil{grid-template-columns:1fr}}
 
-  .choice-info { flex: 1; }
-  .choice-info strong {
-    display: block;
-    font-size: 1.05rem;
-    color: var(--dark);
-    line-height: 1.3;
-  }
-  .choice-info span {
-    display: block;
-    font-size: .83rem;
-    color: #777;
-    margin-top: 2px;
-    line-height: 1.4;
-  }
-  .choice-info .badge-tag {
-    display: inline-block;
-    background: #E8F5E9;
-    color: var(--green);
-    font-size: .75rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 99px;
-    margin-top: 5px;
-  }
-  .choice-emoji { font-size: 1.8rem; flex-shrink: 0; }
+  /* complementos grid */
+  .grid-comp{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:18px;margin-top:44px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 22px;
+    transition:border-color .2s,transform .2s}
+  .card:hover{border-color:var(--line-strong);transform:translateY(-3px)}
+  .card .cic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:18px;
+    background:var(--fire);box-shadow:0 8px 20px rgba(192,71,26,.3)}
+  .card .cic svg{width:22px;height:22px;stroke:#1a0d04;fill:none;stroke-width:1.8}
+  .card h3{font-size:1.18rem;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:.94rem}
+  @media(max-width:460px){.grid-comp{grid-template-columns:1fr}}
 
-  /* ── SALSA COUNTER ROWS ── */
-  .salsa-rows { display: flex; flex-direction: column; gap: 10px; }
-  .salsa-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    border: 2px solid #eee;
-    border-radius: 12px;
-    padding: 12px 16px;
-    transition: border-color .2s;
-  }
-  .salsa-row.active { border-color: var(--gold); background: #FFF8EC; }
-  .salsa-name { font-weight: 700; font-size: .95rem; color: var(--dark); }
-  .counter {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .counter-btn {
-    width: 36px; height: 36px;
-    border: none; border-radius: 50%;
-    background: var(--brown);
-    color: #fff;
-    font-size: 1.3rem;
-    line-height: 1;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .15s, transform .1s;
-    flex-shrink: 0;
-  }
-  .counter-btn:active { transform: scale(.9); }
-  .counter-btn.plus { background: var(--gold); color: var(--dark); }
-  .counter-val {
-    font-size: 1.1rem; font-weight: 700;
-    min-width: 24px; text-align: center;
-    color: var(--dark);
-  }
-  .salsas-quota {
-    background: linear-gradient(135deg, var(--dark), var(--brown));
-    color: #fff;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .salsas-quota span { font-size: .9rem; opacity: .85; }
-  .salsas-quota strong { font-size: 1.3rem; }
+  /* salones — B2B */
+  .salones{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line-strong);
+    background:linear-gradient(150deg,var(--surface-2),var(--bg-2));padding:clamp(32px,5vw,56px)}
+  .salones::before{content:"";position:absolute;width:380px;height:380px;right:-120px;top:-120px;
+    border-radius:50%;filter:blur(80px);background:radial-gradient(circle,rgba(239,155,42,.22),transparent 70%)}
+  .salones .inner{position:relative;z-index:2}
+  .ben-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px 34px;margin-top:40px}
+  .ben h3{font-size:1.1rem;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .ben h3::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--fire);flex:0 0 auto;transform:rotate(45deg)}
+  .ben p{color:var(--muted);font-size:.95rem}
+  .salones-note{margin-top:40px;padding:22px 24px;border-radius:14px;border:1px solid var(--line);
+    background:rgba(239,155,42,.06);color:var(--muted);font-size:.96rem}
+  .salones-note b{color:var(--gold)}
+  @media(max-width:820px){.ben-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.ben-grid{grid-template-columns:1fr}}
 
-  /* ── OPCIONAL DETAIL SECTION ── */
-  .opcional-section {
-    margin-top: 18px;
-    border-top: 2px dashed #e0d0b8;
-    padding-top: 18px;
-    display: none;
-    animation: fadeIn .3s ease both;
-  }
-  .opcional-section.show { display: block; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-  .opcional-section h4 {
-    font-family: 'Playfair Display', serif;
-    color: var(--brown);
-    font-size: 1.05rem;
-    margin-bottom: 12px;
-  }
+  /* por qué + eventos combined row */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,56px)}
+  .reasons{list-style:none;display:grid;gap:16px;margin-top:28px}
+  .reasons li{display:flex;gap:13px}
+  .reasons li svg{flex:0 0 20px;width:20px;height:20px;stroke:var(--gold);fill:none;margin-top:3px}
+  .reasons b{font-weight:700}
+  .reasons span{color:var(--muted)}
+  .tags{display:flex;flex-wrap:wrap;gap:11px;margin-top:28px}
+  .tag{padding:11px 18px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:.95rem}
+  .tag small{display:block;color:var(--faint);font-weight:400;font-size:.8rem;margin-top:2px}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
 
-  /* Empanadas number rows */
-  .num-rows { display: flex; flex-direction: column; gap: 10px; }
-  .num-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    border: 2px solid #eee;
-    border-radius: 12px;
-    padding: 12px 16px;
-  }
-  .num-row-left { display: flex; flex-direction: column; }
-  .num-row-left strong { font-size: .95rem; color: var(--dark); font-weight: 700; }
-  .num-row-left span { font-size: .78rem; color: #999; margin-top: 1px; }
+  /* galería */
+  .gallery-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:38px}
+  .gallery-head .intro{margin-top:14px}
+  .fb-link{display:inline-flex;align-items:center;gap:12px;flex:0 0 auto;
+    padding:12px 18px;border-radius:14px;border:1px solid var(--line-strong);
+    background:rgba(255,255,255,.02);transition:border-color .2s,transform .2s}
+  .fb-link:hover{border-color:var(--gold);transform:translateY(-2px)}
+  .fb-link svg{width:30px;height:30px;fill:#4a85e8;flex:0 0 auto}
+  .fb-link .fb-t{line-height:1.2}
+  .fb-link .fb-t b{display:block;font-size:.98rem;color:var(--text)}
+  .fb-link .fb-t span{font-size:.82rem;color:var(--faint)}
+  .gallery{columns:3;column-gap:16px}
+  .gallery figure{position:relative;break-inside:avoid;margin:0 0 16px;border-radius:14px;overflow:hidden;
+    border:1px solid var(--line);box-shadow:0 20px 50px -30px rgba(0,0,0,.85)}
+  .gallery img{width:100%;display:block;transition:transform .5s ease}
+  .gallery figure:hover img{transform:scale(1.04)}
+  .gallery figure::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(0deg,rgba(18,11,7,.45),transparent 55%);pointer-events:none}
+  .gallery-note{margin-top:30px;text-align:center;color:var(--faint);font-size:.92rem}
+  @media(max-width:860px){.gallery{columns:2}}
+  @media(max-width:520px){.gallery{columns:1}}
 
-  /* ── DIRECCIÓN ── */
-  #dir-section {
-    margin-top: 16px;
-    display: none;
-    animation: fadeIn .3s ease both;
-  }
-  #dir-section.show { display: block; }
+  /* clientes */
+  .clientes{text-align:center}
+  .logos{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:34px 0}
+  .logos .cl{font-family:var(--serif);font-weight:600;font-size:1.25rem;color:var(--muted);
+    padding:16px 30px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+  blockquote{max-width:60ch;margin:0 auto;font-family:var(--serif);font-style:italic;
+    font-size:clamp(1.2rem,2.3vw,1.6rem);line-height:1.4;color:var(--text)}
+  blockquote::before{content:"“";color:var(--gold)}
+  blockquote::after{content:"”";color:var(--gold)}
 
-  /* ── INFO BOX ── */
-  .info-box {
-    background: #FFF8EC;
-    border: 2px solid var(--gold);
-    border-radius: 12px;
-    padding: 13px 16px;
-    margin-bottom: 18px;
-    font-size: .88rem;
-    color: var(--brown);
-    line-height: 1.5;
-  }
+  /* contacto */
+  .contacto{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,60px);align-items:center}
+  .contact-list{list-style:none;display:grid;gap:20px;margin-top:30px}
+  .contact-list li{display:flex;gap:16px;align-items:flex-start}
+  .contact-list .ci{flex:0 0 46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    background:var(--surface);border:1px solid var(--line-strong)}
+  .contact-list .ci svg{width:20px;height:20px;stroke:var(--gold);fill:none}
+  .contact-list .k{font-size:.8rem;color:var(--faint);text-transform:uppercase;letter-spacing:.12em;margin-bottom:2px}
+  .contact-list .v{font-size:1.05rem;font-weight:600}
+  .contact-list .v a:hover{color:var(--gold)}
+  .contact-cta{background:linear-gradient(150deg,var(--surface-2),var(--bg-2));border:1px solid var(--line-strong);
+    border-radius:20px;padding:clamp(28px,4vw,42px);text-align:center;position:relative;overflow:hidden}
+  .contact-cta::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(90% 70% at 50% 0,rgba(239,155,42,.14),transparent 60%)}
+  .contact-cta .inner{position:relative;z-index:2}
+  .contact-cta h3{font-size:clamp(1.5rem,3vw,2rem);margin-bottom:12px}
+  .contact-cta p{color:var(--muted);margin-bottom:26px}
+  .wa-btn{display:inline-flex;align-items:center;gap:11px;background:var(--wa);color:#063b1e;
+    font-weight:700;font-size:1.05rem;padding:16px 30px;border-radius:14px;
+    box-shadow:0 12px 30px rgba(37,211,102,.3);transition:transform .18s}
+  .wa-btn:hover{transform:translateY(-2px)}
+  .wa-btn svg{width:22px;height:22px;fill:#063b1e}
+  @media(max-width:820px){.contacto{grid-template-columns:1fr}}
 
-  /* ── BUTTONS ── */
-  .btn {
-    display: block; width: 100%;
-    padding: 18px;
-    border: none; border-radius: 14px;
-    font-family: 'Lato', sans-serif;
-    font-size: 1.1rem; font-weight: 700;
-    cursor: pointer;
-    transition: transform .15s, box-shadow .15s, opacity .2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn:active { transform: scale(.97); }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--brown) 100%);
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(92,58,30,.35);
-  }
-  .btn-primary:disabled {
-    opacity: .45; cursor: not-allowed; transform: none; box-shadow: none;
-  }
-  .btn-secondary {
-    background: transparent;
-    color: var(--brown);
-    border: 2.5px solid var(--brown);
-    margin-top: 10px;
-  }
-  .btn-wa {
-    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-    color: #fff;
-    font-size: 1.15rem;
-    box-shadow: 0 6px 20px rgba(37,211,102,.3);
-  }
-  .btn-wrap { margin-top: 24px; display: flex; flex-direction: column; gap: 0; }
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:40px 0;position:relative;z-index:2;color:var(--faint)}
+  .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;align-items:center;font-size:.88rem}
+  .foot .fb{font-family:var(--serif);font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 
-  /* ── RESUMEN ── */
-  .resumen-card {
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 4px 16px rgba(42,24,16,.1);
-    margin-bottom: 18px;
-  }
-  .resumen-head {
-    background: linear-gradient(135deg, var(--dark), var(--brown));
-    padding: 16px 20px;
-    color: #fff;
-  }
-  .resumen-head h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-  }
-  .resumen-body { padding: 16px 20px; }
-  .resumen-row {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 9px 0;
-    border-bottom: 1px solid #f0e8dc;
-    font-size: .92rem;
-    gap: 10px;
-  }
-  .resumen-row:last-child { border-bottom: none; }
-  .resumen-row .rk { color: #777; flex-shrink: 0; }
-  .resumen-row .rv { font-weight: 700; color: var(--dark); text-align: right; }
-  .total-row {
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border-radius: 12px;
-    padding: 16px 20px;
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 6px;
-  }
-  .total-row span { font-size: .95rem; font-weight: 700; color: var(--dark); }
-  .total-row strong { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--dark); }
-
-  .seña-note {
-    background: #FFF8EC;
-    border: 2px solid var(--gold);
-    border-radius: 12px;
-    padding: 13px 16px;
-    font-size: .85rem;
-    color: var(--brown);
-    margin-bottom: 18px;
-    line-height: 1.5;
-  }
-  .seña-note strong { display: block; margin-bottom: 4px; font-size: .92rem; }
-
-  /* Pantalla oculta / visible */
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* ── MODAL DOMINGO ── */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.8);
-    display: none; align-items: center; justify-content: center;
-    z-index: 999; padding: 20px;
-  }
-  .modal-overlay.show { display: flex; }
-  .modal-box {
-    background: #fff; border-radius: 18px;
-    padding: 32px 28px; max-width: 360px; width: 100%;
-    text-align: center; border: 4px solid #FFC107;
-    animation: slideUp .3s ease both;
-  }
-  .modal-box h3 { font-family:'Playfair Display',serif; font-size:1.3rem; color:#856404; margin-bottom:12px; }
-  .modal-box p { font-size:.93rem; color:#555; line-height:1.5; margin-bottom:14px; }
-  .modal-box .alt { background:#E8F5E9; border:2px solid #81C784; border-radius:10px; padding:12px; font-size:.88rem; color:#2E7D32; font-weight:700; margin-bottom:18px; }
-
-  /* ── WELCOME MODAL ── */
-  #welcome-modal {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.88);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999; padding: 20px;
-  }
-  #welcome-modal.hidden { display: none; }
-  .welcome-box {
-    background: #fff; border-radius: 20px;
-    padding: 36px 28px; max-width: 360px; width: 100%;
-    text-align: center; border: 4px solid var(--gold);
-    animation: slideUp .4s ease both;
-  }
-  .welcome-box .wlogo {
-    width: 90px; height: 90px; border-radius: 50%;
-    border: 4px solid var(--gold); object-fit: cover;
-    margin: 0 auto 16px;
-    display: block;
-  }
-  .welcome-box h2 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--dark); margin-bottom:8px; }
-  .welcome-box p { font-size:.93rem; color:#555; line-height:1.5; margin-bottom:14px; }
-  .welcome-box .tagline {
-    background: linear-gradient(135deg, var(--dark), var(--brown));
-    color: var(--gold2);
-    font-weight: 700; font-size: .88rem;
-    padding: 10px 16px; border-radius: 10px;
-    margin-bottom: 20px;
-    font-family: 'Playfair Display', serif;
-    letter-spacing: .04em;
-  }
-
-  @media (min-width: 500px) {
-    .card { margin: 18px auto 0; }
-    .progress-wrap { margin: 0 auto; }
+  @media(prefers-reduced-motion:reduce){
+    .ember{animation:none!important}
+    html{scroll-behavior:auto}
   }
 </style>
 </head>
 <body>
 
-<!-- WELCOME MODAL -->
-<div id="welcome-modal">
-  <div class="welcome-box">
-    <img class="wlogo" src="logo.png" alt="Logo">
-    <h2>🍖 ¡Bienvenido!</h2>
-    <p>Te vamos a guiar paso a paso para armar tu presupuesto personalizado.</p>
-    <div class="tagline">Más de 30 años · Calidad · Honestidad · Buen Gusto</div>
-    <p style="font-size:.82rem;color:#888;margin-bottom:20px;">📍 San Martín 1716, Neuquén Capital</p>
-    <button class="btn btn-primary" onclick="closeWelcome()">¡EMPEZAR! 🚀</button>
-  </div>
-</div>
-
-<!-- DOMINGO MODAL -->
-<div class="modal-overlay" id="modal-domingo">
-  <div class="modal-box">
-    <h3>⚠️ Los domingos no trabajamos</h3>
-    <p>No podemos entregar pedidos los días <strong>domingo</strong>.</p>
-    <div class="alt">✅ Alternativa: retiralo el sábado a la noche y te explicamos cómo calentarlo para el domingo.</div>
-    <button class="btn btn-primary" onclick="closeDomingo()">ENTENDIDO</button>
-  </div>
-</div>
-
-<!-- HEADER -->
-<header class="app-header">
-  <img src="logo.png" alt="Logo Tío Rudy">
-  <div class="app-header-text">
-    <h1>Perniles del Tío Rudy</h1>
-    <p>La mejor calidad para tu evento</p>
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="brand" aria-label="Perniles del Tío Rudy">
+      <span class="b-sup">Perniles del</span>
+      <span class="b-main">Tío Rudy</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#pernil">El pernil</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#galeria">Galería</a>
+      <a href="#salones">Salones</a>
+      <a href="#contacto">Contacto</a>
+      <a href="https://wa.me/5492994520532" class="nav-cta">Pedir presupuesto</a>
+    </nav>
   </div>
 </header>
 
-<!-- PROGRESS -->
-<div class="progress-wrap">
-  <div class="progress-label">
-    <span id="prog-label">Paso 1 de 7</span>
-    <span id="prog-pct">14%</span>
-  </div>
-  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:14%"></div></div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANTALLA 1 – Datos básicos
-══════════════════════════════════════════════ -->
-<div class="screen active" id="s1">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 1 de 7</div>
-    <h2>Contanos sobre tu evento</h2>
-    <p>Estos datos son necesarios para preparar tu presupuesto.</p>
-  </div>
-  <div class="card-body">
-    <div class="field">
-      <label>👤 Tu nombre completo</label>
-      <input type="text" id="inp-nombre" placeholder="Ej: Juan García" oninput="validateS1()">
-      <div class="field-error" id="err-nombre">Por favor ingresá tu nombre.</div>
+<!-- ───────────── HERO ───────────── -->
+<section class="hero" id="top">
+  <span class="ember e1"></span>
+  <span class="ember e2"></span>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="hero-logo">
+        <div class="l1">Perniles del</div>
+        <div class="l2">Tío Rudy</div>
+        <div class="l3">Calidad · Honestidad · Buen gusto</div>
+      </div>
+      <h1>Pernil listo para tu <span class="glow">evento</span>.</h1>
+      <p class="lead">Elaboración artesanal de perniles de vaca y cerdo para eventos en Neuquén Capital y alrededores. Pan árabe, siete salsas sin TACC y servicio de corte en tu salón.</p>
+      <div class="cta-row">
+        <a href="https://wa.me/5492994520532" class="btn btn-fire">Pedí tu presupuesto</a>
+        <a href="presupuesto.html" class="btn btn-ghost">Calcularlo online</a>
+      </div>
+      <div class="hero-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>San Martín 1716, Neuquén</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Lun a Sáb · 9–13 y 17–20:30</span>
+      </div>
     </div>
-    <div class="field">
-      <label>📱 Número de teléfono</label>
-      <input type="text" id="inp-tel" placeholder="Ej: 2994520532" oninput="validateS1()">
-      <div class="field-error" id="err-tel">Por favor ingresá tu teléfono.</div>
-    </div>
-    <div class="field">
-      <label>👥 Cantidad de personas</label>
-      <input type="number" id="inp-personas" min="10" placeholder="Mínimo 10 personas" oninput="validateS1()">
-      <div class="field-error" id="err-personas">Mínimo 10 personas.</div>
-    </div>
-    <div class="field">
-      <label>📅 Fecha y hora del evento</label>
-      <input type="datetime-local" id="inp-fecha" onchange="checkDomingo(); validateS1()">
-      <div class="field-error" id="err-fecha">Seleccioná la fecha del evento.</div>
-    </div>
-    <div class="btn-wrap">
-      <button class="btn btn-primary" id="btn-s1" onclick="goTo(2)" disabled>SIGUIENTE →</button>
+    <div class="hero-photo">
+      <img src="pernil%20Cerdo.jpg" alt="Pernil de cerdo glaseado recién salido del horno sobre bandeja negra">
+      <div class="hero-badge">
+        <span class="num">30</span>
+        <span class="txt">años de trayectoria en Neuquén</span>
+      </div>
     </div>
   </div>
-</div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 2 – Salsas
-══════════════════════════════════════════════ -->
-<div class="screen" id="s2">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 2 de 7</div>
-    <h2>Elegí tus salsas</h2>
-    <p>Todas son sin gluten (sin TACC). Podés distribuir la cantidad como quieras.</p>
-  </div>
-  <div class="card-body">
-    <div class="salsas-quota">
-      <span>Salsas incluidas</span>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <strong id="salsas-usadas">0</strong>
-        <span style="opacity:.5;">/</span>
-        <strong id="salsas-total">0</strong>
+<!-- ───────────── QUIÉNES SOMOS ───────────── -->
+<section class="band" id="somos">
+  <div class="wrap somos">
+    <div class="somos-text">
+      <div class="eyebrow">Una familia, un oficio</div>
+      <h2>Tres décadas haciendo del pernil una tradición.</h2>
+      <p class="intro">Perniles del Tío Rudy es una empresa familiar con más de 30 años de trayectoria en la elaboración y venta de perniles en Neuquén Capital. Nos especializamos en un servicio integral para todo tipo de eventos, desde la reunión familiar hasta el gran evento corporativo.</p>
+      <p class="intro">Nuestra experiencia nos respalda y nos posiciona como referentes en el rubro. Trabajamos con productos de primera calidad y un equipo capacitado para garantizar el éxito de cada evento.</p>
+      <div class="values">
+        <span class="pill"><i></i>Calidad</span>
+        <span class="pill"><i></i>Compromiso</span>
+        <span class="pill"><i></i>Profesionalismo</span>
       </div>
     </div>
-    <div class="salsa-rows" id="salsa-rows">
-      <!-- generado por JS -->
-    </div>
-    <div class="field-error show" id="err-salsas" style="display:none!important"></div>
-    <div class="btn-wrap">
-      <button class="btn btn-primary" onclick="goTo(3)">SIGUIENTE →</button>
-      <button class="btn btn-secondary" onclick="goTo(1)">← Volver</button>
+    <div class="somos-photo">
+      <img src="Pernil%20Vaca.jpg" alt="Pernil de vaca cortándose en finas láminas sobre la plancha">
     </div>
   </div>
-</div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 3 – Tipo de pernil
-══════════════════════════════════════════════ -->
-<div class="screen" id="s3">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 3 de 7</div>
-    <h2>¿Qué tipo de pernil querés?</h2>
-    <p>Seleccioná una sola opción.</p>
-  </div>
-  <div class="card-body">
-    <div class="choices" id="tipo-choices">
-      <div class="choice-card" data-val="vacuno" onclick="selectTipo(this)">
-        <span class="choice-emoji">🐄</span>
-        <div class="choice-info">
-          <strong>Vacuno</strong>
-          <span>Clásico pernil de vaca, tierno y jugoso.</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-      <div class="choice-card" data-val="cerdo" onclick="selectTipo(this)">
-        <span class="choice-emoji">🐷</span>
-        <div class="choice-info">
-          <strong>Cerdo</strong>
-          <span>Sabor tradicional, suave y con mucho gusto.</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-      <div class="choice-card d-mixto" data-val="mixto" onclick="selectTipo(this)" style="display:none;">
-
-        <span class="choice-emoji">🥩</span>
-        <div class="choice-info">
-          <strong>Mixto</strong>
-          <span>Combinación de vacuno y cerdo. Disponible desde 20 personas.</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-    </div>
-    <div class="btn-wrap">
-      <button class="btn btn-primary" id="btn-s3" onclick="goTo(4)" disabled>SIGUIENTE →</button>
-      <button class="btn btn-secondary" onclick="goTo(2)">← Volver</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     PANTALLA 4 – Entrega / Mozo
-══════════════════════════════════════════════ -->
-<div class="screen" id="s4">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 4 de 7</div>
-    <h2>¿Cómo querés recibir el pedido?</h2>
-    <p>El pernil no va fileteado — por eso te damos la opción del mozo de corte.</p>
-  </div>
-  <div class="card-body">
-    <div class="choices">
-
-      <div class="choice-card" data-val="retiro" onclick="selectEntrega(this)">
-        <span class="choice-emoji">🏪</span>
-        <div class="choice-info">
-          <strong>Lo retiro en el local</strong>
-          <span>San Martín 1716, Neuquén Capital. El cliente retira con su propia bandeja de horno.</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-
-      <div class="choice-card" data-val="envio-capital" onclick="selectEntrega(this)">
-        <span class="choice-emoji">🚗</span>
-        <div class="choice-info">
-          <strong>Envío a domicilio – Capital</strong>
-          <span>Neuquén Capital hasta 3 km. $10.000</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-
-      <div class="choice-card" data-val="envio-alred" onclick="selectEntrega(this)">
-        <span class="choice-emoji">🗺️</span>
-        <div class="choice-info">
-          <strong>Envío a domicilio – Alrededores</strong>
-          <span>Zona exterior a Neuquén Capital. $25.000</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-
-      <div class="choice-card" data-val="mozo-capital" onclick="selectEntrega(this)">
-        <span class="choice-emoji">👨‍🍳</span>
-        <div class="choice-info">
-          <strong>Mozo de corte – Capital</strong>
-          <span>Neuquén Capital.</span>
-          <span class="badge-tag">✅ El envío es bonificado</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-
-      <div class="choice-card" data-val="mozo-alred" onclick="selectEntrega(this)">
-        <span class="choice-emoji">🏡</span>
-        <div class="choice-info">
-          <strong>Mozo de corte – Alrededores</strong>
-          <span>Hasta 20 km de Neuquén Capital.</span>
-          <span class="badge-tag">✅ El envío es bonificado</span>
-        </div>
-        <div class="choice-check"></div>
-      </div>
-
-    </div>
-
-    <!-- Dirección (si no es retiro) -->
-    <div id="dir-section">
-      <div class="field" style="margin-top:16px">
-        <label>📍 Dirección del evento</label>
-        <div style="position:relative;">
-          <input type="text" id="inp-direccion" 
-            placeholder="Escribí la calle y número..." 
-            oninput="onDirInput()"
-            autocomplete="off">
-          <div id="dir-searching" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#aaa;font-size:.82rem;">🔍</div>
-        </div>
-        <div class="field-error" id="err-dir">Ingresá la dirección del evento.</div>
-
-        <!-- Mapa preview -->
-        <div id="map-preview" style="display:none;margin-top:12px;border-radius:12px;overflow:hidden;border:2px solid var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.12);">
-          <div id="map-container" style="width:100%;height:200px;"></div>
-          <div style="background:#fff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-            <div>
-              <div id="map-address-txt" style="font-weight:700;font-size:.88rem;color:var(--dark);line-height:1.3;"></div>
-              <div id="map-coords-txt" style="font-size:.75rem;color:#aaa;margin-top:2px;"></div>
-            </div>
-            <a id="map-open-btn" href="#" target="_blank"
-              style="background:linear-gradient(135deg,#4285F4,#1a73e8);color:#fff;text-decoration:none;
-                     padding:9px 14px;border-radius:10px;font-size:.82rem;font-weight:700;
-                     white-space:nowrap;flex-shrink:0;box-shadow:0 3px 10px rgba(66,133,244,.35);">
-              🗺️ Ver en Maps
-            </a>
-          </div>
+<!-- ───────────── EL PERNIL ───────────── -->
+<section class="band alt" id="pernil">
+  <div class="wrap pernil">
+    <div>
+      <div class="eyebrow">Nuestro servicio estrella</div>
+      <h2>El pernil, cocido a la perfección.</h2>
+      <p class="intro">Perniles de vacuno, cerdo o mixtos, preparados con las mejores técnicas de cocción para lograr jugosidad y un sabor excepcional. Ideales para eventos desde 10 personas en adelante.</p>
+      <ul class="incl">
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12c0-4 4-7 9-7s9 3 9 7-4 7-9 7-9-3-9-7Z"/><path d="M3 12c2 1 5 2 9 2s7-1 9-2"/></svg></span>
+          <div><b>Pernil cocinado a la perfección</b><br><span>Vacuno, cerdo o mixto, jugoso y lleno de sabor.</span></div>
+        </li>
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8 9h8M8 12h8M8 15h5"/></svg></span>
+          <div><b>Pan árabe recién hecho</b><br><span>Cuatro unidades por persona.</span></div>
+        </li>
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M5 10h14l-1 9H6l-1-9Z"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+          <div><b>Siete variedades de salsas</b><br><span>Según la cantidad de personas del evento.</span></div>
+        </li>
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6"/><path d="M8 10h8M9 14h6"/></svg></span>
+          <div><b>Opción sin TACC</b><br><span>Panes sin TACC para celíacos. Consultá disponibilidad.</span></div>
+        </li>
+      </ul>
+      <div class="salsas">
+        <h3>Nuestras siete salsas</h3>
+        <div class="notac"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Todas sin TACC</div>
+        <div class="chips">
+          <span class="chip">4 Quesos</span>
+          <span class="chip">Provenzal</span>
+          <span class="chip">Tártara</span>
+          <span class="chip">Criolla</span>
+          <span class="chip">Aceitunas</span>
+          <span class="chip">Berenjenas</span>
+          <span class="chip">Provenzal con cebolla de verdeo</span>
         </div>
       </div>
     </div>
-
-    <div class="btn-wrap">
-      <button class="btn btn-primary" id="btn-s4" onclick="goTo(5)" disabled>SIGUIENTE →</button>
-      <button class="btn btn-secondary" onclick="goTo(3)">← Volver</button>
+    <div class="pernil-photos">
+      <figure>
+        <img src="pernil%20Cerdo.jpg" alt="Pernil de cerdo glaseado">
+        <figcaption>Cerdo</figcaption>
+      </figure>
+      <figure>
+        <img src="Pernil%20Vaca.jpg" alt="Pernil de vaca en láminas">
+        <figcaption>Vacuno</figcaption>
+      </figure>
+      <figure>
+        <img src="Tabla%20de%20fiambres.jpg" alt="Tabla de fiambres surtida">
+        <figcaption>Mixto y tablas</figcaption>
+      </figure>
     </div>
   </div>
-</div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 5 – Opcionales
-══════════════════════════════════════════════ -->
-<div class="screen" id="s5">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 5 de 7</div>
-    <h2>¿Querés agregar algo más?</h2>
-    <p>Podés seleccionar uno o varios opcionales.</p>
-  </div>
-  <div class="card-body">
-    <div class="choices">
-
-      <div class="choice-card multi" data-val="pan-sin-tacc" onclick="toggleOpcional(this)">
-        <span class="choice-emoji">🍞</span>
-        <div class="choice-info">
-          <strong>Pan Sin TACC</strong>
-          <span>$15.000 por docena (12 unidades). Sujeto a disponibilidad.</span>
-        </div>
-        <div class="choice-check square"></div>
+<!-- ───────────── SERVICIOS COMPLEMENTARIOS ───────────── -->
+<section class="band" id="servicios">
+  <div class="wrap">
+    <div class="eyebrow">Para completar la mesa</div>
+    <h2>Servicios complementarios.</h2>
+    <p class="intro">Todo lo que tu evento necesita, de la misma cocina y con la misma calidad.</p>
+    <div class="grid-comp">
+      <div class="card">
+        <div class="cic"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0H4Z"/><path d="M6 12c1 1.5 2.5 2 6 2s5-.5 6-2"/></svg></div>
+        <h3>Empanadas</h3>
+        <p>Carne, jamón y queso, choclo y verdura. Caseras, horneadas en el día.</p>
       </div>
-
-      <div class="choice-card multi" data-val="empanadas" onclick="toggleOpcional(this)">
-        <span class="choice-emoji">🥟</span>
-        <div class="choice-info">
-          <strong>Empanadas</strong>
-          <span id="lbl-emp-card">$2.500 c/u · Carne, Jamón & Queso, Choclo, Verdura.</span>
-        </div>
-        <div class="choice-check square"></div>
+      <div class="card">
+        <div class="cic"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M7 11h.01M11 11h.01M15 11h.01M9 15h6"/></svg></div>
+        <h3>Tablas de fiambre</h3>
+        <p>Chica (5 pers.), mediana (10 pers.) y grande (15 pers.), con fiambres y quesos seleccionados.</p>
       </div>
-
-      <div class="choice-card multi" data-val="tablas" onclick="toggleOpcional(this)">
-        <span class="choice-emoji">🧀</span>
-        <div class="choice-info">
-          <strong>Tablas de Fiambre Premium</strong>
-          <span id="lbl-tab-card">Chica $60.000 · Mediana $120.000 · Grande $180.000</span>
-        </div>
-        <div class="choice-check square"></div>
+      <div class="card">
+        <div class="cic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6"/><path d="M8 10h8M9 14h6"/></svg></div>
+        <h3>Pan sin TACC</h3>
+        <p>Opciones para celíacos. Consultanos la disponibilidad al reservar.</p>
       </div>
-
-    </div>
-
-    <!-- Pan Sin TACC detail -->
-    <div class="opcional-section" id="sec-pan-sin-tacc">
-      <h4>🍞 Pan Sin TACC</h4>
-      <div class="num-rows">
-        <div class="num-row">
-          <div class="num-row-left">
-            <strong>Docenas de Pan Sin TACC</strong>
-            <span>$15.000 por docena · 12 unidades c/u</span>
-          </div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('pan-sin-tacc',-1)">−</button>
-            <span class="counter-val" id="num-pan-sin-tacc">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('pan-sin-tacc',1)">+</button>
-          </div>
-        </div>
+      <div class="card">
+        <div class="cic"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg></div>
+        <h3>Mozo de corte</h3>
+        <p>Servicio profesional de flameado y corte en Neuquén Capital y alrededores.</p>
       </div>
-      <div class="info-box" style="margin-top:12px">⚠️ La disponibilidad queda sujeta a confirmación.</div>
-    </div>
-
-    <!-- Empanadas detail -->
-    <div class="opcional-section" id="sec-empanadas">
-      <h4>🥟 Empanadas</h4>
-      <div class="num-rows">
-        <div class="num-row">
-          <div class="num-row-left"><strong>Carne</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('emp-carne',-1)">−</button>
-            <span class="counter-val" id="num-emp-carne">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('emp-carne',1)">+</button>
-          </div>
-        </div>
-        <div class="num-row">
-          <div class="num-row-left"><strong>Jamón & Queso</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('emp-jq',-1)">−</button>
-            <span class="counter-val" id="num-emp-jq">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('emp-jq',1)">+</button>
-          </div>
-        </div>
-        <div class="num-row">
-          <div class="num-row-left"><strong>Choclo</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('emp-choclo',-1)">−</button>
-            <span class="counter-val" id="num-emp-choclo">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('emp-choclo',1)">+</button>
-          </div>
-        </div>
-        <div class="num-row">
-          <div class="num-row-left"><strong>Verdura</strong><span class="lbl-emp-u">$2.500 c/u</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('emp-verdura',-1)">−</button>
-            <span class="counter-val" id="num-emp-verdura">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('emp-verdura',1)">+</button>
-          </div>
-        </div>
+      <div class="card">
+        <div class="cic"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 8Z"/><path d="M6 8c0-2 2.5-3 6-3s6 1 6 3"/><path d="M12 5V3"/></svg></div>
+        <h3>Shots dulces</h3>
+        <p>Postres individuales para cerrar el evento: tiramisú y vasitos de frutillas con crema.</p>
       </div>
-    </div>
-
-    <!-- Tablas detail -->
-    <div class="opcional-section" id="sec-tablas">
-      <h4>🧀 Tablas de Fiambre Premium</h4>
-      <div class="num-rows">
-        <div class="num-row">
-          <div class="num-row-left"><strong>Tabla Chica</strong><span id="lbl-tab-chica">5 personas · ~1 kg · $60.000</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('tabla-chica',-1)">−</button>
-            <span class="counter-val" id="num-tabla-chica">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('tabla-chica',1)">+</button>
-          </div>
-        </div>
-        <div class="num-row">
-          <div class="num-row-left"><strong>Tabla Mediana</strong><span id="lbl-tab-mediana">10 personas · ~2 kg · $120.000</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('tabla-mediana',-1)">−</button>
-            <span class="counter-val" id="num-tabla-mediana">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('tabla-mediana',1)">+</button>
-          </div>
-        </div>
-        <div class="num-row">
-          <div class="num-row-left"><strong>Tabla Grande</strong><span id="lbl-tab-grande">15 personas · ~3 kg · $180.000</span></div>
-          <div class="counter">
-            <button class="counter-btn" onclick="cambiarNum('tabla-grande',-1)">−</button>
-            <span class="counter-val" id="num-tabla-grande">0</span>
-            <button class="counter-btn plus" onclick="cambiarNum('tabla-grande',1)">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="btn-wrap">
-      <button class="btn btn-primary" onclick="goTo(6)">SIGUIENTE →</button>
-      <button class="btn btn-secondary" onclick="goTo(4)">← Volver</button>
     </div>
   </div>
-</div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 6 – Observaciones
-══════════════════════════════════════════════ -->
-<div class="screen" id="s6">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 6 de 7</div>
-    <h2>¿Alguna observación?</h2>
-    <p>¿Hay algo más que quieras contarnos sobre tu evento?</p>
-  </div>
-  <div class="card-body">
-    <div class="choices">
-      <div class="choice-card" data-val="no" onclick="selectObs(this)">
-        <span class="choice-emoji">✅</span>
-        <div class="choice-info">
-          <strong>No, todo está bien</strong>
-          <span>Pasamos directamente al presupuesto.</span>
+<!-- ───────────── SALONES ───────────── -->
+<section class="band alt" id="salones">
+  <div class="wrap">
+    <div class="salones">
+      <div class="inner">
+        <div class="eyebrow">Para salones de eventos</div>
+        <h2>Sumanos como tu opción de catering.</h2>
+        <p class="intro">Condiciones especiales para salones y organizadores que nos incorporan como catering. Nos encargamos de todo para que tu servicio quede impecable ante el cliente.</p>
+        <div class="ben-grid">
+          <div class="ben"><h3>Servicio integral</h3><p>Pernil de primera, panes árabes, salsas gourmet sin TACC y opción de mozo de corte. Tu salón queda impecable.</p></div>
+          <div class="ben"><h3>Atención prioritaria</h3><p>Línea directa para coordinar eventos. Respondemos rápido y nos adaptamos a ajustes de último momento.</p></div>
+          <div class="ben"><h3>Alianza de largo plazo</h3><p>No buscamos un evento, buscamos construir confianza. Tus clientes satisfechos son nuestro mejor marketing.</p></div>
+          <div class="ben"><h3>Flexibilidad de volúmenes</h3><p>Desde 10 hasta 200+ personas. Nos adaptamos al tamaño del evento sin resignar calidad.</p></div>
         </div>
-        <div class="choice-check"></div>
-      </div>
-      <div class="choice-card" data-val="si" onclick="selectObs(this)">
-        <span class="choice-emoji">📝</span>
-        <div class="choice-info">
-          <strong>Sí, quiero agregar algo</strong>
-          <span>Podés escribir comentarios, pedidos especiales, etc.</span>
+        <div class="salones-note">
+          <b>¿Querés incorporarnos en tu salón?</b> Escribinos por WhatsApp al <a href="https://wa.me/5492994520532" style="color:var(--gold);font-weight:600">2994 520532</a> o a <a href="mailto:perniles.tio.rudy@gmail.com" style="color:var(--gold);font-weight:600">perniles.tio.rudy@gmail.com</a> y coordinamos una reunión para contarte nuestras condiciones preferenciales.
         </div>
-        <div class="choice-check"></div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="opcional-section" id="sec-obs">
-      <div class="field" style="margin-top:0">
-        <label>✏️ Tu observación</label>
-        <textarea id="inp-obs" placeholder="Escribí aquí tu comentario..."></textarea>
+<!-- ───────────── POR QUÉ + EVENTOS ───────────── -->
+<section class="band" id="porque">
+  <div class="wrap two">
+    <div>
+      <div class="eyebrow">Por qué elegirnos</div>
+      <h2>Razones para confiarnos tu evento.</h2>
+      <ul class="reasons">
+        <li><svg viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><div><b>Más de 30 años de experiencia.</b> <span>Referentes del rubro, con una trayectoria que respalda cada servicio.</span></div></li>
+        <li><svg viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><div><b>Calidad garantizada.</b> <span>Solo productos de primera, cuidando cada detalle.</span></div></li>
+        <li><svg viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><div><b>Servicio integral.</b> <span>Pernil, empanadas, fiambres y más, en un solo lugar.</span></div></li>
+        <li><svg viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><div><b>Atención personalizada.</b> <span>Te asesoramos para que todo salga perfecto, con precios competitivos.</span></div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="eyebrow">Eventos que atendemos</div>
+      <h2>Desde una mesa familiar a 200 invitados.</h2>
+      <div class="tags">
+        <span class="tag">Corporativos<small>Reuniones, agasajos, institucionales</small></span>
+        <span class="tag">Sociales<small>Cumpleaños, aniversarios, graduaciones</small></span>
+        <span class="tag">Casamientos<small>Recepciones y fiestas de compromiso</small></span>
+        <span class="tag">Salones<small>Catering de calidad para tu salón</small></span>
+        <span class="tag">Especiales<small>Fin de año, inauguraciones, lanzamientos</small></span>
       </div>
     </div>
-
-    <div class="btn-wrap">
-      <button class="btn btn-primary" id="btn-s6" onclick="calcularYMostrar()" disabled>VER MI PRESUPUESTO 🎉</button>
-      <button class="btn btn-secondary" onclick="goTo(5)">← Volver</button>
-    </div>
   </div>
-</div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════════════════
-     PANTALLA 7 – Resumen / Presupuesto
-══════════════════════════════════════════════ -->
-<div class="screen" id="s7">
-<div class="card">
-  <div class="card-head">
-    <div class="step-badge">Paso 7 de 7</div>
-    <h2>Tu presupuesto está listo 🎉</h2>
-    <p>Revisá el detalle y enviánoslo por WhatsApp para confirmarlo.</p>
-  </div>
-  <div class="card-body">
-    <div id="resumen-contenido"></div>
-    <div class="seña-note">
-      <strong>📌 Para reservar la fecha</strong>
-      Enviá el presupuesto por WhatsApp — ¡ese es el último paso para que el Tío Rudy vea tu pedido!
-    </div>
-    <div class="btn-wrap">
-      <a id="wa-btn" class="btn btn-wa" href="#" target="_blank">📱 ENVIAR POR WHATSAPP</a>
-      <button class="btn btn-secondary" onclick="goTo(6)">← Volver</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════ -->
-<script>
-// ── State ──────────────────────────────────
-const SALSAS = ['Cuatro Quesos','Provenzal','Tártara','Aceitunas','Criolla','Berenjenas','Prov. con Verdeo'];
-const state = {
-  nombre:'', tel:'', personas:0, fecha:'',
-  salsas:{}, tipo:'',
-  entrega:'', direccion:'', dirLat:null, dirLng:null,
-  opcionales: new Set(),
-  nums: {
-    'pan-sin-tacc':0,
-    'emp-carne':0,'emp-jq':0,'emp-choclo':0,'emp-verdura':0,
-    'tabla-chica':0,'tabla-mediana':0,'tabla-grande':0
-  },
-  obsOpcion:'', obs:''
-};
-
-// ── Welcome ────────────────────────────────
-function closeWelcome(){
-  document.getElementById('welcome-modal').classList.add('hidden');
-}
-
-// ── Progress ───────────────────────────────
-const totalSteps = 7;
-function updateProgress(step){
-  const pct = Math.round((step/totalSteps)*100);
-  document.getElementById('prog-fill').style.width = pct+'%';
-  document.getElementById('prog-label').textContent = `Paso ${step} de ${totalSteps}`;
-  document.getElementById('prog-pct').textContent = pct+'%';
-}
-
-// ── Navigation ─────────────────────────────
-function goTo(step){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('s'+step).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-  updateProgress(step);
-  if(step===2) buildSalsas();
-  if(step===3) buildTipo();
-  if(step===5) actualizarPreciosOpcionales();
-}
-
-// ── Actualizar etiquetas de precios según fecha ──
-function actualizarPreciosOpcionales(){
-  const fechaEvento = new Date(state.fecha);
-  const esDic = fechaEvento >= new Date('2026-09-01T00:00:00');
-  const pEmp = esDic ? '$3.000' : '$2.500';
-  const pTabC = esDic ? '$65.000'  : '$60.000';
-  const pTabM = esDic ? '$130.000' : '$120.000';
-  const pTabG = esDic ? '$195.000' : '$180.000';
-
-  document.getElementById('lbl-emp-card').textContent = `${pEmp} c/u · Carne, Jamón & Queso, Choclo, Verdura.`;
-  document.querySelectorAll('.lbl-emp-u').forEach(el=>{ el.textContent = `${pEmp} c/u`; });
-  document.getElementById('lbl-tab-card').textContent = `Chica ${pTabC} · Mediana ${pTabM} · Grande ${pTabG}`;
-  document.getElementById('lbl-tab-chica').textContent   = `5 personas · ~1 kg · ${pTabC}`;
-  document.getElementById('lbl-tab-mediana').textContent = `10 personas · ~2 kg · ${pTabM}`;
-  document.getElementById('lbl-tab-grande').textContent  = `15 personas · ~3 kg · ${pTabG}`;
-}
-
-// ── S1 Validation ──────────────────────────
-function validateS1(){
-  state.nombre = document.getElementById('inp-nombre').value.trim();
-  state.tel    = document.getElementById('inp-tel').value.trim();
-  state.personas = parseInt(document.getElementById('inp-personas').value)||0;
-  state.fecha  = document.getElementById('inp-fecha').value;
-  const ok = state.nombre && state.tel && state.personas>=10 && state.fecha;
-  document.getElementById('btn-s1').disabled = !ok;
-}
-
-function checkDomingo(){
-  const v = document.getElementById('inp-fecha').value;
-  if(!v) return;
-  const d = new Date(v);
-  if(d.getDay()===0){
-    document.getElementById('modal-domingo').classList.add('show');
-    document.getElementById('inp-fecha').value='';
-    state.fecha='';
-    validateS1();
-  }
-}
-function closeDomingo(){ document.getElementById('modal-domingo').classList.remove('show'); }
-
-// ── S2 Salsas ──────────────────────────────
-function buildSalsas(){
-  const total = Math.ceil((1/5)*state.personas)+1;
-  document.getElementById('salsas-total').textContent = total;
-  const cont = document.getElementById('salsa-rows');
-  // init state
-  if(Object.keys(state.salsas).length===0) SALSAS.forEach(s=>state.salsas[s]=0);
-  cont.innerHTML = SALSAS.map(s=>`
-    <div class="salsa-row ${state.salsas[s]>0?'active':''}" id="sr-${esc(s)}">
-      <span class="salsa-name">${s}</span>
-      <div class="counter">
-        <button class="counter-btn" onclick="salsaChange('${s}',-1)">−</button>
-        <span class="counter-val" id="sv-${esc(s)}">${state.salsas[s]}</span>
-        <button class="counter-btn plus" onclick="salsaChange('${s}',1)">+</button>
+<!-- ───────────── GALERÍA ───────────── -->
+<section class="band" id="galeria">
+  <div class="wrap">
+    <div class="gallery-head">
+      <div>
+        <div class="eyebrow">Galería</div>
+        <h2>Momentos de nuestros eventos.</h2>
+        <p class="intro">Un vistazo a lo que servimos. Seguí sumando fotos de tus propios eventos a esta galería.</p>
       </div>
-    </div>`).join('');
-  updateSalsasDisplay();
-}
-function esc(s){ return s.replace(/\s+/g,'_').replace(/[^a-z0-9_]/gi,''); }
-function salsaChange(salsa, delta){
-  const total = Math.ceil((1/5)*state.personas)+1;
-  const used  = Object.values(state.salsas).reduce((a,b)=>a+b,0);
-  let cur = state.salsas[salsa]||0;
-  if(delta>0 && used>=total) return;
-  cur = Math.max(0, cur+delta);
-  state.salsas[salsa] = cur;
-  const el = document.getElementById('sv-'+esc(salsa));
-  if(el) el.textContent = cur;
-  document.getElementById('sr-'+esc(salsa)).classList.toggle('active', cur>0);
-  updateSalsasDisplay();
-}
-function updateSalsasDisplay(){
-  const used = Object.values(state.salsas).reduce((a,b)=>a+b,0);
-  document.getElementById('salsas-usadas').textContent = used;
-}
+      <a href="https://www.facebook.com/pernilesdeltiorudy" target="_blank" rel="noopener" class="fb-link">
+        <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z"/></svg>
+        <span class="fb-t"><b>Seguinos en Facebook</b><span>Más de 6.600 seguidores</span></span>
+      </a>
+    </div>
+    <div class="gallery">
+      <figure><img src="pernil%20Cerdo.jpg" alt="Pernil de cerdo glaseado" loading="lazy"></figure>
+      <figure><img src="shots%20dulces.jpeg" alt="Bandeja de shots dulces: tiramisú y frutillas con crema" loading="lazy"></figure>
+      <figure><img src="Tabla%20de%20fiambres.jpg" alt="Tabla de fiambres surtida" loading="lazy"></figure>
+      <figure><img src="Pernil%20Vaca.jpg" alt="Pernil de vaca cortándose en láminas" loading="lazy"></figure>
+      <figure><img src="Shot%20dulces.png" alt="Shots dulces individuales de frutillas y tiramisú" loading="lazy"></figure>
+    </div>
+    <p class="gallery-note">¿Hiciste un evento con nosotros? Etiquetanos en Facebook y sumá tu foto a esta galería.</p>
+  </div>
+</section>
 
-// ── S3 Tipo ────────────────────────────────
-function buildTipo(){
-  const mixto = document.querySelector('.d-mixto');
-  if(mixto) mixto.style.display = state.personas >= 20 ? 'flex' : 'none';
-  // Si tenía mixto seleccionado y ahora no aplica, limpiar selección
-  if(state.personas < 20 && state.tipo === 'mixto'){
-    state.tipo = '';
-    document.querySelectorAll('#tipo-choices .choice-card').forEach(c=>c.classList.remove('selected'));
-    document.getElementById('btn-s3').disabled = true;
-  }
-}
-function selectTipo(el){
-  document.querySelectorAll('#tipo-choices .choice-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  state.tipo = el.dataset.val;
-  document.getElementById('btn-s3').disabled = false;
-}
+<!-- ───────────── CLIENTES ───────────── -->
+<section class="band alt">
+  <div class="wrap clientes">
+    <div class="eyebrow">Algunos de nuestros clientes</div>
+    <h2 style="margin:0 auto 10px">Empresas e instituciones que confían en nosotros.</h2>
+    <div class="logos">
+      <span class="cl">Banco Provincia del Neuquén</span>
+      <span class="cl">Oldelval</span>
+      <span class="cl">Transener</span>
+      <span class="cl">Clínica San Agustín</span>
+      <span class="cl">CIAR</span>
+    </div>
+    <blockquote>La confianza de nuestros clientes corporativos es nuestro mejor aval. Trabajamos día a día para mantener la excelencia en cada servicio.</blockquote>
+  </div>
+</section>
 
-// ── S4 Entrega ─────────────────────────────
-let autocomplete  = null;
-let mapInstance   = null;
-let markerInstance = null;
-let autocompleteReady = false;
-
-function initAutocomplete(){
-  const input = document.getElementById('inp-direccion');
-  if(!input || autocomplete || !window.google || !window.google.maps || !window.google.maps.places) return;
-  try {
-    autocomplete = new google.maps.places.Autocomplete(input, {
-      componentRestrictions: { country: 'ar' },
-      fields: ['formatted_address','geometry','name'],
-      bounds: new google.maps.LatLngBounds(
-        new google.maps.LatLng(-39.2, -68.8),
-        new google.maps.LatLng(-38.7, -68.0)
-      ),
-      strictBounds: false
-    });
-    autocomplete.addListener('place_changed', onPlaceSelected);
-    autocompleteReady = true;
-  } catch(e){ console.warn('Autocomplete error:', e); }
-}
-
-function tryInitAutocomplete(){
-  if(autocompleteReady) return;
-  if(window.google && window.google.maps && window.google.maps.places){
-    initAutocomplete();
-  } else {
-    // Reintentar hasta que Google Maps esté disponible
-    setTimeout(tryInitAutocomplete, 300);
-  }
-}
-
-function onPlaceSelected(){
-  if(!autocomplete) return;
-  const place = autocomplete.getPlace();
-  if(!place || !place.geometry){ clearMap(); return; }
-  const lat  = place.geometry.location.lat();
-  const lng  = place.geometry.location.lng();
-  const addr = place.formatted_address || place.name || '';
-  state.direccion = addr;
-  state.dirLat = lat;
-  state.dirLng = lng;
-  document.getElementById('inp-direccion').value = addr;
-  showMap(lat, lng, addr);
-  validateS4();
-}
-
-function onDirInput(){
-  const val = document.getElementById('inp-direccion').value.trim();
-  if(!val){ clearMap(); state.direccion=''; state.dirLat=null; state.dirLng=null; }
-  else { state.direccion = val; }
-  validateS4();
-}
-
-function showMap(lat, lng, addr){
-  if(!window.google || !window.google.maps) return;
-  const preview = document.getElementById('map-preview');
-  preview.style.display = 'block';
-  document.getElementById('map-address-txt').textContent = addr;
-  document.getElementById('map-coords-txt').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  document.getElementById('map-open-btn').href =
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
-
-  setTimeout(()=>{
-    if(!mapInstance){
-      mapInstance = new google.maps.Map(document.getElementById('map-container'),{
-        center:{lat,lng}, zoom:15,
-        disableDefaultUI: true,
-        zoomControl: true,
-        styles:[{featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}]}]
-      });
-      markerInstance = new google.maps.Marker({
-        position:{lat,lng}, map:mapInstance,
-        icon:{
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: '#D4A044', fillOpacity: 1,
-          strokeColor: '#2A1810', strokeWeight: 2
-        }
-      });
-    } else {
-      mapInstance.setCenter({lat,lng});
-      markerInstance.setPosition({lat,lng});
-    }
-  }, 50);
-}
-
-function clearMap(){
-  document.getElementById('map-preview').style.display='none';
-}
-
-function selectEntrega(el){
-  document.querySelectorAll('#s4 .choice-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  state.entrega = el.dataset.val;
-  const needDir = state.entrega !== 'retiro';
-  const dirSec  = document.getElementById('dir-section');
-  dirSec.classList.toggle('show', needDir);
-  if(!needDir){
-    state.direccion=''; state.dirLat=null; state.dirLng=null;
-    document.getElementById('inp-direccion').value='';
-    clearMap();
-  } else {
-    // Iniciar autocomplete en cuanto el campo sea visible
-    setTimeout(tryInitAutocomplete, 100);
-  }
-  validateS4();
-}
-
-function validateS4(){
-  state.direccion = document.getElementById('inp-direccion').value.trim();
-  const needDir = state.entrega && state.entrega !== 'retiro';
-  const ok = state.entrega && (!needDir || state.direccion);
-  document.getElementById('btn-s4').disabled = !ok;
-}
-
-// ── S5 Opcionales ──────────────────────────
-function toggleOpcional(el){
-  const val = el.dataset.val;
-  el.classList.toggle('selected');
-  if(el.classList.contains('selected')) state.opcionales.add(val);
-  else state.opcionales.delete(val);
-  ['pan-sin-tacc','empanadas','tablas'].forEach(k=>{
-    document.getElementById('sec-'+k).classList.toggle('show', state.opcionales.has(k));
-  });
-}
-function cambiarNum(key, delta){
-  state.nums[key] = Math.max(0,(state.nums[key]||0)+delta);
-  document.getElementById('num-'+key).textContent = state.nums[key];
-}
-
-// ── S6 Observaciones ──────────────────────
-function selectObs(el){
-  document.querySelectorAll('#s6 .choice-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  state.obsOpcion = el.dataset.val;
-  document.getElementById('sec-obs').classList.toggle('show', state.obsOpcion==='si');
-  document.getElementById('btn-s6').disabled = false;
-}
-
-// ── CÁLCULO ────────────────────────────────
-function calcularYMostrar(){
-  state.obs = document.getElementById('inp-obs').value.trim();
-
-  // Precio pernil
-  const fechaEvento = new Date(state.fecha);
-  const fechaLimite = new Date('2026-09-01T00:00:00');
-  const esDic = fechaEvento>=fechaLimite;
-  const costoPorPersona = esDic
-    ? (state.personas<20?15000:14000)
-    : (state.personas<20?14000:13000);
-
-  const totalPernil   = costoPorPersona * state.personas;
-  const totalPanes    = 4 * state.personas;
-
-  // Entrega / mozo
-  let costoEnvio=0, costoMozo=0, envioTxt='', mozoTxt='';
-  const p=state.personas;
-  if(state.entrega==='envio-capital')  { costoEnvio=10000; envioTxt='Envío a domicilio – Capital'; }
-  if(state.entrega==='envio-alred')    { costoEnvio=25000; envioTxt='Envío a domicilio – Alrededores'; }
-  if(state.entrega==='mozo-capital'){
-    mozoTxt='Mozo de corte en Neuquén Capital';
-    const mozos=Math.ceil(p/50);
-    costoMozo = mozos * (p<=39?40000:50000);
-  }
-  if(state.entrega==='mozo-alred'){
-    mozoTxt='Mozo de corte en Alrededores';
-    const mozos=Math.ceil(p/50);
-    costoMozo = mozos * (p<=39?60000:70000);
-  }
-
-  // Opcionales
-  const n=state.nums;
-  const precioEmp    = esDic?3000:2500;
-  const precioTablaC = esDic?65000:60000;
-  const precioTablaM = esDic?130000:120000;
-  const precioTablaG = esDic?195000:180000;
-  const totalPanSinTacc = n['pan-sin-tacc']*15000;
-  const totalEmpCarne   = n['emp-carne']*precioEmp;
-  const totalEmpJQ      = n['emp-jq']*precioEmp;
-  const totalEmpChoclo  = n['emp-choclo']*precioEmp;
-  const totalEmpVerd    = n['emp-verdura']*precioEmp;
-  const totalTablaC     = n['tabla-chica']*precioTablaC;
-  const totalTablaM     = n['tabla-mediana']*precioTablaM;
-  const totalTablaG     = n['tabla-grande']*precioTablaG;
-
-  const TOTAL = totalPernil+costoEnvio+costoMozo+
-    totalPanSinTacc+totalEmpCarne+totalEmpJQ+totalEmpChoclo+totalEmpVerd+
-    totalTablaC+totalTablaM+totalTablaG;
-
-  // Formatear fecha
-  const fObj = new Date(state.fecha);
-  const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  const fechaTxt = `${dias[fObj.getDay()]} ${fObj.getDate()} de ${meses[fObj.getMonth()]} de ${fObj.getFullYear()}`;
-  const horaTxt  = `${String(fObj.getHours()).padStart(2,'0')}:${String(fObj.getMinutes()).padStart(2,'0')} hs`;
-
-  // Salsas
-  const salsasElegidas = Object.entries(state.salsas).filter(([,v])=>v>0);
-  const salsasTxt = salsasElegidas.length
-    ? salsasElegidas.map(([k,v])=>`${k} (x${v})`).join(', ')
-    : 'Sin especificar';
-
-  // ── Build resumen HTML ──────────────────
-  const $ = (v) => '$'+v.toLocaleString('es-AR');
-
-  let html = `
-  <div class="resumen-card">
-    <div class="resumen-head"><h3>👤 Cliente</h3></div>
-    <div class="resumen-body">
-      <div class="resumen-row"><span class="rk">Nombre</span><span class="rv">${state.nombre}</span></div>
-      <div class="resumen-row"><span class="rk">Teléfono</span><span class="rv">${state.tel}</span></div>
+<!-- ───────────── CONTACTO ───────────── -->
+<section class="band" id="contacto">
+  <div class="wrap contacto">
+    <div>
+      <div class="eyebrow">Contacto</div>
+      <h2>Hagamos de tu evento algo inolvidable.</h2>
+      <p class="intro">Pedí tu presupuesto sin compromiso. Te respondemos a la brevedad con una propuesta personalizada.</p>
+      <ul class="contact-list">
+        <li>
+          <span class="ci"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <div><div class="k">Dirección</div><div class="v">San Martín 1716, Neuquén Capital</div></div>
+        </li>
+        <li>
+          <span class="ci"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+          <div><div class="k">WhatsApp</div><div class="v"><a href="https://wa.me/5492994520532">2994 520532</a></div></div>
+        </li>
+        <li>
+          <span class="ci"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+          <div><div class="k">Email</div><div class="v"><a href="mailto:perniles.tio.rudy@gmail.com">perniles.tio.rudy@gmail.com</a></div></div>
+        </li>
+        <li>
+          <span class="ci"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><div class="k">Horario</div><div class="v">Lunes a Sábado · 9 a 13 y 17 a 20:30 hs</div></div>
+        </li>
+        <li>
+          <span class="ci"><svg viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z"/></svg></span>
+          <div><div class="k">Facebook</div><div class="v"><a href="https://www.facebook.com/pernilesdeltiorudy" target="_blank" rel="noopener">/pernilesdeltiorudy</a> · +6.600 seguidores</div></div>
+        </li>
+      </ul>
+    </div>
+    <div class="contact-cta">
+      <div class="inner">
+        <h3>Pedí tu presupuesto hoy</h3>
+        <p>Contanos cuántos invitados y la fecha. El resto lo cocinamos nosotros.</p>
+        <a href="https://wa.me/5492994520532?text=Hola%20Tío%20Rudy!%20Quiero%20un%20presupuesto%20para%20mi%20evento." class="wa-btn">
+          <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.82 9.82 0 0 0 1.504 5.26l-.999 3.648 3.985-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+          Escribinos por WhatsApp
+        </a>
+      </div>
     </div>
   </div>
-  <div class="resumen-card">
-    <div class="resumen-head"><h3>🍖 Pedido</h3></div>
-    <div class="resumen-body">
-      <div class="resumen-row"><span class="rk">Pernil</span><span class="rv">${cap(state.tipo)} · ${state.personas} personas</span></div>
-      <div class="resumen-row"><span class="rk">Panes árabes</span><span class="rv">${totalPanes} unidades</span></div>
-      <div class="resumen-row"><span class="rk">Salsas (sin TACC)</span><span class="rv">${salsasTxt}</span></div>
-      <div class="resumen-row"><span class="rk">Costo pernil</span><span class="rv">${$(totalPernil)}</span></div>`;
+</section>
 
-  if(totalEmpCarne+totalEmpJQ+totalEmpChoclo+totalEmpVerd>0){
-    html+=`<div class="resumen-row"><span class="rk">Empanadas</span><span class="rv">`;
-    const ep=[];
-    if(n['emp-carne']>0)   ep.push(`Carne x${n['emp-carne']}`);
-    if(n['emp-jq']>0)      ep.push(`J&Q x${n['emp-jq']}`);
-    if(n['emp-choclo']>0)  ep.push(`Choclo x${n['emp-choclo']}`);
-    if(n['emp-verdura']>0) ep.push(`Verdura x${n['emp-verdura']}`);
-    html+=ep.join(', ')+`</span></div>`;
-  }
-  if(totalTablaC+totalTablaM+totalTablaG>0){
-    html+=`<div class="resumen-row"><span class="rk">Tablas fiambre</span><span class="rv">`;
-    const tb=[];
-    if(n['tabla-chica']>0)   tb.push(`Chica x${n['tabla-chica']}`);
-    if(n['tabla-mediana']>0) tb.push(`Mediana x${n['tabla-mediana']}`);
-    if(n['tabla-grande']>0)  tb.push(`Grande x${n['tabla-grande']}`);
-    html+=tb.join(', ')+`</span></div>`;
-  }
-  if(n['pan-sin-tacc']>0)
-    html+=`<div class="resumen-row"><span class="rk">Pan Sin TACC ⚠️</span><span class="rv">${n['pan-sin-tacc']} docena(s) – ${$(totalPanSinTacc)}</span></div>`;
+<footer>
+  <div class="wrap foot">
+    <span class="fb">Perniles del Tío Rudy</span>
+    <span>San Martín 1716, Neuquén Capital · 2994 520532</span>
+    <a href="https://www.facebook.com/pernilesdeltiorudy" target="_blank" rel="noopener" style="color:var(--muted)">Facebook · +6.600 seguidores</a>
+  </div>
+</footer>
 
-  html+=`</div></div>
-  <div class="resumen-card">
-    <div class="resumen-head"><h3>🚚 Entrega</h3></div>
-    <div class="resumen-body">
-      <div class="resumen-row"><span class="rk">Fecha</span><span class="rv">${fechaTxt}</span></div>
-      <div class="resumen-row"><span class="rk">Horario</span><span class="rv">${horaTxt}</span></div>`;
-
-  if(state.entrega==='retiro')
-    html+=`<div class="resumen-row"><span class="rk">Modalidad</span><span class="rv">Retiro en local</span></div>`;
-  if(costoEnvio>0)
-    html+=`<div class="resumen-row"><span class="rk">Envío</span><span class="rv">${envioTxt} · ${$(costoEnvio)}</span></div>
-           <div class="resumen-row"><span class="rk">Dirección</span><span class="rv">${state.direccion}${state.dirLat?` <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}" target="_blank" style="color:var(--gold);font-size:.8rem;display:inline-block;margin-top:2px;">🗺️ Ver en Maps</a>`:''}</span></div>`;
-  if(costoMozo>0)
-    html+=`<div class="resumen-row"><span class="rk">Mozo de corte</span><span class="rv">${mozoTxt} · ${$(costoMozo)}</span></div>
-           <div class="resumen-row"><span class="rk">Dirección</span><span class="rv">${state.direccion}${state.dirLat?` <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}" target="_blank" style="color:var(--gold);font-size:.8rem;display:inline-block;margin-top:2px;">🗺️ Ver en Maps</a>`:''}</span></div>`;
-
-  html+=`</div></div>`;
-  if(state.obs)
-    html+=`<div class="resumen-card">
-      <div class="resumen-head"><h3>📝 Observaciones</h3></div>
-      <div class="resumen-body"><div class="resumen-row"><span class="rv">${state.obs}</span></div></div>
-    </div>`;
-
-  html+=`<div class="total-row"><span>TOTAL ESTIMADO</span><strong>${$(TOTAL)}</strong></div>`;
-
-  document.getElementById('resumen-contenido').innerHTML = html;
-
-  // ── WhatsApp message ───────────────────
-  const linea='━━━━━━━━━━━━━━━━━━━━━━━';
-  let wa=`👨‍🍳 *SERVICIO DE PERNIL*\n*TÍO RUDY*\n\nSan Martín 1716\nCel. 2994520532\n${linea}\n\n`;
-  wa+=`👤 *CLIENTE*\nNombre: ${state.nombre}\nTeléfono: ${state.tel}\n${linea}\n\n`;
-  wa+=`📋 *DETALLE DEL PEDIDO*\n`;
-  wa+=`• Pernil: ${cap(state.tipo).toUpperCase()} 🥩 (${state.personas} personas)\n`;
-  wa+=`• Panes: ${totalPanes} unidades (Tipo: ÁRABE) 🥖\n`;
-  if(salsasElegidas.length){
-    wa+=`  Salsas seleccionadas:\n`;
-    salsasElegidas.forEach(([k,v])=>{ wa+=`  ✓ ${k} (${v})\n`; });
-  }
-  const empArr=[['Carne',n['emp-carne']],['Jamón/Queso',n['emp-jq']],['Choclo',n['emp-choclo']],['Verdura',n['emp-verdura']]].filter(([,v])=>v>0);
-  if(empArr.length){ wa+=`• Empanadas:\n`; empArr.forEach(([k,v])=>{ wa+=`  ✓ ${k}: ${v} unid.\n`; }); }
-  const tabArr=[['Chica',n['tabla-chica']],['Mediana',n['tabla-mediana']],['Grande',n['tabla-grande']]].filter(([,v])=>v>0);
-  if(tabArr.length){ wa+=`• Tablas de fiambre:\n`; tabArr.forEach(([k,v])=>{ wa+=`  ✓ ${k}: ${v} unid.\n`; }); }
-  if(n['pan-sin-tacc']>0){ wa+=`• Pan Sin TACC: ${n['pan-sin-tacc']} docena(s) - ${n['pan-sin-tacc']*12} unidades\n  ⚠️ *Sujeto a disponibilidad*\n`; }
-  wa+=`${linea}\n\n`;
-  wa+=`🚚 *ENTREGA*\nFecha: ${fechaTxt}\nHorario: ${horaTxt}\n`;
-  if(state.entrega==='retiro') wa+=`Modalidad: Retira por local\n(El cliente retira con su propia bandeja de horno)\n`;
-  if(costoEnvio>0){
-    wa+=`Modalidad: ${envioTxt}\nDirección: ${state.direccion}\n`;
-    if(state.dirLat) wa+=`📍 Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}\n`;
-  }
-  if(costoMozo>0){
-    wa+=`Modalidad: ${mozoTxt}\nDirección: ${state.direccion}\n`;
-    if(state.dirLat) wa+=`📍 Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(state.direccion)}\n`;
-  }
-  wa+=`${linea}\n\n`;
-  wa+=`💰 *RESUMEN DE CUENTA*\nTotal: $${TOTAL.toLocaleString('es-AR')}\nSeña: $____________\nSALDO A PAGAR: $____________\n${linea}\n\n`;
-  if(state.obs) wa+=`📝 *OBSERVACIONES:*\n${state.obs}\n\n`;
-  wa+=`_¡Gracias por elegirnos para tu evento!_ 👨‍🍳\n\n_Nota: El pernil no va fileteado, por ello ofrecemos servicio de mozo de corte_`;
-
-  document.getElementById('wa-btn').href=`https://wa.me/2994520532?text=${encodeURIComponent(wa)}`;
-
-  goTo(7);
-}
-
-function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : ''; }
-</script>
 </body>
 </html>
