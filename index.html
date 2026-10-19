@@ -278,6 +278,8 @@
     filter:blur(28px) brightness(.45) saturate(1.1);transform:scale(1.18)}
   .slide img{position:relative;z-index:1;max-width:100%;max-height:100%;width:auto;height:auto;
     box-shadow:0 14px 48px rgba(0,0,0,.6)}
+  /* verticales: llenan el marco enfocando el producto */
+  .slide.fill img{position:absolute;inset:0;z-index:1;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center;box-shadow:none}
   .slide figcaption{position:absolute;left:0;right:0;bottom:0;z-index:2;
     display:flex;align-items:center;gap:13px;padding:46px 24px 20px;
     background:linear-gradient(0deg,rgba(9,5,2,.9),rgba(9,5,2,.5) 55%,transparent)}
@@ -586,24 +588,24 @@
           <img src="galeria/prod-02-pernil-vaca.jpg" alt="Pernil de vaca cortado, jugoso por dentro" loading="lazy">
           <figcaption><span class="badge">Producto</span><span class="cap">Pernil de vaca, jugoso al corte</span></figcaption>
         </figure>
-        <figure class="slide" data-cat="producto">
+        <figure class="slide fill" data-cat="producto">
           <div class="slide-bg" style="background-image:url('galeria/prod-03-flambeado.jpg')"></div>
-          <img src="galeria/prod-03-flambeado.jpg" alt="Pernil flambeado al fuego sobre bandeja negra" loading="lazy">
+          <img src="galeria/prod-03-flambeado.jpg" alt="Pernil flambeado al fuego sobre bandeja negra" loading="lazy" style="object-position:center 58%">
           <figcaption><span class="badge">Producto</span><span class="cap">Pernil flambeado al fuego</span></figcaption>
         </figure>
-        <figure class="slide" data-cat="producto">
+        <figure class="slide fill" data-cat="producto">
           <div class="slide-bg" style="background-image:url('galeria/prod-04-salsas.jpg')"></div>
           <img src="galeria/prod-04-salsas.jpg" alt="Nuestras salsas caseras sin TACC en potes" loading="lazy">
           <figcaption><span class="badge">Producto</span><span class="cap">Las siete salsas caseras (sin TACC)</span></figcaption>
         </figure>
-        <figure class="slide" data-cat="producto">
+        <figure class="slide fill" data-cat="producto">
           <div class="slide-bg" style="background-image:url('galeria/prod-05-tabla.jpg')"></div>
           <img src="galeria/prod-05-tabla.jpg" alt="Tabla de fiambres premium surtida" loading="lazy">
           <figcaption><span class="badge">Producto</span><span class="cap">Tabla de fiambres premium</span></figcaption>
         </figure>
-        <figure class="slide" data-cat="producto">
+        <figure class="slide fill" data-cat="producto">
           <div class="slide-bg" style="background-image:url('galeria/prod-06-shots.jpeg')"></div>
-          <img src="galeria/prod-06-shots.jpeg" alt="Shots dulces con frutos rojos y crema" loading="lazy">
+          <img src="galeria/prod-06-shots.jpeg" alt="Shots dulces con frutos rojos y crema" loading="lazy" style="object-position:center 72%">
           <figcaption><span class="badge">Producto</span><span class="cap">Shots dulces para el cierre</span></figcaption>
         </figure>
         <figure class="slide" data-cat="evento">
@@ -611,7 +613,7 @@
           <img src="galeria/ev-01-flambeado.jpg" alt="Flambeado del pernil en vivo durante un evento" loading="lazy">
           <figcaption><span class="badge ev">Evento</span><span class="cap">Flambeado en vivo en pleno evento</span></figcaption>
         </figure>
-        <figure class="slide" data-cat="evento">
+        <figure class="slide fill" data-cat="evento">
           <div class="slide-bg" style="background-image:url('galeria/ev-02-flambeado.jpg')"></div>
           <img src="galeria/ev-02-flambeado.jpg" alt="Show de fuego al flambear el pernil ante los invitados" loading="lazy">
           <figcaption><span class="badge ev">Evento</span><span class="cap">Show de fuego ante los invitados</span></figcaption>
@@ -621,9 +623,9 @@
           <img src="galeria/ev-03-flambeado.jpg" alt="Flambeado del pernil con grandes llamas en el salón" loading="lazy">
           <figcaption><span class="badge ev">Evento</span><span class="cap">Las llamas que enamoran a la mesa</span></figcaption>
         </figure>
-        <figure class="slide" data-cat="evento">
+        <figure class="slide fill" data-cat="evento">
           <div class="slide-bg" style="background-image:url('galeria/ev-04-flambeado.jpg')"></div>
-          <img src="galeria/ev-04-flambeado.jpg" alt="Pernil flambeándose al momento en el evento" loading="lazy">
+          <img src="galeria/ev-04-flambeado.jpg" alt="Pernil flambeándose al momento en el evento" loading="lazy" style="object-position:center 42%">
           <figcaption><span class="badge ev">Evento</span><span class="cap">Pernil flambeándose al momento</span></figcaption>
         </figure>
         <figure class="slide" data-cat="evento">
