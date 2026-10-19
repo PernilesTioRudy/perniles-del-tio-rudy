@@ -1271,12 +1271,14 @@ function calcularYMostrar(){
   if(state.entrega==='mozo-capital'){
     mozoTxt='Mozo de corte en Neuquén Capital';
     const mozos=Math.ceil(p/50);
-    costoMozo = mozos * (p<=39?40000:50000);
+    const tarifaMozo = t==='dic' ? (p<=39?50000:60000) : (p<=39?40000:50000);
+    costoMozo = mozos * tarifaMozo;
   }
   if(state.entrega==='mozo-alred'){
     mozoTxt='Mozo de corte en Alrededores';
     const mozos=Math.ceil(p/50);
-    costoMozo = mozos * (p<=39?60000:70000);
+    const tarifaMozo = t==='dic' ? (p<=39?70000:80000) : (p<=39?60000:70000);
+    costoMozo = mozos * tarifaMozo;
   }
 
   // Opcionales
