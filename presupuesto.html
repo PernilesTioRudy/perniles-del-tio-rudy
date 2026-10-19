@@ -1017,9 +1017,10 @@ function tarifaFecha(fecha){
 function actualizarPreciosOpcionales(){
   const t = tarifaFecha(state.fecha);
   const pEmp  = t==='base' ? '$2.500' : '$3.000';
-  const pTabC = t==='dic' ? '$70.000'  : t==='sep' ? '$65.000'  : '$60.000';
-  const pTabM = t==='dic' ? '$140.000' : t==='sep' ? '$130.000' : '$120.000';
-  const pTabG = t==='dic' ? '$210.000' : t==='sep' ? '$195.000' : '$180.000';
+  // Tablas: precio vigente desde ya (no depende de la fecha del evento)
+  const pTabC = '$70.000';
+  const pTabM = '$140.000';
+  const pTabG = '$210.000';
 
   document.getElementById('lbl-emp-card').textContent = `${pEmp} c/u · Carne, Jamón & Queso, Choclo, Verdura.`;
   document.querySelectorAll('.lbl-emp-u').forEach(el=>{ el.textContent = `${pEmp} c/u`; });
@@ -1281,9 +1282,10 @@ function calcularYMostrar(){
   // Opcionales
   const n=state.nums;
   const precioEmp    = t==='base'?2500:3000;
-  const precioTablaC = t==='dic'?70000  : t==='sep'?65000  : 60000;
-  const precioTablaM = t==='dic'?140000 : t==='sep'?130000 : 120000;
-  const precioTablaG = t==='dic'?210000 : t==='sep'?195000 : 180000;
+  // Tablas: precio vigente desde ya (no depende de la fecha del evento)
+  const precioTablaC = 70000;
+  const precioTablaM = 140000;
+  const precioTablaG = 210000;
   const totalPanSinTacc = n['pan-sin-tacc']*15000;
   const totalEmpCarne   = n['emp-carne']*precioEmp;
   const totalEmpJQ      = n['emp-jq']*precioEmp;
