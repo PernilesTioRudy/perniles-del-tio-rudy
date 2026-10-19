@@ -1004,14 +1004,22 @@ function goTo(step){
   if(step===5) actualizarPreciosOpcionales();
 }
 
+// ── Período de tarifa según fecha del evento ──
+// 'base' = hasta 31/08/2026 · 'sep' = 01/09–30/11/2026 · 'dic' = desde 01/12/2026
+function tarifaFecha(fecha){
+  const f = new Date(fecha);
+  if(f >= new Date('2026-12-01T00:00:00')) return 'dic';
+  if(f >= new Date('2026-09-01T00:00:00')) return 'sep';
+  return 'base';
+}
+
 // ── Actualizar etiquetas de precios según fecha ──
 function actualizarPreciosOpcionales(){
-  const fechaEvento = new Date(state.fecha);
-  const esDic = fechaEvento >= new Date('2026-09-01T00:00:00');
-  const pEmp = esDic ? '$3.000' : '$2.500';
-  const pTabC = esDic ? '$65.000'  : '$60.000';
-  const pTabM = esDic ? '$130.000' : '$120.000';
-  const pTabG = esDic ? '$195.000' : '$180.000';
+  const t = tarifaFecha(state.fecha);
+  const pEmp  = t==='base' ? '$2.500' : '$3.000';
+  const pTabC = t==='dic' ? '$70.000'  : t==='sep' ? '$65.000'  : '$60.000';
+  const pTabM = t==='dic' ? '$140.000' : t==='sep' ? '$130.000' : '$120.000';
+  const pTabG = t==='dic' ? '$210.000' : t==='sep' ? '$195.000' : '$180.000';
 
   document.getElementById('lbl-emp-card').textContent = `${pEmp} c/u · Carne, Jamón & Queso, Choclo, Verdura.`;
   document.querySelectorAll('.lbl-emp-u').forEach(el=>{ el.textContent = `${pEmp} c/u`; });
@@ -1245,12 +1253,11 @@ function calcularYMostrar(){
   state.obs = document.getElementById('inp-obs').value.trim();
 
   // Precio pernil
-  const fechaEvento = new Date(state.fecha);
-  const fechaLimite = new Date('2026-09-01T00:00:00');
-  const esDic = fechaEvento>=fechaLimite;
-  const costoPorPersona = esDic
-    ? (state.personas<20?15000:14000)
-    : (state.personas<20?14000:13000);
+  const t = tarifaFecha(state.fecha);
+  const costoPorPersona =
+      t==='dic' ? (state.personas<20?16000:15000)
+    : t==='sep' ? (state.personas<20?15000:14000)
+    :             (state.personas<20?14000:13000);
 
   const totalPernil   = costoPorPersona * state.personas;
   const totalPanes    = 4 * state.personas;
@@ -1273,10 +1280,10 @@ function calcularYMostrar(){
 
   // Opcionales
   const n=state.nums;
-  const precioEmp    = esDic?3000:2500;
-  const precioTablaC = esDic?65000:60000;
-  const precioTablaM = esDic?130000:120000;
-  const precioTablaG = esDic?195000:180000;
+  const precioEmp    = t==='base'?2500:3000;
+  const precioTablaC = t==='dic'?70000  : t==='sep'?65000  : 60000;
+  const precioTablaM = t==='dic'?140000 : t==='sep'?130000 : 120000;
+  const precioTablaG = t==='dic'?210000 : t==='sep'?195000 : 180000;
   const totalPanSinTacc = n['pan-sin-tacc']*15000;
   const totalEmpCarne   = n['emp-carne']*precioEmp;
   const totalEmpJQ      = n['emp-jq']*precioEmp;
