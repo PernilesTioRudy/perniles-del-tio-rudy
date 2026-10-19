@@ -260,6 +260,44 @@
   @media(max-width:860px){.gallery{columns:2}}
   @media(max-width:520px){.gallery{columns:1}}
 
+  /* carrusel galería */
+  .carousel-tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+  .ctab{font-family:var(--sans);font-weight:600;font-size:.92rem;color:var(--muted);
+    padding:10px 18px;border-radius:999px;border:1px solid var(--line);
+    background:var(--surface);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+  .ctab:hover{border-color:var(--line-strong);color:var(--text)}
+  .ctab.is-active{color:#1b0f07;background:var(--fire);border-color:transparent;
+    box-shadow:0 10px 26px -12px var(--ember-2)}
+  .carousel-stage{position:relative;border-radius:18px;overflow:hidden;
+    border:1px solid var(--line);box-shadow:0 30px 70px -40px rgba(0,0,0,.9);
+    aspect-ratio:16/10;background:#0d0804}
+  .slide{position:absolute;inset:0;opacity:0;visibility:hidden;
+    transition:opacity .9s ease;display:grid;place-items:center}
+  .slide.is-active{opacity:1;visibility:visible}
+  .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;
+    filter:blur(28px) brightness(.45) saturate(1.1);transform:scale(1.18)}
+  .slide img{position:relative;z-index:1;max-width:100%;max-height:100%;width:auto;height:auto;
+    box-shadow:0 14px 48px rgba(0,0,0,.6)}
+  .slide figcaption{position:absolute;left:0;right:0;bottom:0;z-index:2;
+    display:flex;align-items:center;gap:13px;padding:46px 24px 20px;
+    background:linear-gradient(0deg,rgba(9,5,2,.9),rgba(9,5,2,.5) 55%,transparent)}
+  .slide .badge{font-family:var(--sans);font-weight:700;font-size:.68rem;text-transform:uppercase;
+    letter-spacing:.09em;padding:5px 11px;border-radius:999px;color:#1b0f07;background:var(--fire);flex:0 0 auto}
+  .slide .badge.ev{background:linear-gradient(135deg,#8a5a2b,#e8a94a)}
+  .slide .cap{color:var(--text);font-weight:500;font-size:.98rem}
+  .cnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+    width:46px;height:46px;border-radius:50%;border:1px solid var(--line-strong);
+    background:rgba(18,11,7,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    color:var(--text);font-size:1.7rem;line-height:1;cursor:pointer;
+    display:grid;place-items:center;transition:background .2s,border-color .2s}
+  .cnav:hover{background:var(--surface-2);border-color:var(--gold)}
+  .cnav.prev{left:14px}.cnav.next{right:14px}
+  .dots{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-top:20px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--line-strong);
+    border:none;cursor:pointer;padding:0;transition:transform .25s,background .25s}
+  .dot.is-active{background:var(--ember-3);transform:scale(1.35)}
+  @media(max-width:600px){.carousel-stage{aspect-ratio:4/5}.cnav{width:40px;height:40px;font-size:1.4rem}}
+
   /* clientes */
   .clientes{text-align:center}
   .logos{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:34px 0}
@@ -531,12 +569,87 @@
         <span class="fb-t"><b>Seguinos en Facebook</b><span>Más de 6.600 seguidores</span></span>
       </a>
     </div>
-    <div class="gallery">
-      <figure><img src="pernil%20Cerdo.jpg" alt="Pernil de cerdo glaseado" loading="lazy"></figure>
-      <figure><img src="shots%20dulces.jpeg" alt="Bandeja de shots dulces: tiramisú y frutillas con crema" loading="lazy"></figure>
-      <figure><img src="Tabla%20de%20fiambres.jpg" alt="Tabla de fiambres surtida" loading="lazy"></figure>
-      <figure><img src="Pernil%20Vaca.jpg" alt="Pernil de vaca cortándose en láminas" loading="lazy"></figure>
-      <figure><img src="Shot%20dulces.png" alt="Shots dulces individuales de frutillas y tiramisú" loading="lazy"></figure>
+    <div class="carousel" id="carousel">
+      <div class="carousel-tabs">
+        <button class="ctab is-active" data-cat="all">Todas</button>
+        <button class="ctab" data-cat="producto">Producto profesional</button>
+        <button class="ctab" data-cat="evento">Eventos</button>
+      </div>
+      <div class="carousel-stage">
+        <figure class="slide" data-cat="producto">
+          <div class="slide-bg" style="background-image:url('galeria/prod-01-pernil-cerdo.jpg')"></div>
+          <img src="galeria/prod-01-pernil-cerdo.jpg" alt="Pernil de cerdo glaseado entero, recién salido del horno" loading="lazy">
+          <figcaption><span class="badge">Producto</span><span class="cap">Pernil de cerdo glaseado</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="producto">
+          <div class="slide-bg" style="background-image:url('galeria/prod-02-pernil-vaca.jpg')"></div>
+          <img src="galeria/prod-02-pernil-vaca.jpg" alt="Pernil de vaca cortado, jugoso por dentro" loading="lazy">
+          <figcaption><span class="badge">Producto</span><span class="cap">Pernil de vaca, jugoso al corte</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="producto">
+          <div class="slide-bg" style="background-image:url('galeria/prod-03-flambeado.jpg')"></div>
+          <img src="galeria/prod-03-flambeado.jpg" alt="Pernil flambeado al fuego sobre bandeja negra" loading="lazy">
+          <figcaption><span class="badge">Producto</span><span class="cap">Pernil flambeado al fuego</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="producto">
+          <div class="slide-bg" style="background-image:url('galeria/prod-04-salsas.jpg')"></div>
+          <img src="galeria/prod-04-salsas.jpg" alt="Nuestras salsas caseras sin TACC en potes" loading="lazy">
+          <figcaption><span class="badge">Producto</span><span class="cap">Las siete salsas caseras (sin TACC)</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="producto">
+          <div class="slide-bg" style="background-image:url('galeria/prod-05-tabla.jpg')"></div>
+          <img src="galeria/prod-05-tabla.jpg" alt="Tabla de fiambres premium surtida" loading="lazy">
+          <figcaption><span class="badge">Producto</span><span class="cap">Tabla de fiambres premium</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="producto">
+          <div class="slide-bg" style="background-image:url('galeria/prod-06-shots.jpeg')"></div>
+          <img src="galeria/prod-06-shots.jpeg" alt="Shots dulces con frutos rojos y crema" loading="lazy">
+          <figcaption><span class="badge">Producto</span><span class="cap">Shots dulces para el cierre</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-01-flambeado.jpg')"></div>
+          <img src="galeria/ev-01-flambeado.jpg" alt="Flambeado del pernil en vivo durante un evento" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Flambeado en vivo en pleno evento</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-02-flambeado.jpg')"></div>
+          <img src="galeria/ev-02-flambeado.jpg" alt="Show de fuego al flambear el pernil ante los invitados" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Show de fuego ante los invitados</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-03-flambeado.jpg')"></div>
+          <img src="galeria/ev-03-flambeado.jpg" alt="Flambeado del pernil con grandes llamas en el salón" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Las llamas que enamoran a la mesa</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-04-flambeado.jpg')"></div>
+          <img src="galeria/ev-04-flambeado.jpg" alt="Pernil flambeándose al momento en el evento" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Pernil flambeándose al momento</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-05-flambeado.jpg')"></div>
+          <img src="galeria/ev-05-flambeado.jpg" alt="Servicio de flambeado en el salón del evento" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Servicio de flambeado en el salón</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-06-servicio.jpg')"></div>
+          <img src="galeria/ev-06-servicio.jpg" alt="Invitados sirviéndose el pernil con pan árabe" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Los invitados sirviéndose</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-07-salon.jpg')"></div>
+          <img src="galeria/ev-07-salon.jpg" alt="Mesa de salón montada para un evento" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">La mesa montada para la fiesta</span></figcaption>
+        </figure>
+        <figure class="slide" data-cat="evento">
+          <div class="slide-bg" style="background-image:url('galeria/ev-08-pernil-mesa.jpg')"></div>
+          <img src="galeria/ev-08-pernil-mesa.jpg" alt="Pernil servido con pan árabe y las salsas" loading="lazy">
+          <figcaption><span class="badge ev">Evento</span><span class="cap">Pernil, pan árabe y las salsas</span></figcaption>
+        </figure>
+        <button class="cnav prev" aria-label="Foto anterior" type="button">&#8249;</button>
+        <button class="cnav next" aria-label="Foto siguiente" type="button">&#8250;</button>
+      </div>
+      <div class="dots" aria-hidden="true"></div>
     </div>
     <p class="gallery-note">¿Hiciste un evento con nosotros? Etiquetanos en Facebook y sumá tu foto a esta galería.</p>
   </div>
@@ -608,6 +721,61 @@
     <a href="https://www.facebook.com/pernilesdeltiorudy" target="_blank" rel="noopener" style="color:var(--muted)">Facebook · +6.600 seguidores</a>
   </div>
 </footer>
+
+<script>
+(function(){
+  var car=document.getElementById('carousel');
+  if(!car)return;
+  var slides=[].slice.call(car.querySelectorAll('.slide'));
+  var dotsWrap=car.querySelector('.dots');
+  var tabs=[].slice.call(car.querySelectorAll('.ctab'));
+  var filter='all', order=[], pos=0, timer=null, DELAY=4200;
+
+  var dots=slides.map(function(s,i){
+    var b=document.createElement('button');
+    b.className='dot'; b.type='button';
+    b.addEventListener('click',function(){
+      var idx=order.indexOf(i);
+      if(idx>=0){ pos=idx; render(); restart(); }
+    });
+    dotsWrap.appendChild(b);
+    return b;
+  });
+
+  function computeOrder(){
+    order=[];
+    slides.forEach(function(s,i){
+      if(filter==='all'||s.dataset.cat===filter) order.push(i);
+    });
+    if(pos>=order.length) pos=0;
+  }
+  function render(){
+    var current=order[pos];
+    slides.forEach(function(s,i){ s.classList.toggle('is-active', i===current); });
+    dots.forEach(function(d,i){
+      d.style.display = order.indexOf(i)>=0 ? '' : 'none';
+      d.classList.toggle('is-active', i===current);
+    });
+  }
+  function go(step){ if(!order.length)return; pos=(pos+step+order.length)%order.length; render(); }
+  function restart(){ clearInterval(timer); timer=setInterval(function(){go(1);}, DELAY); }
+
+  car.querySelector('.next').addEventListener('click',function(){ go(1); restart(); });
+  car.querySelector('.prev').addEventListener('click',function(){ go(-1); restart(); });
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){ x.classList.remove('is-active'); });
+      t.classList.add('is-active');
+      filter=t.dataset.cat; pos=0; computeOrder(); render(); restart();
+    });
+  });
+  var stage=car.querySelector('.carousel-stage');
+  stage.addEventListener('mouseenter',function(){ clearInterval(timer); });
+  stage.addEventListener('mouseleave',restart);
+
+  computeOrder(); render(); restart();
+})();
+</script>
 
 </body>
 </html>
